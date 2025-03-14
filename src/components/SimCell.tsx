@@ -10,27 +10,26 @@ interface Props {
   init_type: CellType;
 
   holder: number;
-  setHolder: (index: number) => void;
 
   border: string;
 }
 
-const SimCell = ({ index, init_type, holder, setHolder, border }: Props) => {
+const SimCell = ({ index, init_type, holder, border }: Props) => {
   const images: Record<CellType, string | null> = {
-    [CellType.Ground]: null,
-    [CellType.Start]: start,
-    [CellType.Finish]: finish,
-    [CellType.Barrier]: barrier,
+    [CellType.GROUND]: null,
+    [CellType.START]: start,
+    [CellType.FINISH]: finish,
+    [CellType.BARRIER]: barrier,
   };
   const [type, setType] = useState<CellType>(init_type);
 
   const place = () => {
     // setHolder(index)
-    setType(CellType.Start); // tu ce se settat type koji je u postavkama za editanje grida
+    setType(CellType.START); // tu ce se settat type koji je u postavkama za editanje grida
   }
 
   return (
-    <div className={`w-24 h-24 bg-emerald-50 hover:bg-emerald-100 ${border} select-none relative`}
+    <div className={`w-24 h-24 bg-turquoise-50 hover:bg-turquoise-100 ${border} select-none relative`}
          onClick={place}>
 
       {images[type] && <img src={images[type] as string} alt={type.toString()} className={"absolute z-0"}/>}

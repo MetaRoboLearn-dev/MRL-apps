@@ -1,1 +1,69 @@
 @import "tailwindcss";
+
+@theme {
+    --color-turquoise-50: #e6fafa;
+    --color-turquoise-100: #b0eef7;
+    --color-turquoise-200: #8ae6e8;
+    --color-turquoise-300: #54dad4;
+    --color-turquoise-400: #33d3d6;
+    --color-turquoise-500: #00c8cc;
+    --color-turquoise-600: #00b8ba;
+    --color-turquoise-700: #008e91;
+    --color-turquoise-800: #006e70;
+    --color-turquoise-900: #005456;
+
+    --color-tomato-50: #ffecec;
+    --color-tomato-100: #ffc0c5;
+    --color-tomato-200: #ffa7a9;
+    --color-tomato-300: #ff8b82;
+    --color-tomato-400: #f67569;
+    --color-tomato-500: #f25444;
+    --color-tomato-600: #e73a3e;
+    --color-tomato-700: #b43a30;
+    --color-tomato-800: #8c211d;
+    --color-tomato-900: #6b221d;
+
+    --color-sunglow-50: #fffdea;
+    --color-sunglow-100: #fffbde;
+    --color-sunglow-200: #ffeb9e;
+    --color-sunglow-300: #fedf72;
+    --color-sunglow-400: #fed857;
+    --color-sunglow-500: #fec24d;
+    --color-sunglow-600: #e7b239;
+    --color-sunglow-700: #b49220;
+    --color-sunglow-800: #8c7119;
+    --color-sunglow-900: #6b5713;
+
+    --color-white-smoke-50: #fefefe;
+    --color-white-smoke-100: #fcfcfc;
+    --color-white-smoke-200: #fbfbfb;
+    --color-white-smoke-300: #f9f9f9;
+    --color-white-smoke-400: #f8f8f8;
+    --color-white-smoke-500: #f6f6f6;
+    --color-white-smoke-600: #e0e0df;
+    --color-white-smoke-700: #afafae;
+    --color-white-smoke-800: #878787;
+    --color-white-smoke-900: #676767;
+
+    --color-light-cyan-50: #fcffff;
+    --color-light-cyan-100: #f6fefe;
+    --color-light-cyan-200: #f2fefe;
+    --color-light-cyan-300: #ecfdfd;
+    --color-light-cyan-400: #e0fdfd;
+    --color-light-cyan-500: #d5fcfc;
+    --color-light-cyan-600: #cfe5e5;
+    --color-light-cyan-700: #afb3b3;
+    --color-light-cyan-800: #7f8b8b;
+    --color-light-cyan-900: #5f6a6a;
+
+    --color-dark-neutrals-50: #e8e8e8;
+    --color-dark-neutrals-100: #b7b8b9;
+    --color-dark-neutrals-200: #949797;
+    --color-dark-neutrals-300: #646767;
+    --color-dark-neutrals-400: #454949;
+    --color-dark-neutrals-500: #171c1e;
+    --color-dark-neutrals-600: #151919;
+    --color-dark-neutrals-700: #101414;
+    --color-dark-neutrals-800: #0d0f0f;
+    --color-dark-neutrals-900: #0a0c0c;
+}

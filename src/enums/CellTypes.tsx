@@ -1,6 +1,6 @@
 export enum CellType {
-  Start,
-  Finish,
-  Ground,
-  Barrier,
+  START = 'Start',
+  FINISH = 'Finish',
+  GROUND = 'Ground',
+  BARRIER = 'Barrier',
 }

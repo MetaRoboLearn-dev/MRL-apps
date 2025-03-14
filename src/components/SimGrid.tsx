@@ -7,14 +7,14 @@ interface Props {
 }
 
 const SimGrid = ({ size } : Props) => {
-  const border = 'border-2 border-solid border-emerald-700';
-  const [holder, setHolder] = useState(-1);
+  const border = 'border-2 border-solid border-turquoise-700';
+  const [holder, ] = useState(-1);
 
   return (
     <>
       <div className={`grid ${border} overflow-hidden`} style={{gridTemplateColumns: `repeat(${size}, 1fr)`}}>
         {Array.from({length: size * size}).map((_, index) => (
-          <SimCell key={index} init_type={CellType.Ground} index={index} holder={holder} setHolder={setHolder}
+          <SimCell key={index} init_type={CellType.GROUND} index={index} holder={holder}
                    border={border}/>
         ))}
       </div>

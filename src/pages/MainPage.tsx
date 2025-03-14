@@ -1,11 +1,11 @@
-import Simulation from "../components/Simulation.tsx";
-import CodeEditor from "../components/CodeEditor.tsx";
+import SimScreen from "../components/SimScreen.tsx";
+import CodeScreen from "../components/CodeScreen.tsx";
 
 const MainPage = () => {
   return (
     <div className={"w-full h-screen flex"}>
-      <Simulation/>
-      <CodeEditor/>
+      <SimScreen/>
+      <CodeScreen/>
     </div>
   );
 };

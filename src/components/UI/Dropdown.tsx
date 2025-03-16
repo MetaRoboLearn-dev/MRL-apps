@@ -3,9 +3,11 @@ import { RiArrowRightDoubleLine } from "react-icons/ri";
 
 interface Props {
   items: string[];
+  current: string;
+  onSelect: (item: string) => void;
 }
 
-const Dropdown = ({ children, items }: PropsWithChildren<Props>) => {
+const Dropdown = ({ children, items, current, onSelect }: PropsWithChildren<Props>) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -28,32 +30,28 @@ const Dropdown = ({ children, items }: PropsWithChildren<Props>) => {
                       ${isOpen ? 'scale-103' : ''}`}
            onClick={() => setIsOpen(!isOpen)}>
         <span>{children}</span>
-        <svg className={`w-2.5 h-2.5 ms-3 transition-transform duration-300 ${
-          isOpen ? "rotate-180" : ""
-        }`}
+        <svg className={`w-2.5 h-2.5 ms-3 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
              aria-hidden="true"
              xmlns="http://www.w3.org/2000/svg"
              fill="none"
-             viewBox="0 0 10 6"
-        >
-          <path
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="m1 1 4 4 4-4"
-          />
+             viewBox="0 0 10 6">
+          <path stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="m1 1 4 4 4-4"/>
         </svg>
       </div>
 
-      <div className={`bg-gray-200 rounded-lg border-gray-400 shadow-md absolute top-12 left-2 w-44
+      <div className={`bg-gray-200 rounded-lg border-gray-400 shadow-md absolute top-12 left-2 min-w-44
                     transition-all duration-300 ease-in-out transform origin-top
                     ${isOpen ? "opacity-100 scale-y-100" : "opacity-0 scale-y-0 pointer-events-none"}`}>
         <ul className="py-2">
           {items.map((item: string) => (
-            <li className="px-4 py-2 hover:bg-gray-300 cursor-pointer flex items-center gap-2">
+            <li className="px-4 py-2 hover:bg-gray-300 cursor-pointer flex items-center gap-2" onClick={() => onSelect(item)}>
               <RiArrowRightDoubleLine fontSize={'20'} />
-              <span>{item}</span>
+              <div className={"text-lg"}>{item}</div>
+              {item === current ? <span className={"text-xs text-turquoise-800"}>ODABRANO</span> : null}
             </li>
           ))}
         </ul>

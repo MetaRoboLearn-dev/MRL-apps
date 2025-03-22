@@ -1,4 +1,4 @@
-import tank from '../assets/tank.png'
+import tank from '../../assets/tank.png'
 
 const SimVehicle = () => {
   return (

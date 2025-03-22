@@ -1,7 +1,7 @@
 import {useContext} from "react";
-import {SimFocusedContext, SimSettingsContext} from "../Context.tsx";
-import Dropdown from "./UI/Dropdown.tsx";
-import {CellType} from "../enums/CellTypes.tsx";
+import {SimFocusedContext, SimSettingsContext} from "../../Context.tsx";
+import Dropdown from "../UI/Dropdown.tsx";
+import {CellType} from "../../enums/CellTypes.tsx";
 
 const SimInterface = () => {
   const [simFocused] = useContext(SimFocusedContext);

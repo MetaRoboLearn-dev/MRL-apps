@@ -1,6 +1,9 @@
+@import url('https://fonts.googleapis.com/css?family=Nunito:400,700&display=swap');
 @import "tailwindcss";
 
 @theme {
+    --font-display: Inter, sans-serif;
+
     --color-turquoise-50: #e6fafa;
     --color-turquoise-100: #b0eef7;
     --color-turquoise-200: #8ae6e8;

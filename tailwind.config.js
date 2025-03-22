@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+// ovo je nepotrebno, tailwindcss v4.0 koristi postcss tehniku. ova datoteka je tu kako bi ju Webstorm prepoznao
 export default {
     content: ['./src/**/*.{js,ts,jsx,tsx}'],
     theme: {

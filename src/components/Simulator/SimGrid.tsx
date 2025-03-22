@@ -1,7 +1,7 @@
 import SimCell from "./SimCell.tsx";
 import {useState} from "react";
 import SimVehicle from "./SimVehicle.tsx";
-import {GridInfo} from "../interfaces.tsx";
+import {GridInfo} from "../../interfaces.tsx";
 
 interface Props {
   size: number;

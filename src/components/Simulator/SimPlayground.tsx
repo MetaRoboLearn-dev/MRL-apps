@@ -1,6 +1,6 @@
 import React, {useContext, useState} from "react";
 import SimGrid from "./SimGrid.tsx";
-import {SimFocusedContext} from "../Context.tsx";
+import {SimFocusedContext} from "../../Context.tsx";
 import SimInterface from "./SimInterface.tsx";
 
 const SimPlayground = () => {
@@ -54,7 +54,8 @@ const SimPlayground = () => {
   return (
     <>
       <div
-        className={`${cursorType} flex flex-col items-center justify-center w-full h-lvh relative`}
+        className={`bg-turquoise-50 ${cursorType} flex flex-col flex-grow items-center justify-center w-full  
+                    border-t-8 border-y-10 border-turquoise-700 relative`}
         tabIndex={0}
         onClick={() => focus()}
         onKeyDown={onSimKeyDown}

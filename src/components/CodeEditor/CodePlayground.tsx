@@ -14,7 +14,26 @@ const colours = {
   'string': '#008e91', // --color-turquoise-700
 }
 
-const CodeScreen = () => {
+const primjer = `# Primjer kretanja robota
+broj_koraka = 1 + 2  # 3 koraka naprijed
+for korak in range(broj_koraka):
+naprijed()
+
+rotiraj("desno")  # Robot se okreće desno
+
+broj_koraka = 5 - 3  # 2 koraka naprijed
+for korak in range(broj_koraka):
+naprijed()
+
+rotiraj("lijevo")  # Robot se okreće lijevo
+
+koraci_nazad = 2 * 2  # 4 koraka nazad
+while koraci_nazad > 0:
+nazad()
+koraci_nazad -= 1 
+`
+
+const CodePlayground = () => {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
 
   const handleEditorDidMount: OnMount = (editor, monaco) => {
@@ -44,55 +63,23 @@ const CodeScreen = () => {
   };
 
   return (
-    <div className="bg-emerald-400 w-3/5 flex items-center">
+    <div className={'w-full flex-grow pt-2 pb-2.5'}>
       <Editor
         onMount={handleEditorDidMount}
-        height="100vh"
+        height="100%"
         defaultLanguage="python"
-        defaultValue="from pymongo import MongoClient
-
-# Define the MongoDB collection name.
-collection_name = 'Product'
-
-schema = {
-    'name': {
-        'type': str,
-        'required': True
-    },
-    'description': {
-        'type': str
-    },
-    'timestamps': True
-}
-
-# Connect to MongoDB. Replace with your connection string and database name.
-client = MongoClient('your_mongodb_connection_string')
-db = client['your_database_name']
-collection = db[collection_name]
-
-def insert_product(name, description=None):
-    if not name:
-        raise ValueError(Product name is required.)
-    product_data = {
-        'name': name,
-        'description': description
-    }
-    result = collection.insert_one(product_data)
-    return result
-
-
-# Close the MongoDB connection.
-client.close()
-"
+        defaultValue={primjer}
         theme="dark"
         options={{
-          fontSize: 22,
+          fontSize: 20,
           lineNumbers: "on",
           minimap: { enabled: false },
+          padding: { top: 10 },
+
         }}
       />
     </div>
   );
 };
 
-export default CodeScreen;
+export default CodePlayground;

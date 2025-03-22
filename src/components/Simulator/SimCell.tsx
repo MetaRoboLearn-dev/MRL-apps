@@ -1,10 +1,10 @@
-import start from '../assets/start.png'
-import finish from '../assets/finish.png'
-import barrier from '../assets/barrier.png'
-import {CellType} from "../enums/CellTypes.tsx";
+import start from '../../assets/start.png'
+import finish from '../../assets/finish.png'
+import barrier from '../../assets/barrier.png'
+import {CellType} from "../../enums/CellTypes.tsx";
 import {useContext, useState} from "react";
-import {SimSettingsContext} from "../Context.tsx";
-import {GridInfo} from "../interfaces.tsx";
+import {SimSettingsContext} from "../../Context.tsx";
+import {GridInfo} from "../../interfaces.tsx";
 
 interface Props {
   index: number;

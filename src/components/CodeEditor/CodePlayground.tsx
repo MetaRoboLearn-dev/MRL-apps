@@ -1,5 +1,5 @@
 import Editor, { OnMount } from "@monaco-editor/react";
-import { useRef } from "react";
+import {useEffect, useRef} from "react";
 import * as monaco from "monaco-editor"; // Import monaco types
 
 const colours = {
@@ -62,8 +62,20 @@ const CodePlayground = () => {
     monaco.editor.setTheme('default')
   };
 
+  useEffect(() => {
+    const handleResize = () => {
+      if (editorRef.current) {
+        editorRef.current.layout();
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   return (
-    <div className={'w-full flex-grow pt-2 pb-2.5'}>
       <Editor
         onMount={handleEditorDidMount}
         height="100%"
@@ -75,10 +87,8 @@ const CodePlayground = () => {
           lineNumbers: "on",
           minimap: { enabled: false },
           padding: { top: 10 },
-
         }}
       />
-    </div>
   );
 };
 

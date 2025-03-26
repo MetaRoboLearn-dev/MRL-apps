@@ -22,9 +22,8 @@ const SimInterface = () => {
   };
   
   return (
-    <div className={`bg-turquoise-700 w-full h-20 px-5 top-0 absolute flex items-center shadow-md 
-                    transition duration-400 ease-in-out 
-                    ${simFocused ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full'}`}>
+    <div className={`h-full px-5 py-5 absolute right-0 top-0 flex flex-col items-start transition duration-400 ease-in-out
+                      ${simFocused ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full'}`}>
       <Dropdown items={Object.values(CellType)}
                 current={simSettings.cellType.toString()}
                 onSelect={selectCellType}>

@@ -14,7 +14,6 @@ const SimPlayground = () => {
   const onSimFocus = () => {
     setSimFocused(true);
     setCursorType("");
-
   }
 
   const onSimBlur = () => {
@@ -54,13 +53,13 @@ const SimPlayground = () => {
   return (
     <>
       <div
-        className={`bg-turquoise-50 ${cursorType} flex flex-col flex-grow items-center justify-center w-full  
-                    border-t-8 border-y-10 border-turquoise-700 relative`}
+        className={`bg-turquoise-50 ${cursorType} flex flex-col flex-grow items-center justify-center w-full
+                    border-t-8 border-y-10 border-turquoise-700 relative overflow-hidden`}
         tabIndex={0}
         onClick={() => focus()}
         onKeyDown={onSimKeyDown}
         onKeyUp={onSimKeyUp}
-        onMouseDown={onSimMouseDown}
+       onMouseDown={onSimMouseDown}
         onMouseUp={onSimMouseUp}
         onFocus={onSimFocus}
         onBlur={onSimBlur}

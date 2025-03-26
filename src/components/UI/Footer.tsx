@@ -6,12 +6,12 @@ const Footer = () => {
       <div
         className={'bg-sunglow-500 text-dark-neutrals-400 font-display font-bold text-xl pl-5 pr-8 py-2 rounded flex items-center ml-8'}>
         <FaRobot size={24}/>
-        <span className={'ml-4'}>Upogoni!</span>
+        <span className={'ml-4'}>Upogoni</span>
       </div>
       <div
         className={'bg-turquoise-500 text-light-cyan-200 font-display font-bold text-xl pl-5 pr-8 py-2 rounded flex items-center ml-8'}>
         <FaPlay size={18}/>
-        <span className={'ml-4'}>Simuliraj!</span>
+        <span className={'ml-4'}>Simuliraj</span>
       </div>
     </div>
   );

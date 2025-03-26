@@ -8,8 +8,8 @@ const MainPage = () => {
     <div className="w-full h-screen flex flex-col">
       <Navbar />
       <div className="flex-1 w-full flex min-h-0">
-        <SimScreen/>
         <CodeScreen/>
+        <SimScreen/>
       </div>
       <Footer />
     </div>

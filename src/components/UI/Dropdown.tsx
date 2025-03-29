@@ -23,10 +23,10 @@ const Dropdown = ({ children, items, current, onSelect }: PropsWithChildren<Prop
 
   return (
     <div className={'relative inline-block'} ref={dropdownRef}>
-      <div className={`bg-gray-200 rounded-lg border-grey-darker shadow-md flex items-center
+      <div className={`bg-turquoise-700 text-white-smoke-200 rounded-lg border-grey-darker flex items-center
                       mx-2 py-2 px-5 text-base select-none font-semibold
                       transition ease-in-out
-                      hover:cursor-pointer hover:shadow-lg hover:scale-103
+                      hover:cursor-pointer hover:scale-103
                       ${isOpen ? 'scale-103' : ''}`}
            onClick={() => setIsOpen(!isOpen)}>
         <span>{children}</span>
@@ -43,7 +43,7 @@ const Dropdown = ({ children, items, current, onSelect }: PropsWithChildren<Prop
         </svg>
       </div>
 
-      <div className={`bg-gray-200 rounded-lg border-gray-400 shadow-md absolute top-12 left-2 min-w-44
+      <div className={`bg-white-smoke-200 rounded-lg absolute top-12 right-2 min-w-44 border-turquoise-700 border-4
                     transition-all duration-300 ease-in-out transform origin-top
                     ${isOpen ? "opacity-100 scale-y-100" : "opacity-0 scale-y-0 pointer-events-none"}`}>
         <ul className="py-2">

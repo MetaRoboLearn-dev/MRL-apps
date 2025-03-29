@@ -1,7 +1,7 @@
 import React, {useContext, useState} from "react";
-import SimGrid from "./SimGrid.tsx";
 import {SimFocusedContext} from "../../Context.tsx";
 import SimInterface from "./SimInterface.tsx";
+import SimCanvas from "./SimCanvas.tsx";
 
 const SimPlayground = () => {
   const [cursorType, setCursorType] = useState("cursor-pointer");
@@ -59,12 +59,12 @@ const SimPlayground = () => {
         onClick={() => focus()}
         onKeyDown={onSimKeyDown}
         onKeyUp={onSimKeyUp}
-       onMouseDown={onSimMouseDown}
+        onMouseDown={onSimMouseDown}
         onMouseUp={onSimMouseUp}
         onFocus={onSimFocus}
         onBlur={onSimBlur}
         autoFocus>
-        <SimGrid size={5}/>
+        <SimCanvas />
         <SimInterface />
       </div>
     </>

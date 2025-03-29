@@ -1,6 +1,6 @@
 export enum CellType {
-  START = 'Start',
-  FINISH = 'Finish',
-  GROUND = 'Ground',
-  BARRIER = 'Barrier',
+  START = 'Početak',
+  FINISH = 'Kraj',
+  GROUND = 'Pod',
+  BARRIER = 'Prepreka',
 }

@@ -16,7 +16,9 @@ export const SimFocusedContext
   = createContext<[boolean, Dispatch<SetStateAction<boolean>>]> ([false, () => {}]);
 
 export const SimSettingsContext
-  = createContext<[SimSettings, Dispatch<SetStateAction<SimSettings>>]> ([{cellType: CellType.GROUND}, () => {}]);
+  = createContext<[SimSettings, Dispatch<SetStateAction<SimSettings>>]> ([{
+    cellType: CellType.GROUND,
+  }, () => {}]);
 
 interface SimSettings {
   cellType: CellType

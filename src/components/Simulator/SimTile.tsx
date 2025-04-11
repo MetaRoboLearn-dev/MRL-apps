@@ -5,7 +5,8 @@ import {GridInfo} from "../../interfaces.tsx";
 import {useTexture} from "@react-three/drei";
 import {Mesh} from "three";
 import {ThreeEvent} from "@react-three/fiber";
-import edge from "../../assets/edge.png";
+import edge from "../../../public/edge.png";
+import SimVehicle from "./SimVehicle.tsx";
 
 interface Props {
   index: number;
@@ -22,7 +23,7 @@ const SimTile = ({index, position, gridInfo, setGridInfo}: Props) => {
     [CellType.GROUND]: '#3f9b0b',
     [CellType.START]: '#fed857',
     [CellType.FINISH]: '#fe5244',
-    [CellType.BARRIER]: '#646767',
+    [CellType.BARRIER]: 'darkgreen', // #646767
   };
 
   const [type, setType] = useState<CellType>(CellType.GROUND);
@@ -79,19 +80,22 @@ const SimTile = ({index, position, gridInfo, setGridInfo}: Props) => {
             onPointerLeave={(event) => (event.stopPropagation(), setIsHovered(false))}
             onClick={place}>
         <boxGeometry/>
-        <meshToonMaterial map={colorTexture} color={isHovered ? 'blue' : colours[type]}/>
+        <meshStandardMaterial map={colorTexture} color={isHovered ? 'blue' : colours[type]}/>
       </mesh>
 
       {type === CellType.FINISH ? (
         <mesh position={[0, 1, 0]}>
           <boxGeometry args={[0.15, 2, 0.15]}/>
-          <meshToonMaterial map={colorTexture} color={isHovered ? 'blue' : colours[type]}/>
+          <meshStandardMaterial map={colorTexture} color={isHovered ? 'blue' : colours[type]}/>
         </mesh>
       ) : type === CellType.BARRIER ? (
-        <mesh position={[0, 1, 0]}>
-          <boxGeometry args={[1, 1, 0.15]}/>
-          <meshToonMaterial map={colorTexture} color={isHovered ? 'blue' : colours[type]}/>
+        <mesh position={[0, 0.88, 0]} receiveShadow={true}>
+          <boxGeometry args={[1, 0.76, 0.15]}/>
+          <meshStandardMaterial map={colorTexture} color={isHovered ? 'blue' : colours[type]}/>
         </mesh>
+      ) : type === CellType.START ? (
+        // <SimVehicle />
+        <></>
       ) : null}
     </group>
   )

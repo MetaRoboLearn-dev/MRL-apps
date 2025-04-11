@@ -1,6 +1,7 @@
 import Editor, { OnMount } from "@monaco-editor/react";
-import {useEffect, useRef} from "react";
-import * as monaco from "monaco-editor"; // Import monaco types
+import {useContext, useEffect, useRef} from "react";
+import * as monaco from "monaco-editor";
+import {ActiveCodeContext} from "../../Context.tsx"; // Import monaco types
 
 const colours = {
   'background': '#fffbde',  // --color-sunglow-100
@@ -14,27 +15,9 @@ const colours = {
   'string': '#008e91', // --color-turquoise-700
 }
 
-const primjer = `# Primjer kretanja robota
-broj_koraka = 1 + 2  # 3 koraka naprijed
-for korak in range(broj_koraka):
-naprijed()
-
-rotiraj("desno")  # Robot se okreće desno
-
-broj_koraka = 5 - 3  # 2 koraka naprijed
-for korak in range(broj_koraka):
-naprijed()
-
-rotiraj("lijevo")  # Robot se okreće lijevo
-
-koraci_nazad = 2 * 2  # 4 koraka nazad
-while koraci_nazad > 0:
-nazad()
-koraci_nazad -= 1 
-`
-
 const CodePlayground = () => {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
+  const [code, setCode] = useContext(ActiveCodeContext);
 
   const handleEditorDidMount: OnMount = (editor, monaco) => {
     editorRef.current = editor;
@@ -76,19 +59,20 @@ const CodePlayground = () => {
   }, []);
 
   return (
-      <Editor
-        onMount={handleEditorDidMount}
-        height="100%"
-        defaultLanguage="python"
-        defaultValue={primjer}
-        theme="dark"
-        options={{
-          fontSize: 20,
-          lineNumbers: "on",
-          minimap: { enabled: false },
-          padding: { top: 10 },
-        }}
-      />
+    <Editor
+      onMount={handleEditorDidMount}
+      height="100%"
+      defaultLanguage="python"
+      theme="dark"
+      value={code}
+      onChange={(value) => setCode(value || "")}
+      options={{
+        fontSize: 20,
+        lineNumbers: "on",
+        minimap: { enabled: false },
+        padding: { top: 10 },
+      }}
+    />
   );
 };
 

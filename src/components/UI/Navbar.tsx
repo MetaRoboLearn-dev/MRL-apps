@@ -1,4 +1,4 @@
-import LogoWhite from '../../assets/logo_white_notext.svg'
+import LogoWhite from '../../../public/logo_white_notext.svg'
 
 const Navbar = () => {
   return (

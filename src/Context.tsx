@@ -23,3 +23,6 @@ export const SimSettingsContext
 interface SimSettings {
   cellType: CellType
 }
+
+export const ActiveCodeContext
+  = createContext<[string, Dispatch<SetStateAction<string>>]>(['', () => {}]);

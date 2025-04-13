@@ -1,12 +1,10 @@
-import {useContext, useEffect, useRef, useState} from "react";
-import {SimSettingsContext} from "../../Context.tsx";
-import {CellType} from "../../enums/CellTypes.tsx";
-import {GridInfo} from "../../interfaces.tsx";
+import {useEffect, useState} from "react";
+import {TileType, GridInfo} from "../../types.ts";
 import {useTexture} from "@react-three/drei";
-import {Mesh} from "three";
 import {ThreeEvent} from "@react-three/fiber";
-import edge from "../../../public/edge.png";
-import SimVehicle from "./SimVehicle.tsx";
+import edge from "/edge.png";
+import {useSettings} from "../../hooks/useSettings.ts";
+import SimBarrier from "./SimBarrier.tsx";
 
 interface Props {
   index: number;
@@ -16,26 +14,26 @@ interface Props {
 }
 
 const SimTile = ({index, position, gridInfo, setGridInfo}: Props) => {
+  const { selectedType } = useSettings();
   const colorTexture = useTexture(edge);
-  const [simSettings, ] = useContext(SimSettingsContext);
 
-  const colours: Record<CellType, string> = {
-    [CellType.GROUND]: '#3f9b0b',
-    [CellType.START]: '#fed857',
-    [CellType.FINISH]: '#fe5244',
-    [CellType.BARRIER]: 'darkgreen', // #646767
+  const colours: Record<TileType, string> = {
+    [TileType.GROUND]: '#3f9b0b',
+    [TileType.START]: '#fed857',
+    [TileType.FINISH]: '#fe5244',
+    [TileType.BARRIER]: 'darkgreen', // #646767
   };
 
-  const [type, setType] = useState<CellType>(CellType.GROUND);
+  const [type, setType] = useState<TileType>(TileType.GROUND);
   useEffect(() => {
     setType(() => {
       if (index === gridInfo.start)
-        return CellType.START;
+        return TileType.START;
       else if (index === gridInfo.finish)
-        return CellType.FINISH;
+        return TileType.FINISH;
       else if (gridInfo.barriers?.includes(index))
-        return CellType.BARRIER;
-      return CellType.GROUND;
+        return TileType.BARRIER;
+      return TileType.GROUND;
     })
   }, [index, gridInfo]);
 
@@ -51,31 +49,25 @@ const SimTile = ({index, position, gridInfo, setGridInfo}: Props) => {
       barriers: gridInfo.barriers.filter(i => i !== index),
     };
 
-    switch (simSettings.cellType) {
-      case CellType.START:
+    switch (selectedType) {
+      case TileType.START:
         newGridInfo = { ...newGridInfo, start: index };
         break;
-      case CellType.FINISH:
+      case TileType.FINISH:
         newGridInfo = { ...newGridInfo, finish: index };
         break;
-      case CellType.BARRIER:
+      case TileType.BARRIER:
         newGridInfo = { ...newGridInfo, barriers: [...newGridInfo.barriers, index] };
         break;
-      case CellType.GROUND:
+      case TileType.GROUND:
         break;
     }
     setGridInfo(newGridInfo);
   };
 
-  const ref = useRef<Mesh>(null);
-  if (ref.current) {
-    const curr = ref.current;
-    curr.position.y = isHovered ? 0 : 0;
-  }
-
   return (
     <group position={position}>
-      <mesh ref={ref}
+      <mesh scale={[1, 1, 1]}
             onPointerEnter={(event) => (event.stopPropagation(), setIsHovered(true))}
             onPointerLeave={(event) => (event.stopPropagation(), setIsHovered(false))}
             onClick={place}>
@@ -83,18 +75,18 @@ const SimTile = ({index, position, gridInfo, setGridInfo}: Props) => {
         <meshStandardMaterial map={colorTexture} color={isHovered ? 'blue' : colours[type]}/>
       </mesh>
 
-      {type === CellType.FINISH ? (
+      {type === TileType.FINISH ? (
         <mesh position={[0, 1, 0]}>
           <boxGeometry args={[0.15, 2, 0.15]}/>
           <meshStandardMaterial map={colorTexture} color={isHovered ? 'blue' : colours[type]}/>
         </mesh>
-      ) : type === CellType.BARRIER ? (
-        <mesh position={[0, 0.88, 0]} receiveShadow={true}>
-          <boxGeometry args={[1, 0.76, 0.15]}/>
-          <meshStandardMaterial map={colorTexture} color={isHovered ? 'blue' : colours[type]}/>
-        </mesh>
-      ) : type === CellType.START ? (
-        // <SimVehicle />
+      ) : type === TileType.BARRIER ? (
+        // <mesh position={[0, 0.88, 0]} receiveShadow={true}>
+        //   <boxGeometry args={[1, 0.76, 0.15]}/>
+        //   <meshStandardMaterial map={colorTexture} color={isHovered ? 'blue' : colours[type]}/>
+        // </mesh>
+        <SimBarrier />
+      ) : type === TileType.START ? (
         <></>
       ) : null}
     </group>

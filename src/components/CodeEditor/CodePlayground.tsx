@@ -1,7 +1,7 @@
 import Editor, { OnMount } from "@monaco-editor/react";
 import {useContext, useEffect, useRef} from "react";
 import * as monaco from "monaco-editor";
-import {ActiveCodeContext} from "../../Context.tsx"; // Import monaco types
+import {ActiveCodeContext} from "../../providers/Context.tsx"; // Import monaco types
 
 const colours = {
   'background': '#fffbde',  // --color-sunglow-100

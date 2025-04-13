@@ -1,15 +1,11 @@
-import React, {useContext, useState} from "react";
-import {SimFocusedContext} from "../../Context.tsx";
+import {useState} from "react";
 import SimInterface from "./SimInterface.tsx";
 import SimCanvas from "./SimCanvas.tsx";
+import {useSettings} from "../../hooks/useSettings.ts";
 
 const SimPlayground = () => {
+  const { setSimFocused } = useSettings();
   const [cursorType, setCursorType] = useState("cursor-pointer");
-  const [canGrab, setCanGrab] = useState(false);
-  const [isGrabbing, setIsGrabbing] = useState(false);
-
-  const [, setSimFocused] = useContext(SimFocusedContext);
-  // const [gridSize, setGridSize] = useContext(GridSizeContext);
 
   const onSimFocus = () => {
     setSimFocused(true);
@@ -21,53 +17,14 @@ const SimPlayground = () => {
     setCursorType("cursor-pointer");
   }
 
-  const onSimKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === ' ' && !isGrabbing) {
-      console.log(cursorType);
-      setCanGrab(true);
-      setCursorType("cursor-grab");
-    }
-  }
-
-  const onSimKeyUp = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === ' ' && !isGrabbing) {
-      setCanGrab(false);
-      setCursorType("");
-    }
-  }
-
-  const onSimMouseDown = () => {
-    if (canGrab) {
-      setIsGrabbing(true);
-      setCursorType("cursor-grabbing");
-    }
-  }
-
-  const onSimMouseUp = () => {
-    if (canGrab) {
-      setIsGrabbing(false);
-      setCursorType("cursor-grab");
-    }
-  }
-
   return (
-    <>
-      <div
-        className={`bg-turquoise-50 ${cursorType} flex flex-col flex-grow items-center justify-center w-full
-                    border-t-8 border-y-10 border-turquoise-700 relative overflow-hidden`}
-        tabIndex={0}
-        onClick={() => focus()}
-        onKeyDown={onSimKeyDown}
-        onKeyUp={onSimKeyUp}
-        onMouseDown={onSimMouseDown}
-        onMouseUp={onSimMouseUp}
-        onFocus={onSimFocus}
-        onBlur={onSimBlur}
-        autoFocus>
-        <SimCanvas />
-        <SimInterface />
-      </div>
-    </>
+    <div className={`bg-turquoise-50 ${cursorType} flex flex-col flex-grow items-center justify-center w-full
+                  border-t-8 border-y-10 border-turquoise-700 relative overflow-hidden`}
+         tabIndex={0} autoFocus
+         onClick={() => focus()} onFocus={onSimFocus} onBlur={onSimBlur}>
+      <SimCanvas />
+      <SimInterface />
+    </div>
   );
 };
 

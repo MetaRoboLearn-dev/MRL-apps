@@ -1,5 +1,5 @@
 import {useGLTF} from "@react-three/drei";
-import {useRef} from "react";
+import {useEffect, useRef} from "react";
 import {useVehicle} from "../../hooks/useVehicle.ts";
 import {MoveCommand, Position, Rotation} from "../../types.ts";
 import * as THREE from 'three';
@@ -85,6 +85,15 @@ const SimVehicle = () => {
   })
 
   const { scene } = useGLTF('/Car.glb');
+  useEffect(() => {
+    scene.traverse((child) => {
+      if ('isMesh' in child && child.isMesh) {
+        child.castShadow = true;
+        child.receiveShadow = true;
+      }
+    });
+  }, [scene]);
+
   return <primitive ref={vehicleRef} object={scene}
                     position={[0, 0.5, 2]}
                     rotation={[0, -Math.PI / 2, 0]}

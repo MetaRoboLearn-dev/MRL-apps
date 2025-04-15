@@ -1,6 +1,6 @@
 import { useGLTF } from "@react-three/drei";
 import { useMemo } from "react";
-import { Group, Euler } from "three";
+import {Group, Euler, Mesh} from "three";
 
 const getRandomRotation = () =>
   new Euler(0, Math.random() * Math.PI * 2, 0); // rotate only on Y axis
@@ -54,6 +54,13 @@ const SimBarrier = () => {
     container.rotation.copy(getRandomRotation());
     container.scale.set(0.14, 0.16, 0.16);
     container.position.y = 0.5;
+    container.traverse((child) => {
+      if (child as Mesh) {
+        child.castShadow = true;
+        child.receiveShadow = false;
+      }
+    });
+
     return container;
   }, [big, medium, small]);
 

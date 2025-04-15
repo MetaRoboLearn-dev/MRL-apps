@@ -30,7 +30,7 @@ const SimCanvas = () => {
 
   return (
     <div className={'h-full w-full'}>
-      <Canvas orthographic camera={{
+      <Canvas shadows orthographic camera={{
         position: [9, 10, 10],
         left: -3 * aspect / 2,
         right: 3 * aspect / 2,
@@ -39,8 +39,17 @@ const SimCanvas = () => {
         zoom: 0.8
       }}>
         {/*<gridHelper />*/}
-        <ambientLight intensity={0.1}/>
-        <directionalLight color="white" intensity={4} position={[2, 10, 7]} castShadow={true}/>
+        <ambientLight intensity={0.8}/>
+        <directionalLight color="white"
+                          castShadow={true}
+                          position={[2, 10, 7]}
+                          intensity={2.8}
+                          shadow-mapSize-width={1024}
+                          shadow-mapSize-height={1024}
+                          shadow-camera-left={-10}
+                          shadow-camera-right={10}
+                          shadow-camera-top={10}
+                          shadow-camera-bottom={-10}/>
 
         <mesh position={[-10, 0.2, 0]} rotation={[Math.PI / 2, 0, 0]} scale={[50, 50, 1]}>
           <planeGeometry/>

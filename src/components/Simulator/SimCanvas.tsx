@@ -1,44 +1,46 @@
 import {Canvas} from "@react-three/fiber";
-import {OrbitControls} from "@react-three/drei";
+import {OrbitControls, OrthographicCamera} from "@react-three/drei";
 import SimTile from "./SimTile.tsx";
-import {useEffect, useState} from "react";
-import {GridInfo} from "../../types.ts";
+import {useEffect, useRef} from "react";
 import SimVehicle from "./SimVehicle.tsx";
 import {DoubleSide} from "three";
+import * as THREE from 'three';
+import {useGrid} from "../../hooks/useGrid.ts";
 
 const SimCanvas = () => {
-  const x_size = 5;
-  const z_size = 6;
-  const [aspect, setAspect] = useState(window.innerWidth / window.innerHeight);
-
-  const [gridInfo, setGridInfo] = useState<GridInfo>({
-    size: x_size * z_size,
-    start: z_size * (Math.trunc(x_size / 2) + x_size % 2 - 1),
-    finish: z_size * (Math.trunc(x_size / 2) + 1) - 1,
-    barriers: [0, 1, 2, 6, 7, 8, 10, 13, 14, 16, 19, 20, 22, 23],
-  });
+  const { sizeX, sizeZ } = useGrid();
+  const cameraRef = useRef<THREE.OrthographicCamera>(null);
 
   useEffect(() => {
     const handleResize = () => {
-      setAspect(window.innerWidth / window.innerHeight);
+      const newAspect = window.innerWidth / window.innerHeight
+      if (cameraRef.current) {
+        cameraRef.current.left = -3 * newAspect / 2;
+        cameraRef.current.right = 3 * newAspect / 2;
+        // cameraRef.current.bottom = -3 * newAspect / 2;
+        // cameraRef.current.top = 3 * newAspect / 2;
+        cameraRef.current.updateProjectionMatrix();
+      }
     };
     window.addEventListener('resize', handleResize);
+    window.addEventListener('fullscreenchange', handleResize);
+    handleResize();
     return () => {
       window.removeEventListener('resize', handleResize);
-    };
+      window.removeEventListener('fullscreenchange', handleResize);
+    }
   }, []);
 
   return (
     <div className={'h-full w-full'}>
-      <Canvas shadows orthographic camera={{
-        position: [9, 10, 10],
-        left: -3 * aspect / 2,
-        right: 3 * aspect / 2,
-        top: 3,
-        bottom: -3,
-        zoom: 0.8
-      }}>
+      <Canvas shadows>
+        <OrthographicCamera args={[]}
+          ref={cameraRef}
+          makeDefault={true}
+          position={[9, 10, 10]}
+          left={-3} right={3} bottom={-3} top={3} zoom={0.8} />
         {/*<gridHelper />*/}
+
         <ambientLight intensity={0.8}/>
         <directionalLight color="white"
                           castShadow={true}
@@ -59,13 +61,11 @@ const SimCanvas = () => {
         <SimVehicle />
 
         <group position={[0, 0, 0]}>
-          {Array.from({length: x_size}).map((_, x) =>
-            Array.from({length: z_size}).map((_, z) => (
-              <SimTile key={z_size * x + z}
-                       index={z_size * x + z}
-                       position={[-x + (Math.floor(x_size / 2)), 0, -z + 2]}
-                       gridInfo={gridInfo}
-                       setGridInfo={setGridInfo}/>
+          {Array.from({length: sizeX}).map((_, x) =>
+            Array.from({length: sizeZ}).map((_, z) => (
+              <SimTile key={sizeZ * x + z}
+                       index={sizeZ * x + z}
+                       position={[-x + (Math.floor(sizeX / 2)), 0, -z + 2]}/>
             ))
           )}
         </group>

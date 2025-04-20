@@ -16,13 +16,6 @@ export interface MoveCommand {
   command?: string;
 }
 
-export interface GridInfo {
-  size: number;
-  start: number | null;
-  finish: number | null;
-  barriers: number[];
-}
-
 export enum TileType {
   START = 'Početak',
   FINISH = 'Kraj',
@@ -52,7 +45,7 @@ export interface VehicleContextType {
   setCurrentMove: (currentMove: MoveCommand | null) => void;
 }
 
-export interface ActiveContextType {
+export interface GridContextType {
   sizeX: number;
   setSizeX: (sizeX: number) => void;
   sizeZ: number;
@@ -63,6 +56,9 @@ export interface ActiveContextType {
   setFinish: (finish: number | null) => void;
   barriers: number[];
   setBarriers: (barriers: number[]) => void;
+}
+
+export interface CodeContextType {
   code: string;
-  setCode: (code: string | null) => void;
+  setCode: (code: string) => void;
 }

@@ -1,7 +1,7 @@
 import Editor, { OnMount } from "@monaco-editor/react";
-import {useContext, useEffect, useRef} from "react";
+import {useEffect, useRef} from "react";
 import * as monaco from "monaco-editor";
-import {ActiveCodeContext} from "../../providers/Context.tsx"; // Import monaco types
+import {useCode} from "../../hooks/useCode.ts"; // Import monaco types
 
 const colours = {
   'background': '#fffbde',  // --color-sunglow-100
@@ -17,7 +17,8 @@ const colours = {
 
 const CodePlayground = () => {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
-  const [code, setCode] = useContext(ActiveCodeContext);
+  // const [code, setCode] = useContext(ActiveCodeContext);
+  const { code, setCode } = useCode();
 
   const handleEditorDidMount: OnMount = (editor, monaco) => {
     editorRef.current = editor;

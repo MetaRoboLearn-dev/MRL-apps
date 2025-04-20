@@ -1,20 +1,21 @@
 import {useEffect, useState} from "react";
-import {TileType, GridInfo} from "../../types.ts";
+import {TileType} from "../../types.ts";
 // import {useTexture} from "@react-three/drei";
 import {ThreeEvent} from "@react-three/fiber";
 // import edge from "/edge.png";
 import {useSettings} from "../../hooks/useSettings.ts";
 import SimBarrier from "./SimBarrier.tsx";
+import {useGrid} from "../../hooks/useGrid.ts";
 
 interface Props {
   index: number;
   position: [x: number, y: number, z: number];
-  gridInfo: GridInfo;
-  setGridInfo: (newGridInfo: GridInfo) => void;
 }
 
-const SimTile = ({index, position, gridInfo, setGridInfo}: Props) => {
+const SimTile = ({index, position}: Props) => {
   const { selectedType } = useSettings();
+  const { start, setStart, finish, setFinish, barriers, setBarriers } = useGrid();
+  const [isHovered, setIsHovered] = useState(false);
   // const colorTexture = useTexture(edge);
   // napravi chekerboard za parne Z
   const odd = index % 2;
@@ -29,42 +30,36 @@ const SimTile = ({index, position, gridInfo, setGridInfo}: Props) => {
   const [type, setType] = useState<TileType>(TileType.GROUND);
   useEffect(() => {
     setType(() => {
-      if (index === gridInfo.start)
+      if (index === start)
         return TileType.START;
-      else if (index === gridInfo.finish)
+      else if (index === finish)
         return TileType.FINISH;
-      else if (gridInfo.barriers?.includes(index))
+      else if (barriers.includes(index))
         return TileType.BARRIER;
       return TileType.GROUND;
     })
-  }, [index, gridInfo]);
-
-  const [isHovered, setIsHovered] = useState(false);
+  }, [barriers, finish, index, start]);
 
   const place = (event: ThreeEvent<PointerEvent>) => {
     event.stopPropagation();
 
-    let newGridInfo: GridInfo = {
-      size: gridInfo.size,
-      start: gridInfo.start === index ? null : gridInfo.start,
-      finish: gridInfo.finish === index ? null : gridInfo.finish,
-      barriers: gridInfo.barriers.filter(i => i !== index),
-    };
+    setStart(start === index ? null : start);
+    setFinish(finish === index ? null : finish);
+    setBarriers(barriers.filter(i => i !== index));
 
     switch (selectedType) {
       case TileType.START:
-        newGridInfo = { ...newGridInfo, start: index };
+        setStart(index);
         break;
       case TileType.FINISH:
-        newGridInfo = { ...newGridInfo, finish: index };
+        setFinish(index);
         break;
       case TileType.BARRIER:
-        newGridInfo = { ...newGridInfo, barriers: [...newGridInfo.barriers, index] };
+        setBarriers([...barriers, index]);
         break;
       case TileType.GROUND:
         break;
     }
-    setGridInfo(newGridInfo);
   };
 
   return (

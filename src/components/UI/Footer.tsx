@@ -1,12 +1,14 @@
 import {FaPlay, FaRobot} from "react-icons/fa";
-import {useContext} from "react";
-import {ActiveCodeContext} from "../../providers/Context.tsx";
 import {useVehicle} from "../../hooks/useVehicle.ts";
 import {MoveCommand} from "../../types.ts";
+import {useCode} from "../../hooks/useCode.ts";
+import {useGrid} from "../../hooks/useGrid.ts";
 
 const Footer = () => {
-  const [code, ] = useContext(ActiveCodeContext);
+  const { code } = useCode();
   const { queueMoves } = useVehicle();
+
+  const { setSizeX, setSizeZ } = useGrid();
 
   const runCode = async (code: string) => {
     const url = "http://127.0.0.1:8000/run-python";
@@ -22,7 +24,6 @@ const Footer = () => {
         const data = await response.json();
         const steps = data.output.split('\n');
         const processedSteps = processSteps(steps);
-        console.log(processedSteps);
         queueMoves(processedSteps);
       }
     } catch (e) {
@@ -31,12 +32,6 @@ const Footer = () => {
       }
     }
   }
-
-  const simulate = () => {
-    const steps = code.split('\n');
-    const processedSteps = processSteps(steps);
-    queueMoves(processedSteps);
-  };
 
   const processSteps = (steps: string[]): MoveCommand[] => {
     return steps
@@ -65,7 +60,10 @@ const Footer = () => {
       <div
         className={`bg-sunglow-500 text-dark-neutrals-400 font-display font-bold text-xl pl-5 pr-8 py-2 rounded flex items-center ml-8 
                     hover:cursor-pointer hover:bg-sunglow-600 transition`}
-        onClick={simulate}>
+        onClick={() => {
+          setSizeX(7);
+          setSizeZ(11);
+        }}>
         <FaRobot size={24}/>
         <span className={'ml-4'}>Upogoni</span>
       </div>

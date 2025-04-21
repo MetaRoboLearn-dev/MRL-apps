@@ -33,6 +33,7 @@ export interface SettingsContextType {
 }
 
 export interface VehicleContextType {
+  startPosition: Position;
   position: Position;
   setPosition: (positions: Position) => void;
   rotation: Rotation;

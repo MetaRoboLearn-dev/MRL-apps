@@ -1,9 +1,13 @@
 import {PropsWithChildren, useState} from "react";
 import {MoveCommand, Position, Rotation} from "../types.ts";
 import {VehicleContext} from "./Context.tsx";
+import {useGrid} from "../hooks/useGrid.ts";
 
 export const VehicleProvider = ({ children }: PropsWithChildren) => {
-  const [position, setPosition] = useState<Position>({ x: 0, y: 0.5, z: 2 }); // ovo izvuces iz grid info, kao start pozicija
+  const { start, sizeX, sizeZ } = useGrid();
+
+  const startPosition = start !== null ? { x: -Math.floor(start / sizeX) + 2, y: 0.5, z: -(start % sizeZ) + 2 } : {x: 0, y: -2, z: 0};
+  const [position, setPosition] = useState<Position>(startPosition);
   const [rotation, setRotation] = useState<Rotation>({ x: 0, y: -Math.PI / 2, z: 0 });
   const [isMoving, setIsMoving] = useState<boolean>(false);
   const [moveQueue, setMoveQueue] = useState<MoveCommand[]>([]);
@@ -14,8 +18,13 @@ export const VehicleProvider = ({ children }: PropsWithChildren) => {
     setIsMoving(true);
   };
 
+  const reset = () => {
+
+  }
+
   return (
     <VehicleContext.Provider value={{
+      startPosition,
       position, setPosition,
       rotation, setRotation,
       isMoving, setIsMoving,

@@ -6,9 +6,11 @@ import * as THREE from 'three';
 import {Euler, Vector3} from "three";
 import {useFrame} from "@react-three/fiber";
 import {useSettings} from "../../hooks/useSettings.ts";
+import {useGrid} from "../../hooks/useGrid.ts";
 
 const SimVehicle = () => {
-  const { position, rotation, isMoving, moveQueue, currentMove,
+  const { sizeX, sizeZ, barriers } = useGrid();
+  const { startPosition, position, rotation, isMoving, moveQueue, currentMove,
     setPosition, setRotation, setIsMoving, queueMoves, setCurrentMove } = useVehicle();
   const { animationSpeed } = useSettings();
   const vehicleRef = useRef<THREE.Object3D>(null);
@@ -18,7 +20,13 @@ const SimVehicle = () => {
   const targetRot = useRef<Euler>(new Euler(rotation.x, rotation.y, rotation.z));
   // const gridSize = { x: 5, z: 6 };
 
-  // const isValidMove napravi
+  const isValidMove = (newPosition: Position) => {
+    const x = Math.floor(sizeX / 2) - newPosition.x;
+    const z = 2 - newPosition.z;
+    const index = x * sizeZ + z;
+
+    return !(x >= sizeX || x < 0 || z >= sizeZ || z < 0 || barriers.includes(index));
+  }
 
   useFrame(() => {
     if(!vehicleRef.current || !isMoving) return;
@@ -49,8 +57,8 @@ const SimVehicle = () => {
           y: position.y,
           z: position.z + Math.round(moveDirection.z),
         }
-        console.log(newPos);
-        // if valid
+
+        if (!isValidMove(newPos)) return;
         targetPos.current.set(newPos.x, newPos.y, newPos.z);
         setPosition(newPos);
       }
@@ -95,7 +103,7 @@ const SimVehicle = () => {
   }, [scene]);
 
   return <primitive ref={vehicleRef} object={scene}
-                    position={[0, 0.5, 2]}
+                    position={[startPosition.x, startPosition.y, startPosition.z]}
                     rotation={[0, -Math.PI / 2, 0]}
                     scale={[.14, 0.16, 0.16]}/>
 };

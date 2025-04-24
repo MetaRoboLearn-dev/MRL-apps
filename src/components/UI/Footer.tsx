@@ -6,7 +6,7 @@ import {useGrid} from "../../hooks/useGrid.ts";
 
 const Footer = () => {
   const { code } = useCode();
-  const { queueMoves } = useVehicle();
+  const { queueMoves, reset } = useVehicle();
 
   const { setSizeX, setSizeZ } = useGrid();
 
@@ -57,6 +57,7 @@ const Footer = () => {
 
   return (
     <div className={'bg-white-smoke-500 px-15 w-full h-20 z-10 flex items-center justify-end select-none'}>
+      <button onClick={reset}>reset</button>
       <div
         className={`bg-sunglow-500 text-dark-neutrals-400 font-display font-bold text-xl pl-5 pr-8 py-2 rounded flex items-center ml-8 
                     hover:cursor-pointer hover:bg-sunglow-600 transition`}

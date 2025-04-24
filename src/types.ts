@@ -1,3 +1,6 @@
+import {RefObject} from "react";
+import * as THREE from 'three';
+
 export interface Position {
   x: number;
   y: number;
@@ -33,7 +36,10 @@ export interface SettingsContextType {
 }
 
 export interface VehicleContextType {
+  vehicleRef: RefObject<THREE.Object3D | null>;
+  reset: () => void;
   startPosition: Position;
+  startRotation: Rotation;
   position: Position;
   setPosition: (positions: Position) => void;
   rotation: Rotation;

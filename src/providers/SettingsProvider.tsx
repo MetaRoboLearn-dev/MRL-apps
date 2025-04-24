@@ -5,7 +5,7 @@ import {TileType} from "../types.ts";
 export const SettingsProvider = ({ children }: PropsWithChildren) => {
   const [simFocused, setSimFocused] = useState<boolean>(false);
   const [selectedType, setSelectedType] = useState<TileType>(TileType.GROUND);
-  const [animationSpeed, setSpeed] = useState<number>(0.04);
+  const [animationSpeed, setSpeed] = useState<number>(0.07);
 
   const setAnimationSpeed = (speed: number) =>{
     // max 0.1, min 0.02, default 0.4

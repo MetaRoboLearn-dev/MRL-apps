@@ -10,15 +10,14 @@ import {useGrid} from "../../hooks/useGrid.ts";
 
 const SimVehicle = () => {
   const { sizeX, sizeZ, barriers } = useGrid();
-  const { startPosition, position, rotation, isMoving, moveQueue, currentMove,
+  const { vehicleRef, startPosition, startRotation, position, rotation, isMoving, moveQueue,
     setPosition, setRotation, setIsMoving, queueMoves, setCurrentMove } = useVehicle();
   const { animationSpeed } = useSettings();
-  const vehicleRef = useRef<THREE.Object3D>(null);
-  const currentMoveRef = useRef<MoveCommand | null>(null);
 
+  // const vehicleRef = useRef<THREE.Object3D>(null);
+  const currentMoveRef = useRef<MoveCommand | null>(null);
   const targetPos = useRef<Vector3>(new Vector3(position.x, position.y, position.z));
   const targetRot = useRef<Euler>(new Euler(rotation.x, rotation.y, rotation.z));
-  // const gridSize = { x: 5, z: 6 };
 
   const isValidMove = (newPosition: Position) => {
     const x = Math.floor(sizeX / 2) - newPosition.x;
@@ -28,6 +27,14 @@ const SimVehicle = () => {
     return !(x >= sizeX || x < 0 || z >= sizeZ || z < 0 || barriers.includes(index));
   }
 
+  useEffect(() => {
+    targetPos.current = new Vector3(position.x, position.y, position.z);
+  }, [position]);
+
+  useEffect(() => {
+    targetRot.current = new Euler(rotation.x, rotation.y, rotation.z);
+  }, [rotation]);
+
   useFrame(() => {
     if(!vehicleRef.current || !isMoving) return;
 
@@ -35,12 +42,14 @@ const SimVehicle = () => {
     const targetQuat = new THREE.Quaternion().setFromEuler(targetRot.current);
     const rotationCloseEnough = vehicleRef.current.quaternion.angleTo(targetQuat) < 0.01;
 
+    // console.log(positionCloseEnough, vehicleRef.current.position, targetPos.current);
+
     if (positionCloseEnough && rotationCloseEnough && moveQueue.length !== 0) {
       const nextMove = moveQueue[0];
       currentMoveRef.current = nextMove;
       const newMoveQueue = [...moveQueue.slice(1)];
 
-      console.log(nextMove, currentMove);
+      // console.log(nextMove, currentMove);
 
       if (nextMove.type === 'move' && nextMove.direction) {
         const moveDirection = new Vector3(0, 0, 0);
@@ -104,7 +113,7 @@ const SimVehicle = () => {
 
   return <primitive ref={vehicleRef} object={scene}
                     position={[startPosition.x, startPosition.y, startPosition.z]}
-                    rotation={[0, -Math.PI / 2, 0]}
+                    rotation={[startRotation.x, startRotation.y, startRotation.z]}
                     scale={[.14, 0.16, 0.16]}/>
 };
 

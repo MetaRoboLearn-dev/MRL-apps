@@ -1,4 +1,4 @@
-import {RefObject} from "react";
+import {RefObject, ReactNode} from "react";
 import * as THREE from 'three';
 
 export interface Position {
@@ -68,4 +68,15 @@ export interface GridContextType {
 export interface CodeContextType {
   code: string;
   setCode: (code: string) => void;
+}
+
+export interface UIContextType {
+  modalVisible: boolean;
+  setModalVisible: (visible: boolean) => void;
+  modalHeader: ReactNode;
+  setModalHeader: (header: ReactNode) => void;
+  modalBody: ReactNode;
+  setModalBody: (body: ReactNode) => void;
+  modalFooter: ReactNode;
+  setModalFooter: (footer: ReactNode) => void;
 }

@@ -7,12 +7,14 @@ import {Euler, Vector3} from "three";
 import {useFrame} from "@react-three/fiber";
 import {useSettings} from "../../hooks/useSettings.ts";
 import {useGrid} from "../../hooks/useGrid.ts";
+import {useUI} from "../../hooks/useUI.ts";
 
 const SimVehicle = () => {
   const { sizeX, sizeZ, barriers, finish } = useGrid();
-  const { vehicleRef, startPosition, startRotation, position, rotation, isMoving, moveQueue,
+  const { vehicleRef, startPosition, startRotation, position, rotation, isMoving, moveQueue, reset,
     setPosition, setRotation, setIsMoving, queueMoves, setCurrentMove } = useVehicle();
   const { animationSpeed } = useSettings();
+  const { setModalVisible, setModalHeader, setModalBody, setModalFooter } = useUI();
 
   const currentMoveRef = useRef<MoveCommand | null>(null);
   const targetPos = useRef<Vector3>(new Vector3(position.x, position.y, position.z));
@@ -32,6 +34,30 @@ const SimVehicle = () => {
     const index = x * sizeZ + z;
 
     return index === finish;
+  }
+
+  const showModalWindow = (type: string) => {
+    if (type === 'succ'){
+      setModalHeader('Čestitke!');
+      setModalBody('Uspješno ste uputili vozilo do cilja, svaka čast!');
+    }
+    else if (type === 'fail'){
+      setModalHeader('Uuuups!');
+      setModalBody('Niste stigli do kraja, pokušajte ponovno!');
+    }
+    else if (type === 'stuck'){
+      setModalHeader('Uuuups!');
+      setModalBody('Negdje ste zapeli na putu, pokušajte ponovno!');
+    }
+    setModalFooter(
+      <span
+        className={'bg-sunglow-600/70 px-4 py-2 rounded font-semibold transition hover:cursor-pointer hover:bg-sunglow-600'}
+        onClick={() => {
+          reset();
+          setModalVisible(false);
+        }}>Povratak</span>
+    )
+    setModalVisible(true);
   }
 
   useEffect(() => {
@@ -56,9 +82,9 @@ const SimVehicle = () => {
         setIsMoving(false);
         setCurrentMove(null);
         if (checkCompleted({ x: targetPos.current.x, y: targetPos.current.y, z: targetPos.current.z })){
-          console.log('bravooo!!!')
+          showModalWindow('succ');
         } else {
-          console.log('nisi uspio! (nisi doso do cilja)');
+          showModalWindow('fail');
         }
         return;
       }
@@ -88,7 +114,7 @@ const SimVehicle = () => {
         if (!isValidMove(newPos)){
           setIsMoving(false);
           setCurrentMove(null);
-          console.log('nisi uspio! (zabio se il opao s otoka)');
+          showModalWindow('stuck');
           return;
         }
         targetPos.current.set(newPos.x, newPos.y, newPos.z);

@@ -13,7 +13,7 @@ interface Props {
 }
 
 const SimTile = ({index, position}: Props) => {
-  const { selectedType } = useSettings();
+  const { simFocused, selectedType } = useSettings();
   const { start, setStart, finish, setFinish, barriers, setBarriers } = useGrid();
   const [isHovered, setIsHovered] = useState(false);
   // const colorTexture = useTexture(edge);
@@ -42,6 +42,7 @@ const SimTile = ({index, position}: Props) => {
 
   const place = (event: ThreeEvent<PointerEvent>) => {
     event.stopPropagation();
+    if (!simFocused) return;
 
     setStart(start === index ? null : start);
     setFinish(finish === index ? null : finish);
@@ -72,14 +73,14 @@ const SimTile = ({index, position}: Props) => {
         <meshStandardMaterial // map={colorTexture}
                               emissive={'black'}
                               emissiveIntensity={index % 2 === 1 ? 0.5 : 0}
-                              color={isHovered ? 'blue' : colours[type]}/>
+                              color={(isHovered && simFocused) ? 'blue' : colours[type]}/>
       </mesh>
 
       {type === TileType.FINISH ? (
         <mesh position={[0, 1, 0]}>
           <boxGeometry args={[0.15, 2, 0.15]}/>
           <meshStandardMaterial //map={colorTexture}
-                                color={isHovered ? 'blue' : colours[type]}/>
+                                color={(isHovered && simFocused) ? 'blue' : colours[type]}/>
         </mesh>
       ) : type === TileType.BARRIER ? (
         <SimBarrier />

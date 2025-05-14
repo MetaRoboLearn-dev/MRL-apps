@@ -1,42 +1,51 @@
-import React, { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { OrthographicCamera } from '@react-three/drei';
 import * as THREE from 'three';
+import { useFrame, useThree} from '@react-three/fiber';
 
-interface ResponsiveOrthographicCameraProps {
-  viewSize?: number; // Optional prop to control zoom level
-}
-
-const SimCamera: React.FC<ResponsiveOrthographicCameraProps> = ({ viewSize = 3 }) => {
+const SimCamera = () => {
   const cameraRef = useRef<THREE.OrthographicCamera>(null);
+  const { size } = useThree();
+  const baseHeight = 6;
+  const [debouncedSize, setDebouncedSize] = useState(size);
 
   useEffect(() => {
-    const handleResize = () => {
-      if (cameraRef.current) {
-        const aspect = window.innerWidth / window.innerHeight;
+    const timeoutId = setTimeout(() => {
+      setDebouncedSize(size);
+    }, 120);
 
-        // Update the camera's frustum dimensions based on the aspect ratio
-        cameraRef.current.left = -viewSize * aspect;
-        cameraRef.current.right = viewSize * aspect;
-        cameraRef.current.top = viewSize;
-        cameraRef.current.bottom = -viewSize;
+    return () => clearTimeout(timeoutId);
+  }, [size]);
 
-        // Apply the changes to the projection matrix
-        cameraRef.current.updateProjectionMatrix();
-      }
-    };
+  useEffect(() => {
+    const camera = cameraRef.current;
+    if (!camera) return;
 
-    // Set initial dimensions
-    handleResize();
+    const aspect = debouncedSize.width / debouncedSize.height;
+    const worldHeight = baseHeight;
+    const worldWidth = worldHeight * aspect;
 
-    // Add event listener for window resize
-    window.addEventListener('resize', handleResize);
+    camera.left = -worldWidth / 2;
+    camera.right = worldWidth / 2;
+    camera.top = worldHeight / 2;
+    camera.bottom = -worldHeight / 2;
+    camera.updateProjectionMatrix();
+  }, [debouncedSize, baseHeight]);
 
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, [viewSize]);
+  useFrame(() => {
+    if (cameraRef.current) {
+      cameraRef.current.updateProjectionMatrix();
+    }
+  });
 
-  return <OrthographicCamera ref={cameraRef} makeDefault />;
+  return (
+    <OrthographicCamera
+      ref={cameraRef}
+      makeDefault
+      position={[9, 10, 10]}
+      zoom={1}
+      args={[]}/>
+  );
 };
 
 export default SimCamera;

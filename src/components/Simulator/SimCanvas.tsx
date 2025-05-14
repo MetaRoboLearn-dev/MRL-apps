@@ -1,46 +1,22 @@
 import {Canvas} from "@react-three/fiber";
-import {OrbitControls, OrthographicCamera} from "@react-three/drei";
+import {OrbitControls} from "@react-three/drei";
 import SimTile from "./SimTile.tsx";
-import {useEffect, useRef} from "react";
 import SimVehicle from "./SimVehicle.tsx";
 import {DoubleSide} from "three";
-import * as THREE from 'three';
 import {useGrid} from "../../hooks/useGrid.ts";
+import SimCamera from "./SimCamera.tsx";
 
 const SimCanvas = () => {
   const { sizeX, sizeZ } = useGrid();
-  const cameraRef = useRef<THREE.OrthographicCamera>(null);
-
-  useEffect(() => {
-    const handleResize = () => {
-      const newAspect = window.innerWidth / window.innerHeight
-      if (cameraRef.current) {
-        cameraRef.current.left = -3 * newAspect / 2;
-        cameraRef.current.right = 3 * newAspect / 2;
-        // cameraRef.current.bottom = -3 * newAspect / 2;
-        // cameraRef.current.top = 3 * newAspect / 2;
-        cameraRef.current.updateProjectionMatrix();
-      }
-    };
-    window.addEventListener('resize', handleResize);
-    window.addEventListener('fullscreenchange', handleResize);
-    handleResize();
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      window.removeEventListener('fullscreenchange', handleResize);
-    }
-  }, []);
 
   return (
     <div className={'h-full w-full'}>
-      <Canvas shadows>
-        <OrthographicCamera args={[]}
-          ref={cameraRef}
-          makeDefault={true}
-          position={[9, 10, 10]}
-          left={-3} right={3} bottom={-3} top={3} zoom={0.8} />
-        {/*<gridHelper />*/}
+      <Canvas shadows className={'h-full w-full block'}
+        resize={{ scroll: false, debounce: 0 }}
+      >
 
+      <SimCamera />
+        {/*<gridHelper />*/}
         <ambientLight intensity={0.8}/>
         <directionalLight color="white"
                           castShadow={true}

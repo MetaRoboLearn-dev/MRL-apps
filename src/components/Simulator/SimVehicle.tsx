@@ -9,12 +9,11 @@ import {useSettings} from "../../hooks/useSettings.ts";
 import {useGrid} from "../../hooks/useGrid.ts";
 
 const SimVehicle = () => {
-  const { sizeX, sizeZ, barriers } = useGrid();
+  const { sizeX, sizeZ, barriers, finish } = useGrid();
   const { vehicleRef, startPosition, startRotation, position, rotation, isMoving, moveQueue,
     setPosition, setRotation, setIsMoving, queueMoves, setCurrentMove } = useVehicle();
   const { animationSpeed } = useSettings();
 
-  // const vehicleRef = useRef<THREE.Object3D>(null);
   const currentMoveRef = useRef<MoveCommand | null>(null);
   const targetPos = useRef<Vector3>(new Vector3(position.x, position.y, position.z));
   const targetRot = useRef<Euler>(new Euler(rotation.x, rotation.y, rotation.z));
@@ -25,6 +24,14 @@ const SimVehicle = () => {
     const index = x * sizeZ + z;
 
     return !(x >= sizeX || x < 0 || z >= sizeZ || z < 0 || barriers.includes(index));
+  }
+
+  const checkCompleted = (newPosition: Position) => {
+    const x = Math.floor(sizeX / 2) - newPosition.x;
+    const z = 2 - newPosition.z;
+    const index = x * sizeZ + z;
+
+    return index === finish;
   }
 
   useEffect(() => {
@@ -44,7 +51,18 @@ const SimVehicle = () => {
 
     // console.log(positionCloseEnough, vehicleRef.current.position, targetPos.current);
 
-    if (positionCloseEnough && rotationCloseEnough && moveQueue.length !== 0) {
+    if (positionCloseEnough && rotationCloseEnough) {
+      if(moveQueue.length === 0){
+        setIsMoving(false);
+        setCurrentMove(null);
+        if (checkCompleted({ x: targetPos.current.x, y: targetPos.current.y, z: targetPos.current.z })){
+          console.log('bravooo!!!')
+        } else {
+          console.log('nisi uspio! (nisi doso do cilja)');
+        }
+        return;
+      }
+
       const nextMove = moveQueue[0];
       currentMoveRef.current = nextMove;
       const newMoveQueue = [...moveQueue.slice(1)];
@@ -67,7 +85,12 @@ const SimVehicle = () => {
           z: position.z + Math.round(moveDirection.z),
         }
 
-        if (!isValidMove(newPos)) return;
+        if (!isValidMove(newPos)){
+          setIsMoving(false);
+          setCurrentMove(null);
+          console.log('nisi uspio! (zabio se il opao s otoka)');
+          return;
+        }
         targetPos.current.set(newPos.x, newPos.y, newPos.z);
         setPosition(newPos);
       }
@@ -83,12 +106,7 @@ const SimVehicle = () => {
         setRotation(newRot);
       }
 
-      if(moveQueue.length === 0){
-        setIsMoving(false);
-        setCurrentMove(null);
-      } else {
-        queueMoves(newMoveQueue);
-      }
+      queueMoves(newMoveQueue);
     }
 
     if (currentMoveRef.current?.type === 'move') {

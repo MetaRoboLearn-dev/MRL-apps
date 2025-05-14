@@ -22,7 +22,7 @@ export interface MoveCommand {
 export enum TileType {
   START = 'Početak',
   FINISH = 'Kraj',
-  GROUND = 'Pod',
+  GROUND = 'Tlo',
   BARRIER = 'Prepreka',
 }
 

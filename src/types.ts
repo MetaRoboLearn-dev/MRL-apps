@@ -27,6 +27,8 @@ export enum TileType {
 }
 
 export interface SettingsContextType {
+  selectedTab: string;
+  setSelectedTab: (tab: string) => void;
   simFocused: boolean;
   setSimFocused: (simFocused: boolean) => void;
   selectedType: TileType;

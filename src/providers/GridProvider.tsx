@@ -1,17 +1,31 @@
 import {PropsWithChildren, useEffect, useState} from "react";
 import {GridContext} from "./Context.tsx";
+import {useSettings} from "../hooks/useSettings.ts";
 
 const GridProvider = ({ children }: PropsWithChildren) => {
-  const [sizeX, setSizeX] = useState<number>(5);
-  const [sizeZ, setSizeZ] = useState<number>(6);
-  const [start, setStart] = useState<number | null>(sizeZ * (Math.trunc(sizeX / 2) + sizeX % 2 - 1));
-  const [finish, setFinish] = useState<number | null>(sizeZ * (Math.trunc(sizeX / 2) + 1) - 1);
-  const [barriers, setBarriers] = useState<number[]>([0, 1, 2, 6, 7, 8, 10, 13, 14, 16, 19, 20, 22, 23]);
+  const { selectedTab } = useSettings();
+
+  const [sizeX, setSizeX] = useState<number>(0);
+  const [sizeZ, setSizeZ] = useState<number>(0);
+  const [start, setStart] = useState<number | null>(null);
+  const [finish, setFinish] = useState<number | null>(null);
+  const [barriers, setBarriers] = useState<number[]>([]);
 
   useEffect(() => {
-    setStart(sizeZ * (Math.trunc(sizeX / 2) + sizeX % 2 - 1));
-    setFinish(sizeZ * (Math.trunc(sizeX / 2) + 1) - 1);
-  }, [sizeX, sizeZ]);
+    const raw = localStorage.getItem(selectedTab || '');
+    if (!raw) return;
+
+    const data = JSON.parse(raw);
+    setSizeX(data.sizeX);
+    setSizeZ(data.sizeZ);
+    setBarriers(data.barriers || []);
+
+    const computedStart = data.sizeZ * (Math.trunc(data.sizeX / 2) + data.sizeX % 2 - 1);
+    const computedFinish = data.sizeZ * (Math.trunc(data.sizeX / 2) + 1) - 1;
+
+    setStart(data.start !== null ? data.start : computedStart);
+    setFinish(data.finish !== null ? data.finish : computedFinish);
+  }, [selectedTab]);
 
   return (
     <GridContext.Provider value={{

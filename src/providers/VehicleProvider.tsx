@@ -7,7 +7,18 @@ import * as THREE from "three";
 export const VehicleProvider = ({ children }: PropsWithChildren) => {
   const { start, sizeX, sizeZ } = useGrid();
 
-  const startPosition = start !== null ? { x: -Math.floor(start / sizeX) + 2, y: 0.5, z: -(start % sizeZ) + 2 } : {x: 0, y: -2, z: 0};
+  const calcStartPosition = (start: number | null, sizeX: number, sizeZ: number): Position => {
+    if (start === null) {
+      return { x: 0, y: -2, z: 0 };
+    }
+    return {
+      x: -Math.trunc(start / sizeZ) + Math.trunc(sizeX / 2),
+      y: 0.5,
+      z: -(start % sizeZ) + 2,
+    };
+  };
+
+  const startPosition = calcStartPosition(start, sizeX, sizeZ)
   const startRotation = { x: 0, y: -Math.PI / 2, z: 0 };
 
   const [position, setPosition] = useState<Position>(startPosition);
@@ -19,10 +30,7 @@ export const VehicleProvider = ({ children }: PropsWithChildren) => {
   const vehicleRef = useRef<THREE.Object3D | null>(null);
 
   useEffect(() => {
-    setPosition(start !== null ? { x: -Math.floor(start / sizeX) + 2, y: 0.5, z: -(start % sizeZ) + 2 } : {x: 0, y: -2, z: 0});
-
-    // ovo mijenjanje rotacije ne radi na vehicle refu
-    setRotation({ x: 0, y: -Math.PI / 2, z: 0 })
+    setPosition(calcStartPosition(start, sizeX, sizeZ));
   }, [sizeX, sizeZ, start])
 
   const queueMoves = (moves: MoveCommand[]) => {

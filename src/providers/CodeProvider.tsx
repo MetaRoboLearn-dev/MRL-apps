@@ -1,8 +1,21 @@
-import {PropsWithChildren, useState} from "react";
+import {PropsWithChildren, useEffect, useState} from "react";
 import {CodeContext} from "./Context.tsx";
+import {useSettings} from "../hooks/useSettings.ts";
 
 export const CodeProvider = ({ children }: PropsWithChildren) => {
-  const [code, setCode] = useState<string>(primjer);
+  const { selectedTab } = useSettings();
+
+  const [code, setCode] = useState<string>('');
+
+  useEffect(() => {
+    const raw = localStorage.getItem(selectedTab || '');
+    if (!raw) return;
+
+    const data = JSON.parse(raw);
+
+    setCode(data.code);
+  }, [selectedTab]);
+
   return (
     <CodeContext.Provider value={{
       code, setCode
@@ -11,33 +24,3 @@ export const CodeProvider = ({ children }: PropsWithChildren) => {
     </CodeContext.Provider>
   );
 };
-
-const primjer = `print("lijevo") # rotiraj_lijevo()
-
-broj_koraka = 1 + 1  # 2x naprijed
-for korak in range(broj_koraka):
-    print("naprijed") # naprijed()
-
-print("desno") # rotiraj_desno()
-
-broj_koraka = 1 + 2  # 3x naprijed
-for korak in range(broj_koraka):
-    print("naprijed")
-
-print("desno")
-
-broj_koraka = 2 * 2  # 4x naprijed
-for korak in range(broj_koraka):
-    print("naprijed")
-
-print("lijevo")
-
-broj_koraka = 2  # 2x naprijed
-for korak in range(broj_koraka):
-    print("naprijed")
-
-print("lijevo")
-
-broj_koraka = 2  # 2x naprijed
-for korak in range(broj_koraka):
-    print("naprijed")`;

@@ -12,11 +12,9 @@ const SimCanvas = () => {
   return (
     <div className={'h-full w-full'}>
       <Canvas shadows className={'h-full w-full block'}
-        resize={{ scroll: false, debounce: 0 }}
-      >
+        resize={{ scroll: false, debounce: 0 }}>
 
-      <SimCamera />
-        {/*<gridHelper />*/}
+        <SimCamera />
         <ambientLight intensity={0.8}/>
         <directionalLight color="white"
                           castShadow={true}

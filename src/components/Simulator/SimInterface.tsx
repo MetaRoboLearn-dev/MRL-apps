@@ -2,6 +2,8 @@ import {useSettings} from "../../hooks/useSettings.ts";
 import {TileType} from "../../types.ts";
 import {useVehicle} from "../../hooks/useVehicle.ts";
 import SimModal from "./SimModal.tsx";
+import {useUI} from "../../hooks/useUI.ts";
+import {useGrid} from "../../hooks/useGrid.ts";
 
 interface Props{
   isHovered: boolean,
@@ -9,6 +11,8 @@ interface Props{
 
 const SimInterface = ({isHovered}: Props) => {
   const { simFocused, setSimFocused, selectedType, setSelectedType, animationSpeed, setAnimationSpeed } = useSettings();
+  const { start, sizeX, sizeZ } = useGrid();
+  const { modalVisible } = useUI();
   const { position, rotation, isMoving, moveQueue } = useVehicle();
 
   return (
@@ -19,10 +23,12 @@ const SimInterface = ({isHovered}: Props) => {
         <h1>moveQueue: [{moveQueue.length}]</h1>
         <h1>isMoving: [{isMoving.toString()}]</h1>
         <h1>animationSpeed: [{animationSpeed}]</h1>
+        <h1>start: [{start}]</h1>
+        <h1>sizeX: [{sizeX}], sizeZ: [{sizeZ}]</h1>
       </div>
 
-      <div className={`absolute bottom-5 text-lg text-center font-semibold text-dark-neutrals-500 bg-white/80 px-4 py-2 rounded shadow transition-opacity duration-200
-                      ${!simFocused && isHovered ? 'opacity-100 cursor-pointer' : 'opacity-0 pointer-events-none'}`}
+      <div className={`absolute bottom-5 text-lg text-center font-semibold text-dark-neutrals-500 bg-white/80 px-4 py-2 rounded shadow transition-opacity duration-200 select-none
+                      ${!simFocused && isHovered && !modalVisible ? 'opacity-100 cursor-pointer' : 'opacity-0 pointer-events-none'}`}
            onClick={() => setSimFocused(true)}>
         ✏️ Pritisni za uređivanje simulacije
       </div>

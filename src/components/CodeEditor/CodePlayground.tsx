@@ -17,7 +17,6 @@ const colours = {
 
 const CodePlayground = () => {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
-  // const [code, setCode] = useContext(ActiveCodeContext);
   const { code, setCode } = useCode();
 
   const handleEditorDidMount: OnMount = (editor, monaco) => {

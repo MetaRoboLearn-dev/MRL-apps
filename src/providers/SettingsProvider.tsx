@@ -3,6 +3,7 @@ import {SettingsContext} from "./Context.tsx";
 import {TileType} from "../types.ts";
 
 export const SettingsProvider = ({ children }: PropsWithChildren) => {
+  const [selectedTab, setSelectedTab] = useState<string>(localStorage.getItem("selectedID") || '');
   const [simFocused, setSimFocused] = useState<boolean>(false);
   const [selectedType, setSelectedType] = useState<TileType>(TileType.GROUND);
   const [animationSpeed, setSpeed] = useState<number>(0.07);
@@ -14,6 +15,7 @@ export const SettingsProvider = ({ children }: PropsWithChildren) => {
 
   return (
     <SettingsContext.Provider value={{
+      selectedTab, setSelectedTab,
       simFocused, setSimFocused,
       selectedType, setSelectedType,
       animationSpeed, setAnimationSpeed,

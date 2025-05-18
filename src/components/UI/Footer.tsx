@@ -2,13 +2,10 @@ import {FaPlay, FaRobot} from "react-icons/fa";
 import {useVehicle} from "../../hooks/useVehicle.ts";
 import {MoveCommand} from "../../types.ts";
 import {useCode} from "../../hooks/useCode.ts";
-import {useGrid} from "../../hooks/useGrid.ts";
 
 const Footer = () => {
   const { code } = useCode();
-  const { queueMoves, reset } = useVehicle();
-
-  const { setSizeX, setSizeZ } = useGrid();
+  const { queueMoves } = useVehicle();
 
   const runCode = async (code: string) => {
     const url = "http://127.0.0.1:8000/run-python";
@@ -25,6 +22,26 @@ const Footer = () => {
         const steps = data.output.split('\n');
         const processedSteps = processSteps(steps);
         queueMoves(processedSteps);
+      }
+    } catch (e) {
+      if(e instanceof Error) {
+        console.error(e.message);
+      }
+    }
+  }
+
+  const runRobot = async (code: string) => {
+    const url = "http://adresa/execute";
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        body: JSON.stringify({ code: 'print(\\"Go forward\\")\\nforward(1.0, 30.0)\\n\\nprint(\\"Go left\\")\\nturn_left(1.0, 60.0)\\n\\nprint(\\"Go right\\")\\nturn_right(2.0, 60.0)\\n\\nprint(\\"Go back\\")\\nback(2.0, 30.0)' }),
+        headers: {
+          "Content-Type": "application/json",
+        }
+      });
+      if (response.ok) {
+        console.log('ok, ', code);
       }
     } catch (e) {
       if(e instanceof Error) {
@@ -57,14 +74,10 @@ const Footer = () => {
 
   return (
     <div className={'bg-white-smoke-500 px-15 w-full h-20 z-10 flex items-center justify-end select-none'}>
-      <button onClick={reset}>reset</button>
       <div
         className={`bg-sunglow-500 text-dark-neutrals-400 font-display font-bold text-xl pl-5 pr-8 py-2 rounded flex items-center ml-8 
                     hover:cursor-pointer hover:bg-sunglow-600 transition`}
-        onClick={() => {
-          setSizeX(7);
-          setSizeZ(11);
-        }}>
+        onClick={() => runRobot('test')}>
         <FaRobot size={24}/>
         <span className={'ml-4'}>Upogoni</span>
       </div>

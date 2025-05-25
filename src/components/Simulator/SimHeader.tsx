@@ -13,7 +13,7 @@ const SimHeader = () => {
         const res = await fetch('/demo.json');
         const data = await res.json();
         localStorage.setItem('sim1', JSON.stringify(data));
-        setSelectedTab('sim1'); // optional: select it immediately
+        setSelectedTab('sim1');
       }
 
       const keys = Object.keys(localStorage).filter((key) => key !== 'selectedID');

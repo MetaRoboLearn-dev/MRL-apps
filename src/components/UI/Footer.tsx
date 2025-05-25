@@ -31,11 +31,11 @@ const Footer = () => {
   }
 
   const runRobot = async (code: string) => {
-    const url = "http://adresa/execute";
+    const url = "http://172.20.10.2:5000/execute";
     try {
       const response = await fetch(url, {
         method: "POST",
-        body: JSON.stringify({ code: 'print(\\"Go forward\\")\\nforward(1.0, 30.0)\\n\\nprint(\\"Go left\\")\\nturn_left(1.0, 60.0)\\n\\nprint(\\"Go right\\")\\nturn_right(2.0, 60.0)\\n\\nprint(\\"Go back\\")\\nback(2.0, 30.0)' }),
+        body: JSON.stringify({ code: code }),
         headers: {
           "Content-Type": "application/json",
         }
@@ -48,6 +48,23 @@ const Footer = () => {
         console.error(e.message);
       }
     }
+  }
+
+  const abortRobot = async () => {
+    const url = "http://172.20.10.2:5000/abort";
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+      })
+      if (!response.ok) {
+        console.log('abort not ok');
+      }
+    } catch (e) {
+      if(e instanceof Error) {
+        console.error(e.message);
+      }
+    }
+
   }
 
   const processSteps = (steps: string[]): MoveCommand[] => {
@@ -74,10 +91,13 @@ const Footer = () => {
 
   return (
     <div className={'bg-white-smoke-500 px-15 w-full h-20 z-10 flex items-center justify-end select-none'}>
+      <div onClick={abortRobot}>
+        abort
+      </div>
       <div
         className={`bg-sunglow-500 text-dark-neutrals-400 font-display font-bold text-xl pl-5 pr-8 py-2 rounded flex items-center ml-8 
                     hover:cursor-pointer hover:bg-sunglow-600 transition`}
-        onClick={() => runRobot('test')}>
+        onClick={() => runRobot(code)}>
         <FaRobot size={24}/>
         <span className={'ml-4'}>Upogoni</span>
       </div>

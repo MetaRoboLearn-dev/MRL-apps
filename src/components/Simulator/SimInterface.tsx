@@ -15,9 +15,11 @@ const SimInterface = ({isHovered}: Props) => {
   const { modalVisible } = useUI();
   const { position, rotation, isMoving, moveQueue } = useVehicle();
 
+  const dev = false;
+
   return (
     <>
-      <div className={'absolute w-full h-full text-white-smoke-50 text-lg text-left p-5 pointer-events-none'}>
+      <div className={`${dev ? '' : 'hidden'} absolute w-full h-full text-white-smoke-50 text-lg text-left p-5 pointer-events-none`}>
         <h1>pos [x: {position.x}, y: {position.y}, z: {position.z}]</h1>
         <h1>rot [x: {rotation.x}, y: {rotation.y}, z: {rotation.z}]</h1>
         <h1>moveQueue: [{moveQueue.length}]</h1>

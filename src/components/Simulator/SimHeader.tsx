@@ -2,9 +2,13 @@ import SimTab from "./SimTab.tsx";
 import {useEffect, useState} from "react";
 import SimCreate from "./SimCreate.tsx";
 import {useSettings} from "../../hooks/useSettings.ts";
+import {useVehicle} from "../../hooks/useVehicle.ts";
+import {useUI} from "../../hooks/useUI.ts";
 
 const SimHeader = () => {
   const { selectedTab, setSelectedTab } = useSettings();
+  const { isMoving } = useVehicle();
+  const { modalVisible } = useUI();
   const [simKeys, setSimKeys] = useState<string[]>([]);
 
   useEffect(() => {
@@ -28,6 +32,7 @@ const SimHeader = () => {
   }, [selectedTab]);
 
   const handleTabChange = (id: string) => {
+    if (isMoving || modalVisible) return;
     setSelectedTab(id);
   };
 

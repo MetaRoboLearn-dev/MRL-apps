@@ -1,3 +1,6 @@
+import {useVehicle} from "../../hooks/useVehicle.ts";
+import {useUI} from "../../hooks/useUI.ts";
+
 interface Props {
   id: string;
   label: string;
@@ -7,6 +10,8 @@ interface Props {
 }
 
 const SimTab = ({id, label, isChecked, onTabChange, remove} : Props) => {
+  const { isMoving } = useVehicle();
+  const { modalVisible } = useUI();
 
   const style = isChecked ?
     ('bg-turquoise-700 text-white font-bold py-2') :
@@ -24,7 +29,7 @@ const SimTab = ({id, label, isChecked, onTabChange, remove} : Props) => {
           onChange={() => onTabChange(id)}
         />
         <span className={'cursor-pointer hover:font-bold'}>{label}</span>
-        <span className={'ml-2 cursor-pointer hover:font-bold hover:text-xl'} onClick={() => remove(id)}>x</span>
+        <span className={`ml-2 cursor-pointer hover:font-bold hover:text-xl ${isMoving || modalVisible ? 'hidden' : ''}`} onClick={() => remove(id)}>x</span>
       </label>
     </li>
   );

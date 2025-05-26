@@ -30,7 +30,7 @@ const SimInterface = ({isHovered}: Props) => {
       </div>
 
       <div className={`absolute bottom-5 text-lg text-center font-semibold text-dark-neutrals-500 bg-white/80 px-4 py-2 rounded shadow transition-opacity duration-200 select-none
-                      ${!simFocused && isHovered && !modalVisible ? 'opacity-100 cursor-pointer' : 'opacity-0 pointer-events-none'}`}
+                      ${!simFocused && isHovered && !modalVisible && !isMoving ? 'opacity-100 cursor-pointer' : 'opacity-0 pointer-events-none'}`}
            onClick={() => setSimFocused(true)}>
         ✏️ Pritisni za uređivanje simulacije
       </div>

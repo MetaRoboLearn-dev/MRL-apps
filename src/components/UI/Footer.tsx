@@ -2,12 +2,17 @@ import {FaPlay, FaRobot} from "react-icons/fa";
 import {useVehicle} from "../../hooks/useVehicle.ts";
 import {MoveCommand} from "../../types.ts";
 import {useCode} from "../../hooks/useCode.ts";
+import {useUI} from "../../hooks/useUI.ts";
+import {useSettings} from "../../hooks/useSettings.ts";
 
 const Footer = () => {
   const { code } = useCode();
-  const { queueMoves } = useVehicle();
+  const { queueMoves, isMoving } = useVehicle();
+  const { modalVisible } = useUI();
+  const { setSimFocused } = useSettings();
 
   const runCode = async (code: string) => {
+    setSimFocused(false);
     const url = "http://127.0.0.1:8000/run-python";
     try {
       const response = await fetch(url, {
@@ -91,23 +96,23 @@ const Footer = () => {
 
   return (
     <div className={'bg-white-smoke-500 px-15 w-full h-20 z-10 flex items-center justify-end select-none'}>
-      <div onClick={abortRobot}>
+      <div onClick={abortRobot} className={'hidden'}>
         abort
       </div>
-      <div
+      <button disabled={isMoving || modalVisible}
         className={`bg-sunglow-500 text-dark-neutrals-400 font-display font-bold text-xl pl-5 pr-8 py-2 rounded flex items-center ml-8 
-                    hover:cursor-pointer hover:bg-sunglow-600 transition`}
+                      ${isMoving || modalVisible ? 'bg-sunglow-700' : 'hover:cursor-pointer hover:bg-sunglow-600'} transition`}
         onClick={() => runRobot(code)}>
         <FaRobot size={24}/>
         <span className={'ml-4'}>Upogoni</span>
-      </div>
-      <div
+      </button>
+      <button disabled={isMoving || modalVisible}
         className={`bg-turquoise-500 text-light-cyan-200 font-display font-bold text-xl pl-5 pr-8 py-2 rounded flex items-center ml-8 
-                    hover:cursor-pointer hover:bg-turquoise-600 transition`}
+                    ${isMoving || modalVisible ? 'bg-turquoise-700 text-light-cyan-700' : 'hover:cursor-pointer hover:bg-turquoise-600'} transition`}
         onClick={() => runCode(code)}>
         <FaPlay size={18}/>
         <span className={'ml-4'}>Simuliraj</span>
-      </div>
+      </button>
     </div>
   );
 };

@@ -13,9 +13,16 @@ const GridProvider = ({ children }: PropsWithChildren) => {
   const [stickers, setStickers] = useState<{
     index: number;
     sticker: PlaceableSticker
-  }[]>([{index: 0, sticker: Stickers[Placeable.RESTORAUNT]}]);
+  }[]>([]);
   const [loaded, setLoaded] = useState(false);
-  
+
+  function getPlaceableKey(value: string): keyof typeof Placeable | undefined {
+    return (Object.keys(Placeable) as (keyof typeof Placeable)[]).find(
+      (key) => Placeable[key] === value
+    );
+  }
+
+
   useEffect(() => {
     const raw = localStorage.getItem(selectedTab || '');
     if (!raw) return;
@@ -24,6 +31,22 @@ const GridProvider = ({ children }: PropsWithChildren) => {
     setSizeX(data.sizeX);
     setSizeZ(data.sizeZ);
     setBarriers(data.barriers || []);
+    setStickers(
+      (data.stickers || []).map(({ index, sticker }: { index: number; sticker: string }) => {
+        const key = Placeable[sticker as keyof typeof Placeable]
+          ?? getPlaceableKey(sticker);
+
+        const stickerData = Stickers[key as Placeable];
+
+        if (!stickerData) {
+          console.warn(`Unknown sticker type: ${sticker}`);
+          return null;
+        }
+
+        return { index, sticker: stickerData };
+      }).filter(Boolean)
+    );
+
 
     const computedStart = data.sizeZ * (Math.trunc(data.sizeX / 2) + data.sizeX % 2 - 1);
     const computedFinish = data.sizeZ * (Math.trunc(data.sizeX / 2) + 1) - 1;
@@ -45,13 +68,18 @@ const GridProvider = ({ children }: PropsWithChildren) => {
         start,
         finish,
         barriers,
+        stickers: stickers.map(({ index, sticker }) => ({
+          index,
+          sticker: sticker.type,
+        })),
       };
 
       localStorage.setItem(selectedTab, JSON.stringify(updated));
     } catch (err) {
       console.error("Failed to update localStorage entry:", err);
     }
-  }, [start, finish, barriers, selectedTab, loaded]);
+  }, [start, finish, barriers, stickers, selectedTab, loaded]);
+
 
   return (
     <GridContext.Provider value={{

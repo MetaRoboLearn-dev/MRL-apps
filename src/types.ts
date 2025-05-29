@@ -38,7 +38,7 @@ export enum Placeable {
   HOUSE_BLUE = 'Plava kuća',
   HOUSE_YELLOW = 'Žuta kuća',
   POST_OFFICE = 'Pošta',
-  RESTORAUNT = 'Restoran',
+  RESTAURANT = 'Restoran',
   WAREHOUSE = 'Skladište',
 }
 
@@ -74,8 +74,8 @@ export const Stickers: Record<Placeable, PlaceableSticker> = {
     image: 'sticker/post_office.png',
     scale: 1,
   },
-  [Placeable.RESTORAUNT]: {
-    type: Placeable.RESTORAUNT,
+  [Placeable.RESTAURANT]: {
+    type: Placeable.RESTAURANT,
     image: 'sticker/restoraunt.png',
     scale: 1,
   },

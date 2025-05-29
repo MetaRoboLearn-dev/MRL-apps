@@ -27,6 +27,7 @@ const SimCreateForm = () => {
       "start": null,
       "finish": null,
       "barriers": [],
+      "stickers": [],
       "code": ""
     }));
 

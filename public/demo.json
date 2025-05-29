@@ -4,5 +4,11 @@
   "start": null,
   "finish": null,
   "barriers": [0, 1, 2, 6, 7, 8, 10, 13, 14, 16, 19, 20, 22, 23],
+  "stickers": [
+    {
+      "index": 6,
+      "sticker": "WAREHOUSE"
+    }
+  ],
   "code": "turn_left(1.0, 60.0)\nbroj_koraka = 1 + 1\nfor korak in range(broj_koraka):\n    forward(1.0, 30.0)\nturn_right(1.0, 60.0)\nbroj_koraka = 1 + 2\nfor korak in range(broj_koraka):\n    forward(1.0, 30.0)\nturn_right(1.0, 60.0)\nbroj_koraka = 2 * 2\nfor korak in range(broj_koraka):\n    forward(1.0, 30.0)\nturn_left(1.0, 60.0)\nbroj_koraka = 2\nfor korak in range(broj_koraka):\n    forward(1.0, 30.0)\nturn_left(1.0, 60.0)\nbroj_koraka = 2\nfor korak in range(broj_koraka):\n    forward(1.0, 30.0)"
 }

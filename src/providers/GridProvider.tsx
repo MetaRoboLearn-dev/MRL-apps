@@ -22,7 +22,6 @@ const GridProvider = ({ children }: PropsWithChildren) => {
     );
   }
 
-
   useEffect(() => {
     const raw = localStorage.getItem(selectedTab || '');
     if (!raw) return;
@@ -70,7 +69,7 @@ const GridProvider = ({ children }: PropsWithChildren) => {
         barriers,
         stickers: stickers.map(({ index, sticker }) => ({
           index,
-          sticker: sticker.type,
+          sticker: getPlaceableKey(sticker.type) || sticker.type,
         })),
       };
 
@@ -79,7 +78,6 @@ const GridProvider = ({ children }: PropsWithChildren) => {
       console.error("Failed to update localStorage entry:", err);
     }
   }, [start, finish, barriers, stickers, selectedTab, loaded]);
-
 
   return (
     <GridContext.Provider value={{

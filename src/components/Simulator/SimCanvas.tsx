@@ -7,10 +7,16 @@ import {DoubleSide} from "three";
 import {useGrid} from "../../hooks/useGrid.ts";
 import SimCamera from "./SimCamera.tsx";
 import {useEffect, useRef} from "react";
+import {useSettings} from "../../hooks/useSettings.ts";
 
 const SimCanvas = () => {
+  const { loadTextures } = useSettings();
   const { sizeX, sizeZ } = useGrid();
   const controlsRef = useRef<OrbitControlsImpl | null>(null);
+
+  useEffect(() => {
+    loadTextures();
+  }, []);
 
   useEffect(() => {
     if (!controlsRef.current) return;

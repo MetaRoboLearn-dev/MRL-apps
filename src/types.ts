@@ -32,7 +32,14 @@ export enum TileType {
   STICKER = 'Naljepnica'
 }
 
-export enum Placeable {
+export enum Barrier {
+  HOLE = 'Rupa',
+  TREES = 'Drveće',
+  FOUNTAIN = 'Fontana',
+  LAKE = 'Jezero',
+}
+
+export enum Sticker {
   HOUSE_GREEN = 'Zelena kuća',
   HOUSE_RED = 'Crvena kuća',
   HOUSE_BLUE = 'Plava kuća',
@@ -42,45 +49,45 @@ export enum Placeable {
   WAREHOUSE = 'Skladište',
 }
 
-export interface PlaceableSticker {
-  type: Placeable,
+export interface StickerData {
+  type: Sticker,
   image: string,
   scale?: number,
 }
 
-export const Stickers: Record<Placeable, PlaceableSticker> = {
-  [Placeable.HOUSE_GREEN]: {
-    type: Placeable.HOUSE_GREEN,
+export const Stickers: Record<Sticker, StickerData> = {
+  [Sticker.HOUSE_GREEN]: {
+    type: Sticker.HOUSE_GREEN,
     image: 'sticker/house_green.png',
     scale: 1,
   },
-  [Placeable.HOUSE_RED]: {
-    type: Placeable.HOUSE_RED,
+  [Sticker.HOUSE_RED]: {
+    type: Sticker.HOUSE_RED,
     image: 'sticker/house_red.png',
     scale: 1,
   },
-  [Placeable.HOUSE_BLUE]: {
-    type: Placeable.HOUSE_BLUE,
+  [Sticker.HOUSE_BLUE]: {
+    type: Sticker.HOUSE_BLUE,
     image: 'sticker/house_blue.png',
     scale: 1,
   },
-  [Placeable.HOUSE_YELLOW]: {
-    type: Placeable.HOUSE_YELLOW,
+  [Sticker.HOUSE_YELLOW]: {
+    type: Sticker.HOUSE_YELLOW,
     image: 'sticker/house_yellow.png',
     scale: 1,
   },
-  [Placeable.POST_OFFICE]: {
-    type: Placeable.POST_OFFICE,
+  [Sticker.POST_OFFICE]: {
+    type: Sticker.POST_OFFICE,
     image: 'sticker/post_office.png',
     scale: 1,
   },
-  [Placeable.RESTAURANT]: {
-    type: Placeable.RESTAURANT,
+  [Sticker.RESTAURANT]: {
+    type: Sticker.RESTAURANT,
     image: 'sticker/restoraunt.png',
     scale: 1,
   },
-  [Placeable.WAREHOUSE]: {
-    type: Placeable.WAREHOUSE,
+  [Sticker.WAREHOUSE]: {
+    type: Sticker.WAREHOUSE,
     image: 'sticker/warehouse.png',
     scale: 1,
   },
@@ -94,13 +101,13 @@ export interface SettingsContextType {
   setSelectedTab: (tab: string) => void;
   selectedType: TileType;
   setSelectedType: (selectedType: TileType) => void;
-  selectedPlaceable: Placeable;
-  setSelectedPlaceable: (selectedPlaceable: Placeable) => void;
+  selectedSticker: Sticker | null;
+  setSelectedSticker: (selectedPlaceable: Sticker | null) => void;
   simFocused: boolean;
   setSimFocused: (simFocused: boolean) => void;
   animationSpeed: number;
   setAnimationSpeed: (animationSpeed: number) => void;
-  textures: Record<Placeable, Texture>;
+  textures: Record<Sticker, Texture>;
   loadTextures: () => void;
 }
 
@@ -134,11 +141,11 @@ export interface GridContextType {
   setBarriers: (barriers: number[]) => void;
   stickers: {
     index: number
-    sticker: PlaceableSticker
+    sticker: StickerData
   }[];
   setStickers: (stickers: {
     index: number
-    sticker: PlaceableSticker
+    sticker: StickerData
   }[]) => void;
 }
 

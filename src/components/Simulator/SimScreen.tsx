@@ -1,5 +1,5 @@
 import SimPlayground from "./SimPlayground.tsx";
-import SimHeader from "./SimHeader.tsx";
+import SimHeader from "./UI/SimHeader.tsx";
 
 const SimScreen = () => {
   return (

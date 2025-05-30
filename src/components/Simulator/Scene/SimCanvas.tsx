@@ -1,13 +1,14 @@
 import {Canvas} from "@react-three/fiber";
 import {OrbitControls} from "@react-three/drei";
 import { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
-import SimTile from "./SimTile.tsx";
-import SimVehicle from "./SimVehicle.tsx";
+import SimVehicle from "../Tile/SimVehicle.tsx";
 import {DoubleSide} from "three";
-import {useGrid} from "../../hooks/useGrid.ts";
+import {useGrid} from "../../../hooks/useGrid.ts";
 import SimCamera from "./SimCamera.tsx";
 import {useEffect, useRef} from "react";
-import {useSettings} from "../../hooks/useSettings.ts";
+import {useSettings} from "../../../hooks/useSettings.ts";
+import SimTiles from "../Tile/SimTiles.tsx";
+import SimLights from "./SimLights.tsx";
 
 const SimCanvas = () => {
   const { loadTextures } = useSettings();
@@ -30,21 +31,12 @@ const SimCanvas = () => {
 
   return (
     <div className={'h-full w-full'}>
-      <Canvas shadows className={'h-full w-full block'}
-        resize={{ scroll: false, debounce: 0 }}>
+      <Canvas shadows className={'h-full w-full block'} resize={{ scroll: false, debounce: 0 }}>
+        <color attach={"background"} args={['#00beee']} />
 
         <SimCamera />
-        <ambientLight intensity={0.8}/>
-        <directionalLight color="white"
-                          castShadow={true}
-                          position={[2, 10, 7]}
-                          intensity={2.8}
-                          shadow-mapSize-width={1024}
-                          shadow-mapSize-height={1024}
-                          shadow-camera-left={-10}
-                          shadow-camera-right={10}
-                          shadow-camera-top={10}
-                          shadow-camera-bottom={-10}/>
+
+        <SimLights />
 
         <mesh position={[-10, 0.2, 0]} rotation={[Math.PI / 2, 0, 0]} scale={[50, 50, 1]}>
           <planeGeometry/>
@@ -53,15 +45,7 @@ const SimCanvas = () => {
 
         <SimVehicle />
 
-        <group position={[0, 0, 0]}>
-          {Array.from({length: sizeX}).map((_, x) =>
-            Array.from({length: sizeZ}).map((_, z) => (
-              <SimTile key={sizeZ * x + z}
-                       index={sizeZ * x + z}
-                       position={[-x + (Math.floor(sizeX / 2)), 0, -z + 2]}/>
-            ))
-          )}
-        </group>
+        <SimTiles />
 
         <OrbitControls ref={controlsRef}
                        enableRotate={false}

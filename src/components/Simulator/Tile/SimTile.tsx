@@ -1,9 +1,9 @@
 import {useEffect, useState} from "react";
-import {Stickers, TileType} from "../../types.ts";
+import {Stickers, TileType} from "../../../types.ts";
 import {ThreeEvent} from "@react-three/fiber";
-import {useSettings} from "../../hooks/useSettings.ts";
+import {useSettings} from "../../../hooks/useSettings.ts";
 import SimBarrier from "./SimBarrier.tsx";
-import {useGrid} from "../../hooks/useGrid.ts";
+import {useGrid} from "../../../hooks/useGrid.ts";
 import SimSticker from "./SimSticker.tsx";
 
 interface Props {
@@ -12,7 +12,7 @@ interface Props {
 }
 
 const SimTile = ({index, position}: Props) => {
-  const { simFocused, selectedType, selectedPlaceable } = useSettings();
+  const { simFocused, selectedType, selectedSticker } = useSettings();
   const { start, setStart, finish, setFinish, barriers, setBarriers, stickers, setStickers } = useGrid();
   const [isHovered, setIsHovered] = useState(false);
   const [type, setType] = useState<TileType>(TileType.GROUND);
@@ -59,12 +59,18 @@ const SimTile = ({index, position}: Props) => {
         setFinish(index);
         break;
       case TileType.BARRIER:
-        setBarriers([...barriers, index]);
+        setBarriers([...new Set([...barriers, index])]);
         break;
       case TileType.GROUND:
         break;
       case TileType.STICKER:
-        setStickers([...stickers, {index: index, sticker: Stickers[selectedPlaceable]}])
+        if (selectedSticker) {
+          const updated = [
+            ...stickers.filter(i => i.index !== index),
+            { index, sticker: Stickers[selectedSticker] }
+          ];
+          setStickers(updated);
+        }
         break;
     }
   };

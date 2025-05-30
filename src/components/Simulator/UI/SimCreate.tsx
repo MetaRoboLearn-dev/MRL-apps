@@ -1,6 +1,6 @@
-import {useUI} from "../../hooks/useUI.ts";
+import {useUI} from "../../../hooks/useUI.ts";
 import SimCreateForm from "./SimCreateForm.tsx";
-import {useVehicle} from "../../hooks/useVehicle.ts";
+import {useVehicle} from "../../../hooks/useVehicle.ts";
 
 const SimCreate = () => {
   const { setModalVisible, modalVisible, setModalHeader, setModalBody, setModalFooter } = useUI();

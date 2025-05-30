@@ -1,9 +1,9 @@
-import {useSettings} from "../../hooks/useSettings.ts";
-import {Placeable, TileType} from "../../types.ts";
-import {useVehicle} from "../../hooks/useVehicle.ts";
+import {useSettings} from "../../../hooks/useSettings.ts";
+import {Sticker, TileType} from "../../../types.ts";
+import {useVehicle} from "../../../hooks/useVehicle.ts";
 import SimModal from "./SimModal.tsx";
-import {useUI} from "../../hooks/useUI.ts";
-import {useGrid} from "../../hooks/useGrid.ts";
+import {useUI} from "../../../hooks/useUI.ts";
+import {useGrid} from "../../../hooks/useGrid.ts";
 import {ChangeEvent} from "react";
 
 interface Props{
@@ -11,14 +11,19 @@ interface Props{
 }
 
 const SimInterface = ({isHovered}: Props) => {
-  const { simFocused, setSimFocused, selectedType, setSelectedType, animationSpeed, setAnimationSpeed, setSelectedPlaceable } = useSettings();
+  const { simFocused, setSimFocused, selectedType, setSelectedType, animationSpeed, setAnimationSpeed, setSelectedSticker } = useSettings();
   const { start, sizeX, sizeZ } = useGrid();
   const { modalVisible } = useUI();
   const { position, rotation, isMoving, moveQueue } = useVehicle();
 
   const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    const selectedKey = e.target.value as keyof typeof Placeable;
-    setSelectedPlaceable(Placeable[selectedKey]);
+    const key = e.target.value;
+    if (!key){
+      setSelectedSticker(null);
+      return;
+    }
+    const selectedKey = key as keyof typeof Sticker;
+    setSelectedSticker(Sticker[selectedKey]);
   };
 
   const dev = false;
@@ -45,7 +50,10 @@ const SimInterface = ({isHovered}: Props) => {
         <label>Naljepnica: </label>
 
         <select name="sticker" id="sticker" onChange={handleChange}>
-          {Object.entries(Placeable).map(([key, label]) => (
+          <option key={'none'} value={'none'}>
+            Ukloni
+          </option>
+          {Object.entries(Sticker).map(([key, label]) => (
             <option key={key} value={key}>
               {label}
             </option>

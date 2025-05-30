@@ -1,13 +1,13 @@
 import {useGLTF} from "@react-three/drei";
 import {useEffect, useRef} from "react";
-import {useVehicle} from "../../hooks/useVehicle.ts";
-import {MoveCommand, Position, Rotation} from "../../types.ts";
+import {useVehicle} from "../../../hooks/useVehicle.ts";
+import {MoveCommand, Position, Rotation} from "../../../types.ts";
 import * as THREE from 'three';
 import {Euler, Vector3} from "three";
 import {useFrame} from "@react-three/fiber";
-import {useSettings} from "../../hooks/useSettings.ts";
-import {useGrid} from "../../hooks/useGrid.ts";
-import {useUI} from "../../hooks/useUI.ts";
+import {useSettings} from "../../../hooks/useSettings.ts";
+import {useGrid} from "../../../hooks/useGrid.ts";
+import {useUI} from "../../../hooks/useUI.ts";
 
 const SimVehicle = () => {
   const { sizeX, sizeZ, barriers, finish } = useGrid();

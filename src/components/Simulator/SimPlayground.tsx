@@ -1,6 +1,6 @@
 import {useState} from "react";
-import SimInterface from "./SimInterface.tsx";
-import SimCanvas from "./SimCanvas.tsx";
+import SimInterface from "./UI/SimInterface.tsx";
+import SimCanvas from "./Scene/SimCanvas.tsx";
 
 const SimPlayground = () => {
   const [isHovered, setIsHovered] = useState(false);

@@ -1,4 +1,4 @@
-import {useUI} from "../../hooks/useUI.ts";
+import {useUI} from "../../../hooks/useUI.ts";
 
 const SimModal = () => {
   const { modalVisible, modalHeader, modalBody, modalFooter } = useUI();

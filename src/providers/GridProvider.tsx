@@ -1,7 +1,7 @@
 import {PropsWithChildren, useEffect, useState} from "react";
 import {GridContext} from "./Context.tsx";
 import {useSettings} from "../hooks/useSettings.ts";
-import {Placeable, PlaceableSticker, Stickers} from "../types.ts";
+import {Sticker, StickerData, Stickers} from "../types.ts";
 
 const GridProvider = ({ children }: PropsWithChildren) => {
   const { selectedTab } = useSettings();
@@ -12,13 +12,13 @@ const GridProvider = ({ children }: PropsWithChildren) => {
   const [barriers, setBarriers] = useState<number[]>([]);
   const [stickers, setStickers] = useState<{
     index: number;
-    sticker: PlaceableSticker
+    sticker: StickerData
   }[]>([]);
   const [loaded, setLoaded] = useState(false);
 
-  function getPlaceableKey(value: string): keyof typeof Placeable | undefined {
-    return (Object.keys(Placeable) as (keyof typeof Placeable)[]).find(
-      (key) => Placeable[key] === value
+  function getStickerKey(value: string): keyof typeof Sticker | undefined {
+    return (Object.keys(Sticker) as (keyof typeof Sticker)[]).find(
+      (key) => Sticker[key] === value
     );
   }
 
@@ -32,10 +32,10 @@ const GridProvider = ({ children }: PropsWithChildren) => {
     setBarriers(data.barriers || []);
     setStickers(
       (data.stickers || []).map(({ index, sticker }: { index: number; sticker: string }) => {
-        const key = Placeable[sticker as keyof typeof Placeable]
-          ?? getPlaceableKey(sticker);
+        const key = Sticker[sticker as keyof typeof Sticker]
+          ?? getStickerKey(sticker);
 
-        const stickerData = Stickers[key as Placeable];
+        const stickerData = Stickers[key as Sticker];
 
         if (!stickerData) {
           console.warn(`Unknown sticker type: ${sticker}`);
@@ -69,7 +69,7 @@ const GridProvider = ({ children }: PropsWithChildren) => {
         barriers,
         stickers: stickers.map(({ index, sticker }) => ({
           index,
-          sticker: getPlaceableKey(sticker.type) || sticker.type,
+          sticker: getStickerKey(sticker.type) || sticker.type,
         })),
       };
 

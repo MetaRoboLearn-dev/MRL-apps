@@ -1,15 +1,15 @@
 import {PropsWithChildren, useState} from "react";
 import {SettingsContext} from "./Context.tsx";
-import {Placeable, Stickers, TileType} from "../types.ts";
+import {Sticker, Stickers, TileType} from "../types.ts";
 import {Texture, TextureLoader} from "three";
 
 export const SettingsProvider = ({ children }: PropsWithChildren) => {
   const [selectedTab, setSelectedTab] = useState<string>(localStorage.getItem("selectedID") || '');
   const [selectedType, setSelectedType] = useState<TileType>(TileType.GROUND);
-  const [selectedPlaceable, setSelectedPlaceable] = useState<Placeable>(Placeable.HOUSE_GREEN);
+  const [selectedSticker, setSelectedSticker] = useState<Sticker | null>(null);
   const [simFocused, setSimFocused] = useState<boolean>(false);
   const [animationSpeed, setSpeed] = useState<number>(0.07);
-  const [textures, setTextures] = useState<Record<Placeable, Texture>>({} as Record<Placeable, Texture>);
+  const [textures, setTextures] = useState<Record<Sticker, Texture>>({} as Record<Sticker, Texture>);
 
   const setAnimationSpeed = (speed: number) =>{
     // max 0.1, min 0.02, default 0.4
@@ -38,7 +38,7 @@ export const SettingsProvider = ({ children }: PropsWithChildren) => {
     <SettingsContext.Provider value={{
       selectedTab, setSelectedTab,
       selectedType, setSelectedType,
-      selectedPlaceable, setSelectedPlaceable,
+      selectedSticker, setSelectedSticker,
       simFocused, setSimFocused,
       animationSpeed, setAnimationSpeed,
       textures, loadTextures

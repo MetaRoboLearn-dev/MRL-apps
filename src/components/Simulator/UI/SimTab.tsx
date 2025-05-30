@@ -1,5 +1,5 @@
-import {useVehicle} from "../../hooks/useVehicle.ts";
-import {useUI} from "../../hooks/useUI.ts";
+import {useVehicle} from "../../../hooks/useVehicle.ts";
+import {useUI} from "../../../hooks/useUI.ts";
 
 interface Props {
   id: string;

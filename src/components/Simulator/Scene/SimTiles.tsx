@@ -1,4 +1,4 @@
-import SimTile from "./SimTile.tsx";
+import SimTile from "../Tile/SimTile.tsx";
 import {useGrid} from "../../../hooks/useGrid.ts";
 
 const SimTiles = () => {

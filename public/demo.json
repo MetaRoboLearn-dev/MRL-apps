@@ -1,14 +1,27 @@
 {
-  "sizeX": 5,
-  "sizeZ": 6,
-  "start": null,
-  "finish": null,
-  "barriers": [0, 1, 2, 6, 7, 8, 10, 13, 14, 16, 19, 20, 22, 23],
-  "stickers": [
-    {
-      "index": 6,
-      "sticker": "WAREHOUSE"
-    }
-  ],
-  "code": "turn_left(1.0, 60.0)\nbroj_koraka = 1 + 1\nfor korak in range(broj_koraka):\n    forward(1.0, 30.0)\nturn_right(1.0, 60.0)\nbroj_koraka = 1 + 2\nfor korak in range(broj_koraka):\n    forward(1.0, 30.0)\nturn_right(1.0, 60.0)\nbroj_koraka = 2 * 2\nfor korak in range(broj_koraka):\n    forward(1.0, 30.0)\nturn_left(1.0, 60.0)\nbroj_koraka = 2\nfor korak in range(broj_koraka):\n    forward(1.0, 30.0)\nturn_left(1.0, 60.0)\nbroj_koraka = 2\nfor korak in range(broj_koraka):\n    forward(1.0, 30.0)"
+  "sizeX":5,
+  "sizeZ":6,
+  "start":12,
+  "finish":17,
+  "barriers":[
+    [6,"TREES"],
+    [7,"TREES"],
+    [13,"TREES"],
+    [19,"TREES"],
+    [20,"TREES"],
+    [16,"TREES"],
+    [10,"FOUNTAIN"],
+    [22,"TREES"],
+    [23,"TREES"],
+    [14,"TREES"],
+    [1,"LAKE"],
+    [0,"TREES"],
+    [29,"LAKE"]],
+  "stickers":[
+    {"index":17,"sticker":"RESTAURANT"},
+    {"index":12,"sticker":"HOUSE_YELLOW"},
+    {"index":24,"sticker":"HOUSE_RED"},
+    {"index":4,"sticker":"POST_OFFICE"},
+    {"index":8,"sticker":"HOUSE_GREEN"}],
+  "code":"turn_left(1.0, 60.0)\nbroj_koraka = 1 + 1\nfor korak in range(broj_koraka):\n    forward(1.0, 30.0)\nturn_right(1.0, 60.0)\nbroj_koraka = 1 + 2\nfor korak in range(broj_koraka):\n    forward(1.0, 30.0)\nturn_right(1.0, 60.0)\nbroj_koraka = 2 * 2\nfor korak in range(broj_koraka):\n    forward(1.0, 30.0)\nturn_left(1.0, 60.0)\nbroj_koraka = 2\nfor korak in range(broj_koraka):\n    forward(1.0, 30.0)\nturn_left(1.0, 60.0)\nbroj_koraka = 2\nfor korak in range(broj_koraka):\n    forward(1.0, 30.0)"
 }

@@ -5,8 +5,6 @@ import {useSettings} from "../../../hooks/useSettings.ts";
 import SimBarrier from "./SimBarrier.tsx";
 import {useGrid} from "../../../hooks/useGrid.ts";
 import SimSticker from "./SimSticker.tsx";
-import SimFountain from "./SimFountain.tsx";
-import SimLake from "./SimLake.tsx";
 
 interface Props {
   index: number;
@@ -14,10 +12,18 @@ interface Props {
 }
 
 const SimTile = ({index, position}: Props) => {
-  const { simFocused, selectedType, selectedSticker } = useSettings();
-  const { start, setStart, finish, setFinish, barriers, setBarriers, stickers, setStickers } = useGrid();
+  const { simFocused, selectedType, selectedSticker, selectedBarrier } = useSettings();
+  const { start, setStart,
+          finish, setFinish,
+          barriers, setBarriers,
+          stickers, setStickers } = useGrid();
+
   const [isHovered, setIsHovered] = useState(false);
   const [type, setType] = useState<TileType>(TileType.GROUND);
+
+  const barrier_keys = [...barriers.keys()];
+
+  const barrier = barriers.get(index);
   const sticker = stickers.find((s) => s.index === index);
 
   const colours: Record<TileType, string> = {
@@ -34,7 +40,7 @@ const SimTile = ({index, position}: Props) => {
         return TileType.START;
       else if (index === finish)
         return TileType.FINISH;
-      else if (barriers.includes(index))
+      else if (barrier_keys.includes(index))
         return TileType.BARRIER;
       return TileType.GROUND;
     })
@@ -47,7 +53,8 @@ const SimTile = ({index, position}: Props) => {
     if (selectedType !== TileType.STICKER){
       setStart(start === index ? null : start);
       setFinish(finish === index ? null : finish);
-      setBarriers(barriers.filter(i => i !== index));
+      setBarriers(new Map([...barriers].filter(([key]) => key !== index))
+      );
     }
     else {
       setStickers(stickers.filter(i => i.index !== index));
@@ -61,7 +68,7 @@ const SimTile = ({index, position}: Props) => {
         setFinish(index);
         break;
       case TileType.BARRIER:
-        setBarriers([...new Set([...barriers, index])]);
+        setBarriers(new Map(barriers).set(index, selectedBarrier));
         break;
       case TileType.GROUND:
         break;
@@ -94,23 +101,12 @@ const SimTile = ({index, position}: Props) => {
         ) : null
       }
 
-      {type === TileType.FINISH ? (
-        <></>
-      ) : type === TileType.BARRIER ? (
-        <SimBarrier />
-      ) : type === TileType.START ? (
-        <></>
+      {type === TileType.BARRIER ? (
+        <SimBarrier barrier={barrier} />
       ) : null}
 
       {sticker ? (
         <SimSticker sticker={sticker.sticker}/>
-      ) : null}
-
-      {index === 35 ? (
-        <SimFountain />
-      ) : null}
-      {index === 0 ? (
-        <SimLake />
       ) : null}
     </group>
   )

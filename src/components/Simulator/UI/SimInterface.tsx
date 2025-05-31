@@ -31,10 +31,6 @@ const SimInterface = ({isHovered}: Props) => {
 
   const handleChangeBarrier = (e: ChangeEvent<HTMLSelectElement>) => {
     const key = e.target.value;
-    if (!key){
-      setSelectedBarrier(null);
-      return;
-    }
     const selectedKey = key as keyof typeof Barrier;
     setSelectedBarrier(Barrier[selectedKey]);
   };
@@ -75,9 +71,6 @@ const SimInterface = ({isHovered}: Props) => {
 
         <label>Prepreka: </label>
         <select name="barrier" id="barrier" onChange={handleChangeBarrier}>
-          <option key={'none'} value={'none'}>
-            Ukloni
-          </option>
           {Object.entries(Barrier).map(([key, label]) => (
             <option key={key} value={key}>
               {label}

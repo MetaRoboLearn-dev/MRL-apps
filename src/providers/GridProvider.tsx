@@ -1,7 +1,7 @@
 import {PropsWithChildren, useEffect, useState} from "react";
 import {GridContext} from "./Context.tsx";
 import {useSettings} from "../hooks/useSettings.ts";
-import {Sticker, Stickers} from "../types.ts";
+import {Barrier, Barriers, Sticker, Stickers} from "../types.ts";
 
 const GridProvider = ({ children }: PropsWithChildren) => {
   const { selectedTab } = useSettings();
@@ -11,11 +11,13 @@ const GridProvider = ({ children }: PropsWithChildren) => {
   const [start, setStart] = useState<number | null>(null);
   const [finish, setFinish] = useState<number | null>(null);
 
-  const [barriers, setBarriers] = useState<number[]>([]);
+  // const [barriers, setBarriers] = useState<number[]>([]);
+  const [barriers, setBarriers] = useState<Map<number, Barrier>>(new Map());
   const [stickers, setStickers] = useState<{ index: number, sticker: Sticker }[]>([]);
 
   const [loaded, setLoaded] = useState(false);
 
+  // ucitavanje iz local storage
   useEffect(() => {
     const raw = localStorage.getItem(selectedTab || '');
     if (!raw) return;
@@ -23,7 +25,15 @@ const GridProvider = ({ children }: PropsWithChildren) => {
     const data = JSON.parse(raw);
     setSizeX(data.sizeX);
     setSizeZ(data.sizeZ);
-    setBarriers(data.barriers || []);
+    setBarriers(
+      new Map(
+        (data.barriers || []).map(
+          ([index, key]: [number, keyof typeof Barrier]) => [index, Barrier[key]]
+        )
+      )
+    );
+
+
     setStickers(
       (data.stickers || []).map(({ index, sticker }: { index: number; sticker: string }) => {
         const key = Sticker[sticker as keyof typeof Sticker];
@@ -46,6 +56,7 @@ const GridProvider = ({ children }: PropsWithChildren) => {
     setLoaded(true);
   }, [selectedTab]);
 
+  // spremanje u local storage
   useEffect(() => {
     if (!selectedTab || !loaded) return;
 
@@ -56,7 +67,9 @@ const GridProvider = ({ children }: PropsWithChildren) => {
       ...parsed,
       start,
       finish,
-      barriers,
+      barriers: [...barriers.entries()].map(([index, barrier]) => [
+       index, Barriers[barrier].key
+      ]),
       stickers: stickers.map(({ index, sticker }) => ({
         index,
         sticker: Stickers[sticker].key,

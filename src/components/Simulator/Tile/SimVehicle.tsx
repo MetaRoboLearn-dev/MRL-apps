@@ -25,7 +25,7 @@ const SimVehicle = () => {
     const z = 2 - newPosition.z;
     const index = x * sizeZ + z;
 
-    return !(x >= sizeX || x < 0 || z >= sizeZ || z < 0 || barriers.includes(index));
+    return !(x >= sizeX || x < 0 || z >= sizeZ || z < 0 || [...barriers.keys()].includes(index));
   }
 
   const checkCompleted = (newPosition: Position) => {

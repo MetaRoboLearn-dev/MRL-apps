@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {Stickers, TileType} from "../../../types.ts";
+import {TileType} from "../../../types.ts";
 import {ThreeEvent} from "@react-three/fiber";
 import {useSettings} from "../../../hooks/useSettings.ts";
 import SimBarrier from "./SimBarrier.tsx";
@@ -69,7 +69,7 @@ const SimTile = ({index, position}: Props) => {
         if (selectedSticker) {
           const updated = [
             ...stickers.filter(i => i.index !== index),
-            { index, sticker: Stickers[selectedSticker] }
+            { index, sticker: selectedSticker }
           ];
           setStickers(updated);
         }
@@ -103,7 +103,7 @@ const SimTile = ({index, position}: Props) => {
       ) : null}
 
       {sticker ? (
-        <SimSticker sticker={sticker}/>
+        <SimSticker sticker={sticker.sticker}/>
       ) : null}
 
       {index === 35 ? (

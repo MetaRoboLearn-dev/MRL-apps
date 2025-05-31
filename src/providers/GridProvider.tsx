@@ -1,19 +1,19 @@
 import {PropsWithChildren, useEffect, useState} from "react";
 import {GridContext} from "./Context.tsx";
 import {useSettings} from "../hooks/useSettings.ts";
-import {Sticker, StickerData, Stickers} from "../types.ts";
+import {Sticker, Stickers} from "../types.ts";
 
 const GridProvider = ({ children }: PropsWithChildren) => {
   const { selectedTab } = useSettings();
   const [sizeX, setSizeX] = useState<number>(0);
   const [sizeZ, setSizeZ] = useState<number>(0);
+
   const [start, setStart] = useState<number | null>(null);
   const [finish, setFinish] = useState<number | null>(null);
+
   const [barriers, setBarriers] = useState<number[]>([]);
-  const [stickers, setStickers] = useState<{
-    index: number;
-    sticker: StickerData
-  }[]>([]);
+  const [stickers, setStickers] = useState<{ index: number, sticker: Sticker }[]>([]);
+
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -34,7 +34,7 @@ const GridProvider = ({ children }: PropsWithChildren) => {
           return null;
         }
 
-        return { index, sticker: stickerData };
+        return { index, sticker: key };
       }).filter(Boolean)
     );
 
@@ -49,25 +49,21 @@ const GridProvider = ({ children }: PropsWithChildren) => {
   useEffect(() => {
     if (!selectedTab || !loaded) return;
 
-    try {
-      const current = localStorage.getItem(selectedTab);
-      const parsed = current ? JSON.parse(current) : {};
+    const current = localStorage.getItem(selectedTab);
+    const parsed = current ? JSON.parse(current) : {};
 
-      const updated = {
-        ...parsed,
-        start,
-        finish,
-        barriers,
-        stickers: stickers.map(({ index, sticker }) => ({
-          index,
-          sticker: sticker.key,
-        })),
-      };
+    const updated = {
+      ...parsed,
+      start,
+      finish,
+      barriers,
+      stickers: stickers.map(({ index, sticker }) => ({
+        index,
+        sticker: Stickers[sticker].key,
+      })),
+    };
 
-      localStorage.setItem(selectedTab, JSON.stringify(updated));
-    } catch (err) {
-      console.error("Failed to update localStorage entry:", err);
-    }
+    localStorage.setItem(selectedTab, JSON.stringify(updated));
   }, [start, finish, barriers, stickers, selectedTab, loaded]);
 
   return (

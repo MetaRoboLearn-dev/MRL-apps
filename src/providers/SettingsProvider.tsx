@@ -1,14 +1,17 @@
 import {PropsWithChildren, useState} from "react";
 import {SettingsContext} from "./Context.tsx";
-import {Sticker, Stickers, TileType} from "../types.ts";
+import {Barrier, Sticker, Stickers, TileType} from "../types.ts";
 import {Texture, TextureLoader} from "three";
 
 export const SettingsProvider = ({ children }: PropsWithChildren) => {
   const [selectedTab, setSelectedTab] = useState<string>(localStorage.getItem("selectedID") || '');
   const [selectedType, setSelectedType] = useState<TileType>(TileType.GROUND);
   const [selectedSticker, setSelectedSticker] = useState<Sticker | null>(null);
+  const [selectedBarrier, setSelectedBarrier] = useState<Barrier | null>(null);
+
   const [simFocused, setSimFocused] = useState<boolean>(false);
   const [animationSpeed, setSpeed] = useState<number>(0.07);
+
   const [textures, setTextures] = useState<Record<Sticker, Texture>>({} as Record<Sticker, Texture>);
 
   const setAnimationSpeed = (speed: number) =>{
@@ -39,6 +42,7 @@ export const SettingsProvider = ({ children }: PropsWithChildren) => {
       selectedTab, setSelectedTab,
       selectedType, setSelectedType,
       selectedSticker, setSelectedSticker,
+      selectedBarrier, setSelectedBarrier,
       simFocused, setSimFocused,
       animationSpeed, setAnimationSpeed,
       textures, loadTextures

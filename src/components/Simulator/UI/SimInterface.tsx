@@ -1,5 +1,5 @@
 import {useSettings} from "../../../hooks/useSettings.ts";
-import {Sticker, TileType} from "../../../types.ts";
+import {Barrier, Sticker, TileType} from "../../../types.ts";
 import {useVehicle} from "../../../hooks/useVehicle.ts";
 import SimModal from "./SimModal.tsx";
 import {useUI} from "../../../hooks/useUI.ts";
@@ -11,12 +11,15 @@ interface Props{
 }
 
 const SimInterface = ({isHovered}: Props) => {
-  const { simFocused, setSimFocused, selectedType, setSelectedType, animationSpeed, setAnimationSpeed, setSelectedSticker } = useSettings();
+  const { simFocused, setSimFocused,
+    selectedType, setSelectedType,
+    animationSpeed, setAnimationSpeed,
+    setSelectedSticker, setSelectedBarrier } = useSettings();
   const { start, sizeX, sizeZ } = useGrid();
   const { modalVisible } = useUI();
   const { position, rotation, isMoving, moveQueue } = useVehicle();
 
-  const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
+  const handleChangeSticker = (e: ChangeEvent<HTMLSelectElement>) => {
     const key = e.target.value;
     if (!key){
       setSelectedSticker(null);
@@ -24,6 +27,16 @@ const SimInterface = ({isHovered}: Props) => {
     }
     const selectedKey = key as keyof typeof Sticker;
     setSelectedSticker(Sticker[selectedKey]);
+  };
+
+  const handleChangeBarrier = (e: ChangeEvent<HTMLSelectElement>) => {
+    const key = e.target.value;
+    if (!key){
+      setSelectedBarrier(null);
+      return;
+    }
+    const selectedKey = key as keyof typeof Barrier;
+    setSelectedBarrier(Barrier[selectedKey]);
   };
 
   const dev = false;
@@ -46,14 +59,26 @@ const SimInterface = ({isHovered}: Props) => {
         ✏️ Pritisni za uređivanje simulacije
       </div>
 
-      <div className={`absolute bottom-5 select-none transition-opacity duration-200 ${simFocused ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+      <div
+        className={`absolute bottom-5 select-none transition-opacity duration-200 ${simFocused ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
         <label>Naljepnica: </label>
-
-        <select name="sticker" id="sticker" onChange={handleChange}>
+        <select name="sticker" id="sticker" onChange={handleChangeSticker}>
           <option key={'none'} value={'none'}>
             Ukloni
           </option>
           {Object.entries(Sticker).map(([key, label]) => (
+            <option key={key} value={key}>
+              {label}
+            </option>
+          ))}
+        </select>
+
+        <label>Prepreka: </label>
+        <select name="barrier" id="barrier" onChange={handleChangeBarrier}>
+          <option key={'none'} value={'none'}>
+            Ukloni
+          </option>
+          {Object.entries(Barrier).map(([key, label]) => (
             <option key={key} value={key}>
               {label}
             </option>
@@ -99,8 +124,6 @@ const SimInterface = ({isHovered}: Props) => {
             </div>
           </ul>
         </div>
-
-
       </div>
       <SimModal/>
     </>

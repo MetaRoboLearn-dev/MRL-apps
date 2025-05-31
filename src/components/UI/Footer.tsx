@@ -4,12 +4,16 @@ import {MoveCommand} from "../../types.ts";
 import {useCode} from "../../hooks/useCode.ts";
 import {useUI} from "../../hooks/useUI.ts";
 import {useSettings} from "../../hooks/useSettings.ts";
+import {useGrid} from "../../hooks/useGrid.ts";
 
 const Footer = () => {
   const { code } = useCode();
   const { queueMoves, isMoving } = useVehicle();
   const { modalVisible } = useUI();
   const { setSimFocused } = useSettings();
+  const { start, finish } = useGrid();
+
+  const disabled = isMoving || modalVisible || !start || !finish;
 
   const runCode = async (code: string) => {
     setSimFocused(false);
@@ -99,16 +103,16 @@ const Footer = () => {
       <div onClick={abortRobot} className={'hidden'}>
         abort
       </div>
-      <button disabled={isMoving || modalVisible}
+      <button disabled={disabled}
         className={`bg-sunglow-500 text-dark-neutrals-400 font-display font-bold text-xl pl-5 pr-8 py-2 rounded flex items-center ml-8 
-                      ${isMoving || modalVisible ? 'bg-sunglow-700' : 'hover:cursor-pointer hover:bg-sunglow-600'} transition`}
+                      ${disabled ? 'bg-sunglow-700' : 'hover:cursor-pointer hover:bg-sunglow-600'} transition`}
         onClick={() => runRobot(code)}>
         <FaRobot size={24}/>
         <span className={'ml-4'}>Upogoni</span>
       </button>
-      <button disabled={isMoving || modalVisible}
+      <button disabled={disabled}
         className={`bg-turquoise-500 text-light-cyan-200 font-display font-bold text-xl pl-5 pr-8 py-2 rounded flex items-center ml-8 
-                    ${isMoving || modalVisible ? 'bg-turquoise-700 text-light-cyan-700' : 'hover:cursor-pointer hover:bg-turquoise-600'} transition`}
+                    ${disabled ? 'bg-turquoise-700 text-light-cyan-700' : 'hover:cursor-pointer hover:bg-turquoise-600'} transition`}
         onClick={() => runCode(code)}>
         <FaPlay size={18}/>
         <span className={'ml-4'}>Simuliraj</span>

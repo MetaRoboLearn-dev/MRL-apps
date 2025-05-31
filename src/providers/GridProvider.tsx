@@ -16,12 +16,6 @@ const GridProvider = ({ children }: PropsWithChildren) => {
   }[]>([]);
   const [loaded, setLoaded] = useState(false);
 
-  function getStickerKey(value: string): keyof typeof Sticker | undefined {
-    return (Object.keys(Sticker) as (keyof typeof Sticker)[]).find(
-      (key) => Sticker[key] === value
-    );
-  }
-
   useEffect(() => {
     const raw = localStorage.getItem(selectedTab || '');
     if (!raw) return;
@@ -32,10 +26,8 @@ const GridProvider = ({ children }: PropsWithChildren) => {
     setBarriers(data.barriers || []);
     setStickers(
       (data.stickers || []).map(({ index, sticker }: { index: number; sticker: string }) => {
-        const key = Sticker[sticker as keyof typeof Sticker]
-          ?? getStickerKey(sticker);
-
-        const stickerData = Stickers[key as Sticker];
+        const key = Sticker[sticker as keyof typeof Sticker];
+        const stickerData = Stickers[key];
 
         if (!stickerData) {
           console.warn(`Unknown sticker type: ${sticker}`);
@@ -45,7 +37,6 @@ const GridProvider = ({ children }: PropsWithChildren) => {
         return { index, sticker: stickerData };
       }).filter(Boolean)
     );
-
 
     const computedStart = data.sizeZ * (Math.trunc(data.sizeX / 2) + data.sizeX % 2 - 1);
     const computedFinish = data.sizeZ * (Math.trunc(data.sizeX / 2) + 1) - 1;
@@ -69,7 +60,7 @@ const GridProvider = ({ children }: PropsWithChildren) => {
         barriers,
         stickers: stickers.map(({ index, sticker }) => ({
           index,
-          sticker: getStickerKey(sticker.type) || sticker.type,
+          sticker: sticker.key,
         })),
       };
 

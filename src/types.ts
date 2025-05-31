@@ -51,6 +51,7 @@ export enum Sticker {
 
 export interface StickerData {
   type: Sticker,
+  key: string
   image: string,
   scale?: number,
 }
@@ -58,36 +59,43 @@ export interface StickerData {
 export const Stickers: Record<Sticker, StickerData> = {
   [Sticker.HOUSE_GREEN]: {
     type: Sticker.HOUSE_GREEN,
+    key: 'HOUSE_GREEN',
     image: 'sticker/house_green.png',
     scale: 1,
   },
   [Sticker.HOUSE_RED]: {
     type: Sticker.HOUSE_RED,
+    key: 'HOUSE_RED',
     image: 'sticker/house_red.png',
     scale: 1,
   },
   [Sticker.HOUSE_BLUE]: {
     type: Sticker.HOUSE_BLUE,
+    key: 'HOUSE_BLUE',
     image: 'sticker/house_blue.png',
     scale: 1,
   },
   [Sticker.HOUSE_YELLOW]: {
     type: Sticker.HOUSE_YELLOW,
+    key: 'HOUSE_YELLOW',
     image: 'sticker/house_yellow.png',
     scale: 1,
   },
   [Sticker.POST_OFFICE]: {
     type: Sticker.POST_OFFICE,
+    key: 'POST_OFFICE',
     image: 'sticker/post_office.png',
     scale: 1,
   },
   [Sticker.RESTAURANT]: {
     type: Sticker.RESTAURANT,
+    key: 'RESTAURANT',
     image: 'sticker/restoraunt.png',
     scale: 1,
   },
   [Sticker.WAREHOUSE]: {
     type: Sticker.WAREHOUSE,
+    key: 'WAREHOUSE',
     image: 'sticker/warehouse.png',
     scale: 1,
   },
@@ -103,6 +111,8 @@ export interface SettingsContextType {
   setSelectedType: (selectedType: TileType) => void;
   selectedSticker: Sticker | null;
   setSelectedSticker: (selectedPlaceable: Sticker | null) => void;
+  selectedBarrier: Barrier | null;
+  setSelectedBarrier: (selectedBarrier: Barrier | null) => void;
   simFocused: boolean;
   setSimFocused: (simFocused: boolean) => void;
   animationSpeed: number;

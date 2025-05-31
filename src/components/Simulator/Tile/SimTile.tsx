@@ -5,6 +5,8 @@ import {useSettings} from "../../../hooks/useSettings.ts";
 import SimBarrier from "./SimBarrier.tsx";
 import {useGrid} from "../../../hooks/useGrid.ts";
 import SimSticker from "./SimSticker.tsx";
+import SimFountain from "./SimFountain.tsx";
+import SimLake from "./SimLake.tsx";
 
 interface Props {
   index: number;
@@ -77,15 +79,20 @@ const SimTile = ({index, position}: Props) => {
 
   return (
     <group position={position}>
-      <mesh scale={[1, 1, 1]} receiveShadow={true}
-            onPointerEnter={(event) => (event.stopPropagation(), setIsHovered(true))}
-            onPointerLeave={(event) => (event.stopPropagation(), setIsHovered(false))}
-            onClick={place}>
-        <boxGeometry/>
-        <meshStandardMaterial emissive={'black'}
-                              emissiveIntensity={index % 2 === 1 ? 0.5 : 0}
-                              color={(isHovered && simFocused) ? 'blue' : colours[type]}/>
-      </mesh>
+      {
+        // ovo bi se moglo koristit za barrijeru rupa
+        !([-1].includes(index)) ? (
+          <mesh scale={[1, 1, 1]} receiveShadow={true}
+                onPointerEnter={(event) => (event.stopPropagation(), setIsHovered(true))}
+                onPointerLeave={(event) => (event.stopPropagation(), setIsHovered(false))}
+                onClick={place}>
+            <boxGeometry/>
+            <meshStandardMaterial emissive={'black'}
+                                  emissiveIntensity={index % 2 === 1 ? 0.5 : 0}
+                                  color={(isHovered && simFocused) ? 'blue' : colours[type]}/>
+          </mesh>
+        ) : null
+      }
 
       {type === TileType.FINISH ? (
         <></>
@@ -97,6 +104,13 @@ const SimTile = ({index, position}: Props) => {
 
       {sticker ? (
         <SimSticker sticker={sticker}/>
+      ) : null}
+
+      {index === 35 ? (
+        <SimFountain />
+      ) : null}
+      {index === 0 ? (
+        <SimLake />
       ) : null}
     </group>
   )

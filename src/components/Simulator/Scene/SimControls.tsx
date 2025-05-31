@@ -7,7 +7,7 @@ import { useGrid } from '../../../hooks/useGrid.ts';
 
 const SimControls = () => {
   const { sizeX, sizeZ } = useGrid();
-  const { camera } = useThree();
+  const { camera, scene } = useThree();
   const controlsRef = useRef<OrbitControlsImpl | null>(null);
 
   const [minPan, setMinPan] = useState<THREE.Vector3>(new THREE.Vector3());
@@ -21,19 +21,23 @@ const SimControls = () => {
 
     for (let x = 0; x < sizeX; x++) {
       for (let z = 0; z < sizeZ; z++) {
-        const pos = new THREE.Vector3(-x + offsetX, 2, -z + offsetZ);
+        const pos = new THREE.Vector3(-x + offsetX, 0, -z + offsetZ);
         positions.push(pos);
       }
     }
 
     const box = new THREE.Box3().setFromPoints(positions);
-    const padding = 0.5;
-    box.min.subScalar(padding);
-    box.max.addScalar(padding);
 
-    setMinPan(box.min.clone());
-    setMaxPan(box.max.clone());
+    const min = box.min.clone();
+    const max = box.max.clone();
+
+    min.y = -3;
+    max.y = 3;
+
+    setMinPan(min);
+    setMaxPan(max);
   }, [sizeX, sizeZ]);
+
 
   useEffect(() => {
     if (!controlsRef.current) return;
@@ -62,15 +66,15 @@ const SimControls = () => {
     return () => controls.removeEventListener('change', handleChange);
   }, [camera, minPan, maxPan]);
 
-  // useEffect(() => {
-  //   const box = new THREE.Box3(minPan.clone(), maxPan.clone());
-  //   const helper = new THREE.Box3Helper(box, 0xffff00);
-  //   scene.add(helper);
-  //
-  //   return () => {
-  //     scene.remove(helper);
-  //   };
-  // }, [scene, minPan, maxPan]);
+  useEffect(() => {
+    const box = new THREE.Box3(minPan.clone(), maxPan.clone());
+    const helper = new THREE.Box3Helper(box, 0xffff00);
+    // scene.add(helper);
+
+    return () => {
+      scene.remove(helper);
+    };
+  }, [scene, minPan, maxPan]);
 
   return (
     <OrbitControls

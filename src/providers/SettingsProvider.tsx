@@ -9,6 +9,7 @@ export const SettingsProvider = ({ children }: PropsWithChildren) => {
   const [selectedSticker, setSelectedSticker] = useState<Sticker | null>(null);
   const [selectedBarrier, setSelectedBarrier] = useState<Barrier>(Barrier.TREES);
 
+  const [camMode, setCamMode] = useState<boolean>(false);
   const [simFocused, setSimFocused] = useState<boolean>(false);
   const [animationSpeed, setSpeed] = useState<number>(0.07);
 
@@ -43,6 +44,7 @@ export const SettingsProvider = ({ children }: PropsWithChildren) => {
       selectedType, setSelectedType,
       selectedSticker, setSelectedSticker,
       selectedBarrier, setSelectedBarrier,
+      camMode, setCamMode,
       simFocused, setSimFocused,
       animationSpeed, setAnimationSpeed,
       textures, loadTextures

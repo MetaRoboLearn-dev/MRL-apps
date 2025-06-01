@@ -15,7 +15,8 @@ const SimTab = ({id, label, isChecked, onTabChange, remove} : Props) => {
 
   const style = isChecked ?
     ('bg-turquoise-700 text-white font-bold py-2') :
-    ('bg-turquoise-50 text-dark-neutrals-200 pt-2 pb-3.5 translate-y-2.5 hover:cursor-pointer hover:bg-turquoise-100 hover:translate-y-1.5 transition');
+    ('bg-turquoise-50 text-dark-neutrals-200 pt-2 pb-3.5 translate-y-2.5 ' +
+      'hover:cursor-pointer hover:bg-turquoise-100 hover:text-white-smoke-900 hover:translate-y-1.5 transition');
 
   return (
     <li className={`${style} font-display mx-1 px-4 rounded-t-lg cursor-pointer peer-checked:bg-turquoise-700`}>
@@ -28,8 +29,8 @@ const SimTab = ({id, label, isChecked, onTabChange, remove} : Props) => {
           checked={isChecked}
           onChange={() => onTabChange(id)}
         />
-        <span className={'cursor-pointer hover:font-bold'}>{label}</span>
-        <span className={`ml-2 cursor-pointer hover:font-bold hover:text-xl ${isMoving || modalVisible ? 'hidden' : ''}`} onClick={() => remove(id)}>x</span>
+        <span className={'cursor-pointer'}>{label}</span>
+        <span className={`ml-2 cursor-pointer hover:font-bold ${isMoving || modalVisible ? 'hidden' : ''}`} onClick={() => remove(id)}>x</span>
       </label>
     </li>
   );

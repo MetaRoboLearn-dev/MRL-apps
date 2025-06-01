@@ -120,6 +120,8 @@ export interface SettingsContextType {
   setSelectedBarrier: (selectedBarrier: Barrier) => void;
   simFocused: boolean;
   setSimFocused: (simFocused: boolean) => void;
+  camMode: boolean;
+  setCamMode: (camMode: boolean) => void;
   animationSpeed: number;
   setAnimationSpeed: (animationSpeed: number) => void;
   textures: Record<Sticker, Texture>;

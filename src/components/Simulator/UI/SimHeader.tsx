@@ -4,6 +4,7 @@ import SimCreate from "./SimCreate.tsx";
 import {useSettings} from "../../../hooks/useSettings.ts";
 import {useVehicle} from "../../../hooks/useVehicle.ts";
 import {useUI} from "../../../hooks/useUI.ts";
+import CamTab from "../Camera/CamTab.tsx";
 
 const SimHeader = () => {
   const { selectedTab, setSelectedTab } = useSettings();
@@ -47,6 +48,7 @@ const SimHeader = () => {
   return (
     <div className={'w-full flex justify-between items-end'}>
       <ul className={"bg-white px-4 h-14 flex items-end"}>
+        <CamTab />
         {simKeys.map((key) => (
           <SimTab
             key={key}

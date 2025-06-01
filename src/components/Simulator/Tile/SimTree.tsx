@@ -6,9 +6,9 @@ const getRandomRotation = () =>
   new Euler(0, Math.random() * Math.PI * 2, 0); // rotate only on Y axis
 
 const SimTree = () => {
-  const big = useGLTF('barrier/Tree_big.glb').scene;
-  const medium = useGLTF('barrier/Tree_medium.glb').scene;
-  const small = useGLTF('barrier/Tree_small.glb').scene;
+  const big = useGLTF('models/Tree_big.glb').scene;
+  const medium = useGLTF('models/Tree_medium.glb').scene;
+  const small = useGLTF('models/Tree_small.glb').scene;
 
   const group = useMemo(() => {
     const container = new Group();

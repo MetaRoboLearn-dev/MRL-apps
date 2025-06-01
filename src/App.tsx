@@ -4,19 +4,17 @@ import {SettingsProvider} from "./providers/SettingsProvider.tsx";
 import {CodeProvider} from "./providers/CodeProvider.tsx";
 import GridProvider from "./providers/GridProvider.tsx";
 import UIProvider from "./providers/UIProvider.tsx";
-import { TextureLoader } from 'three';
-import { Stickers } from './types';
-
-const loader = new TextureLoader();
-Object.values(Stickers).forEach((sticker) => {
-  if (sticker?.image) {
-    loader.load(sticker.image, () => {
-      console.log(`Preloaded: ${sticker.image}`);
-    });
-  }
-});
+import {useGLTF} from "@react-three/drei";
+import {TextureLoader} from "three";
 
 function App() {
+  const loader = new TextureLoader();
+  loader.load('textures/fountain.png');
+  loader.load('textures/lake.png');
+  useGLTF('models/Tree_big.glb');
+  useGLTF('models/Tree_medium.glb');
+  useGLTF('models/Tree_small.glb');
+
   return (
     <UIProvider>
       <SettingsProvider>

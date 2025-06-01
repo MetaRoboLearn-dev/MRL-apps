@@ -10,10 +10,10 @@ const Footer = () => {
   const { code } = useCode();
   const { queueMoves, isMoving } = useVehicle();
   const { modalVisible } = useUI();
-  const { setSimFocused } = useSettings();
+  const { setSimFocused, camMode } = useSettings();
   const { start, finish } = useGrid();
 
-  const disabled = isMoving || modalVisible || !start || !finish;
+  const disabled = isMoving || modalVisible || start === null || finish === null;
 
   const runCode = async (code: string) => {
     setSimFocused(false);
@@ -103,6 +103,7 @@ const Footer = () => {
       <div onClick={abortRobot} className={'hidden'}>
         abort
       </div>
+
       <button disabled={disabled}
         className={`bg-sunglow-500 text-dark-neutrals-400 font-display font-bold text-xl pl-5 pr-8 py-2 rounded flex items-center ml-8 
                       ${disabled ? 'bg-sunglow-700' : 'hover:cursor-pointer hover:bg-sunglow-600'} transition`}
@@ -110,9 +111,10 @@ const Footer = () => {
         <FaRobot size={24}/>
         <span className={'ml-4'}>Upogoni</span>
       </button>
-      <button disabled={disabled}
+
+      <button disabled={disabled || camMode}
         className={`bg-turquoise-500 text-light-cyan-200 font-display font-bold text-xl pl-5 pr-8 py-2 rounded flex items-center ml-8 
-                    ${disabled ? 'bg-turquoise-700 text-light-cyan-700' : 'hover:cursor-pointer hover:bg-turquoise-600'} transition`}
+                    ${disabled || camMode ? 'bg-turquoise-700 text-light-cyan-700' : 'hover:cursor-pointer hover:bg-turquoise-600'} transition`}
         onClick={() => runCode(code)}>
         <FaPlay size={18}/>
         <span className={'ml-4'}>Simuliraj</span>

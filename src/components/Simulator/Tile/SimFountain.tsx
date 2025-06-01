@@ -2,7 +2,7 @@ import {DoubleSide, TextureLoader} from "three";
 
 const SimFountain = () => {
   const loader = new TextureLoader();
-  const texture = loader.load('./barrier/fountain.png');
+  const texture = loader.load('textures/fountain.png');
 
   return (
     <group>

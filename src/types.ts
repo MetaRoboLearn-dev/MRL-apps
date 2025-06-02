@@ -60,6 +60,10 @@ export const Barriers: Record<Barrier, BarrierData> = {
 }
 
 export enum Sticker {
+  ROAD_INTERSECT = 'Raskržije',
+  ROAD_T = 'T raskržije',
+  ROAD_STRAIGHT = 'Cesta',
+  ROAD_TURN = 'Zavoj',
   HOUSE_GREEN = 'Zelena kuća',
   HOUSE_RED = 'Crvena kuća',
   HOUSE_BLUE = 'Plava kuća',
@@ -76,33 +80,53 @@ interface StickerData {
 }
 
 export const Stickers: Record<Sticker, StickerData> = {
+  [Sticker.ROAD_INTERSECT]: {
+    key: 'ROAD_INTERSECT',
+    image: 'textures/road_intersect.png',
+    scale: 1,
+  },
+  [Sticker.ROAD_T]: {
+    key: 'ROAD_T',
+    image: 'textures/road_t.png',
+    scale: 1,
+  },
+  [Sticker.ROAD_STRAIGHT]: {
+    key: 'ROAD_STRAIGHT',
+    image: 'textures/road_straight.png',
+    scale: 1,
+  },
+  [Sticker.ROAD_TURN]: {
+    key: 'ROAD_TURN',
+    image: 'textures/road_turn.png',
+    scale: 1,
+  },
   [Sticker.HOUSE_GREEN]: {
     key: 'HOUSE_GREEN',
-    image: 'sticker/house_green.png',
+    image: 'textures/house_green.png',
   },
   [Sticker.HOUSE_RED]: {
     key: 'HOUSE_RED',
-    image: 'sticker/house_red.png',
+    image: 'textures/house_red.png',
   },
   [Sticker.HOUSE_BLUE]: {
     key: 'HOUSE_BLUE',
-    image: 'sticker/house_blue.png',
+    image: 'textures/house_blue.png',
   },
   [Sticker.HOUSE_YELLOW]: {
     key: 'HOUSE_YELLOW',
-    image: 'sticker/house_yellow.png',
+    image: 'textures/house_yellow.png',
   },
   [Sticker.POST_OFFICE]: {
     key: 'POST_OFFICE',
-    image: 'sticker/post_office.png',
+    image: 'textures/post_office.png',
   },
   [Sticker.RESTAURANT]: {
     key: 'RESTAURANT',
-    image: 'sticker/restoraunt.png',
+    image: 'textures/restoraunt.png',
   },
   [Sticker.WAREHOUSE]: {
     key: 'WAREHOUSE',
-    image: 'sticker/warehouse.png',
+    image: 'textures/warehouse.png',
   },
 };
 
@@ -118,6 +142,8 @@ export interface SettingsContextType {
   setSelectedSticker: (selectedPlaceable: Sticker | null) => void;
   selectedBarrier: Barrier;
   setSelectedBarrier: (selectedBarrier: Barrier) => void;
+  selectedRotation: number;
+  rotateBy90: () => void;
   simFocused: boolean;
   setSimFocused: (simFocused: boolean) => void;
   camMode: boolean;
@@ -156,8 +182,8 @@ export interface GridContextType {
   setFinish: (finish: number | null) => void;
   barriers: Map<number, Barrier>;
   setBarriers: (barriers: Map<number, Barrier>) => void;
-  stickers: { index: number, sticker: Sticker }[];
-  setStickers: (stickers: { index: number, sticker: Sticker }[]) => void;
+  stickers: { index: number, sticker: Sticker, rotation: number }[];
+  setStickers: (stickers: { index: number, sticker: Sticker, rotation: number }[]) => void;
 }
 
 export interface CodeContextType {

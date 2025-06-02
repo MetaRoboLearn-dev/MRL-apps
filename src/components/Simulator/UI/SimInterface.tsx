@@ -14,7 +14,8 @@ const SimInterface = ({isHovered}: Props) => {
   const { simFocused, setSimFocused,
     selectedType, setSelectedType,
     animationSpeed, setAnimationSpeed,
-    setSelectedSticker, setSelectedBarrier } = useSettings();
+    setSelectedSticker, setSelectedBarrier,
+    selectedRotation, rotateBy90 } = useSettings();
   const { start, sizeX, sizeZ } = useGrid();
   const { modalVisible } = useUI();
   const { position, rotation, isMoving, moveQueue } = useVehicle();
@@ -77,6 +78,9 @@ const SimInterface = ({isHovered}: Props) => {
             </option>
           ))}
         </select>
+
+        <button className={'m-1 px-4 py-1 bg-sunglow-600 rounded'} onClick={rotateBy90}>Okreni</button>
+        <span>Rotacija: {selectedRotation}</span>
 
         <div className={'flex'}>
           <div

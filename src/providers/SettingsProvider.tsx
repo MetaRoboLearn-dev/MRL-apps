@@ -8,6 +8,7 @@ export const SettingsProvider = ({ children }: PropsWithChildren) => {
   const [selectedType, setSelectedType] = useState<TileType>(TileType.GROUND);
   const [selectedSticker, setSelectedSticker] = useState<Sticker | null>(null);
   const [selectedBarrier, setSelectedBarrier] = useState<Barrier>(Barrier.TREES);
+  const [selectedRotation, setSelectedRotation] = useState<number>(0);
 
   const [camMode, setCamMode] = useState<boolean>(false);
   const [simFocused, setSimFocused] = useState<boolean>(false);
@@ -15,9 +16,17 @@ export const SettingsProvider = ({ children }: PropsWithChildren) => {
 
   const [textures, setTextures] = useState<Record<Sticker, Texture>>({} as Record<Sticker, Texture>);
 
-  const setAnimationSpeed = (speed: number) =>{
+  const setAnimationSpeed = (speed: number) => {
     // max 0.1, min 0.02, default 0.4
     setSpeed(speed / 1000);
+  }
+
+  const rotateBy90 = () => {
+    const new_rot = selectedRotation + 90;
+    if (new_rot >= 360)
+      setSelectedRotation(0)
+    else
+      setSelectedRotation(new_rot)
   }
 
   const loadTextures = () => {
@@ -44,6 +53,7 @@ export const SettingsProvider = ({ children }: PropsWithChildren) => {
       selectedType, setSelectedType,
       selectedSticker, setSelectedSticker,
       selectedBarrier, setSelectedBarrier,
+      selectedRotation, rotateBy90,
       camMode, setCamMode,
       simFocused, setSimFocused,
       animationSpeed, setAnimationSpeed,

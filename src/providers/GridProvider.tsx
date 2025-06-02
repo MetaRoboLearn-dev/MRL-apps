@@ -13,7 +13,7 @@ const GridProvider = ({ children }: PropsWithChildren) => {
 
   // const [barriers, setBarriers] = useState<number[]>([]);
   const [barriers, setBarriers] = useState<Map<number, Barrier>>(new Map());
-  const [stickers, setStickers] = useState<{ index: number, sticker: Sticker }[]>([]);
+  const [stickers, setStickers] = useState<{ index: number, sticker: Sticker, rotation: number }[]>([]);
 
   const [loaded, setLoaded] = useState(false);
 
@@ -35,7 +35,7 @@ const GridProvider = ({ children }: PropsWithChildren) => {
 
 
     setStickers(
-      (data.stickers || []).map(({ index, sticker }: { index: number; sticker: string }) => {
+      (data.stickers || []).map(({ index, sticker, rotation }: { index: number; sticker: string; rotation: number }) => {
         const key = Sticker[sticker as keyof typeof Sticker];
         const stickerData = Stickers[key];
 
@@ -44,7 +44,7 @@ const GridProvider = ({ children }: PropsWithChildren) => {
           return null;
         }
 
-        return { index, sticker: key };
+        return { index, sticker: key, rotation };
       }).filter(Boolean)
     );
 
@@ -70,9 +70,10 @@ const GridProvider = ({ children }: PropsWithChildren) => {
       barriers: [...barriers.entries()].map(([index, barrier]) => [
        index, Barriers[barrier].key
       ]),
-      stickers: stickers.map(({ index, sticker }) => ({
+      stickers: stickers.map(({ index, sticker, rotation }) => ({
         index,
         sticker: Stickers[sticker].key,
+        rotation
       })),
     };
 

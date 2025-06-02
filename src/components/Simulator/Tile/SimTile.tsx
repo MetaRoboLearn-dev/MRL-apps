@@ -12,7 +12,7 @@ interface Props {
 }
 
 const SimTile = ({index, position}: Props) => {
-  const { simFocused, selectedType, selectedSticker, selectedBarrier } = useSettings();
+  const { simFocused, selectedType, selectedSticker, selectedBarrier, selectedRotation } = useSettings();
   const { start, setStart,
           finish, setFinish,
           barriers, setBarriers,
@@ -76,7 +76,7 @@ const SimTile = ({index, position}: Props) => {
         if (selectedSticker) {
           const updated = [
             ...stickers.filter(i => i.index !== index),
-            { index, sticker: selectedSticker }
+            { index, sticker: selectedSticker, rotation: selectedRotation }
           ];
           setStickers(updated);
         }
@@ -106,7 +106,7 @@ const SimTile = ({index, position}: Props) => {
       ) : null}
 
       {sticker ? (
-        <SimSticker sticker={sticker.sticker}/>
+        <SimSticker sticker={sticker}/>
       ) : null}
     </group>
   )

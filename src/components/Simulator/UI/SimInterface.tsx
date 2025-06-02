@@ -4,7 +4,7 @@ import {useVehicle} from "../../../hooks/useVehicle.ts";
 import SimModal from "./SimModal.tsx";
 import {useUI} from "../../../hooks/useUI.ts";
 import {useGrid} from "../../../hooks/useGrid.ts";
-import {ChangeEvent} from "react";
+import {ChangeEvent, useEffect} from "react";
 
 interface Props{
   isHovered: boolean,
@@ -19,6 +19,21 @@ const SimInterface = ({isHovered}: Props) => {
   const { start, sizeX, sizeZ } = useGrid();
   const { modalVisible } = useUI();
   const { position, rotation, isMoving, moveQueue } = useVehicle();
+  const dev = false;
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (!simFocused || modalVisible) return;
+
+      if (event.key === 'r') {
+        rotateBy90();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [modalVisible, rotateBy90, simFocused]);
+
 
   const handleChangeSticker = (e: ChangeEvent<HTMLSelectElement>) => {
     const key = e.target.value;
@@ -35,8 +50,6 @@ const SimInterface = ({isHovered}: Props) => {
     const selectedKey = key as keyof typeof Barrier;
     setSelectedBarrier(Barrier[selectedKey]);
   };
-
-  const dev = false;
 
   return (
     <>
@@ -79,7 +92,7 @@ const SimInterface = ({isHovered}: Props) => {
           ))}
         </select>
 
-        <button className={'m-1 px-4 py-1 bg-sunglow-600 rounded'} onClick={rotateBy90}>Okreni</button>
+        <button className={'m-1 px-4 py-1 bg-sunglow-600 rounded'} onClick={rotateBy90}>Okreni (r)</button>
         <span>Rotacija: {selectedRotation}</span>
 
         <div className={'flex'}>

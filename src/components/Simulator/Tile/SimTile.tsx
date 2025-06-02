@@ -108,6 +108,14 @@ const SimTile = ({index, position}: Props) => {
       {sticker ? (
         <SimSticker sticker={sticker}/>
       ) : null}
+
+      {simFocused && isHovered && selectedType === TileType.STICKER ? (
+        <SimSticker hover={true} sticker={{
+          index: index,
+          sticker: selectedSticker,
+          rotation: selectedRotation,
+        }} />
+      ) : null}
     </group>
   )
 };

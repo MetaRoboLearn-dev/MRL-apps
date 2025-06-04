@@ -41,21 +41,26 @@ export enum Barrier {
 
 interface BarrierData {
   key: string;
+  image: string;
   model?: string;
 }
 
 export const Barriers: Record<Barrier, BarrierData> = {
   [Barrier.TREES]: {
     key: 'TREES',
+    image: 'textures/trees.png'
   },
   [Barrier.FOUNTAIN]:{
     key: 'FOUNTAIN',
+    image: 'textures/fountain.png'
   },
   [Barrier.LAKE]: {
     key: 'LAKE',
+    image: 'textures/lake.png'
   },
   [Barrier.HOLE]: {
     key: 'HOLE',
+    image: 'textures/house_blue.png'
   },
 }
 

@@ -1,4 +1,4 @@
-import {FaPlay, FaRobot} from "react-icons/fa";
+import {FaPlay, FaStop, FaRobot} from "react-icons/fa";
 import {useVehicle} from "../../hooks/useVehicle.ts";
 import {MoveCommand} from "../../types.ts";
 import {useCode} from "../../hooks/useCode.ts";
@@ -8,7 +8,7 @@ import {useGrid} from "../../hooks/useGrid.ts";
 
 const Footer = () => {
   const { code } = useCode();
-  const { queueMoves, isMoving } = useVehicle();
+  const { queueMoves, moveQueue, isMoving, reset } = useVehicle();
   const { modalVisible } = useUI();
   const { setSimFocused, camMode } = useSettings();
   const { start, finish } = useGrid();
@@ -100,25 +100,41 @@ const Footer = () => {
 
   return (
     <div className={'bg-white-smoke-500 px-15 w-full h-20 z-10 flex items-center justify-end select-none'}>
-      <div onClick={abortRobot} className={'hidden'}>
-        abort
-      </div>
+      <button disabled={disabled}
+              className={`bg-tomato-500 text-light-cyan-200 font-display font-bold text-xl px-3 py-3 rounded flex items-center ml-8 
+                    ${disabled ? 'bg-tomato-700 text-light-cyan-700' : 'hover:cursor-pointer hover:bg-tomato-600'} transition`}
+              onClick={abortRobot}>
+        <FaStop size={18}/>
+      </button>
 
       <button disabled={disabled}
-        className={`bg-sunglow-500 text-dark-neutrals-400 font-display font-bold text-xl pl-5 pr-8 py-2 rounded flex items-center ml-8 
+              className={`bg-sunglow-500 text-dark-neutrals-400 font-display font-bold text-xl pl-5 pr-8 py-2 rounded flex items-center ml-2 
                       ${disabled ? 'bg-sunglow-700' : 'hover:cursor-pointer hover:bg-sunglow-600'} transition`}
-        onClick={() => runRobot(code)}>
+              onClick={() => runRobot(code)}>
         <FaRobot size={24}/>
         <span className={'ml-4'}>Upogoni</span>
       </button>
 
-      <button disabled={disabled || camMode}
-        className={`bg-turquoise-500 text-light-cyan-200 font-display font-bold text-xl pl-5 pr-8 py-2 rounded flex items-center ml-8 
-                    ${disabled || camMode ? 'bg-turquoise-700 text-light-cyan-700' : 'hover:cursor-pointer hover:bg-turquoise-600'} transition`}
-        onClick={() => runCode(code)}>
-        <FaPlay size={18}/>
-        <span className={'ml-4'}>Simuliraj</span>
-      </button>
+      {!isMoving && moveQueue.length === 0 ? (
+        <button disabled={disabled || camMode}
+                className={`bg-turquoise-500 text-light-cyan-200 font-display font-bold text-xl pl-5 pr-8 py-2 rounded flex items-center ml-8 
+                  ${disabled || camMode ? 'bg-turquoise-700 text-light-cyan-700' : 'hover:cursor-pointer hover:bg-turquoise-600'} transition`}
+                onClick={() => runCode(code)}>
+          <FaPlay size={18}/>
+          <span className={'ml-4'}>Simuliraj</span>
+        </button>
+      ) : (
+        <>
+          <button disabled={camMode}
+                  className={`bg-tomato-500 text-light-cyan-200 font-display font-bold text-xl pl-5 pr-8 py-2 rounded flex items-center ml-8 
+                    ${camMode ? 'bg-tomato-700 text-light-cyan-700' : 'hover:cursor-pointer hover:bg-tomato-600'} transition`}
+                  onClick={reset}>
+            <FaStop size={18}/>
+            <span className={'ml-4'}>Zaustavi</span>
+          </button>
+        </>
+      )}
+
     </div>
   );
 };

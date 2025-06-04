@@ -34,7 +34,7 @@ export const VehicleProvider = ({ children }: PropsWithChildren) => {
   }, [sizeX, sizeZ, start])
 
   const queueMoves = (moves: MoveCommand[]) => {
-    if (!start) return;
+    if (start === null) return;
     setMoveQueue(moves);
     setIsMoving(true);
   };

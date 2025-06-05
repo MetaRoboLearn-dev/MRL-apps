@@ -13,7 +13,7 @@ export const VehicleProvider = ({ children }: PropsWithChildren) => {
     }
     return {
       x: -Math.trunc(start / sizeZ) + Math.trunc(sizeX / 2),
-      y: 0.5,
+      y: 0.1,
       z: -(start % sizeZ) + 2,
     };
   };

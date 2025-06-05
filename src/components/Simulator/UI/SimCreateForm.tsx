@@ -7,13 +7,11 @@ const SimCreateForm = () => {
   const { setSelectedTab } = useSettings();
 
   const [id, setId] = useState<string>('');
-  const [label, setLabel] = useState<string>('');
   const [x, setX] = useState<string>('');
   const [z, setZ] = useState<string>('');
 
   const clear= () =>{
     setId('');
-    setLabel('');
     setX('');
     setZ('');
   }
@@ -42,14 +40,6 @@ const SimCreateForm = () => {
                placeholder={'Unesite oznaku'}
                value={id}
                onChange={(e) => setId(e.target.value)}
-               className={'w-full bg-sunglow-600 p-2 rounded'}/>
-      </div>
-      <div className={'flex flex-col mb-3'}>
-        <label className={'mr-5 text-lg'}>Naziv</label>
-        <input type='text'
-               placeholder={'Unesite naziv'}
-               value={label}
-               onChange={(e) => setLabel(e.target.value)}
                className={'w-full bg-sunglow-600 p-2 rounded'}/>
       </div>
       <div className={'flex justify-between w-full'}>

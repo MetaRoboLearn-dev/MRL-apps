@@ -53,7 +53,7 @@ const SimTree = () => {
 
     container.rotation.copy(getRandomRotation());
     container.scale.set(0.14, 0.16, 0.16);
-    container.position.y = 0.5;
+    container.position.y = 0.1;
     container.traverse((child) => {
       if (child as Mesh) {
         child.castShadow = true;

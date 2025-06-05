@@ -21,7 +21,7 @@ const SimSticker = ({ sticker, hover }: Props) => {
   const scale = data.scale ? data.scale : 0.75;
 
   return (
-    <mesh position={[0, 0.51 + (hover ? 0.02 : 0), 0]} rotation={[Math.PI / 2 , 0, Math.PI + (sticker.rotation * Math.PI) / 180.0]} scale={[scale, scale, 0]}>
+    <mesh position={[0, 0.51 + (hover ? 0.02 : 0) - 0.4, 0]} rotation={[Math.PI / 2 , 0, Math.PI + (sticker.rotation * Math.PI) / 180.0]} scale={[scale, scale, 0]}>
       <planeGeometry args={[1, 1]} />
       <meshBasicMaterial map={texture} transparent={true} side={DoubleSide} color={hover ? 'red' : ''} />
     </mesh>

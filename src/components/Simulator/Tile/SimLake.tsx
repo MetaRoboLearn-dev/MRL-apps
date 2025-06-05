@@ -5,7 +5,7 @@ const SimLake = () => {
   const texture = loader.load('textures/lake.png');
 
   return (
-    <group>
+    <group position={[0, -0.4, 0]}>
       <mesh position={[0, 0.525, 0]} scale={[0.8, 0.05, 0.8]} receiveShadow={true}>
         <boxGeometry/>
         <meshStandardMaterial color={'green'}/>

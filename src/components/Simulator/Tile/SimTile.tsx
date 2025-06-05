@@ -89,7 +89,7 @@ const SimTile = ({index, position}: Props) => {
       {
         // ovo bi se moglo koristit za barrijeru rupa
         !([-1].includes(index)) ? (
-          <mesh scale={[1, 1, 1]} receiveShadow={true}
+          <mesh scale={[1, 0.2, 1]} receiveShadow={true}
                 onPointerEnter={(event) => (event.stopPropagation(), setIsHovered(true))}
                 onPointerLeave={(event) => (event.stopPropagation(), setIsHovered(false))}
                 onClick={place}>

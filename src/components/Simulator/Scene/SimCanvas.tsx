@@ -21,7 +21,7 @@ const SimCanvas = () => {
         <color attach={"background"} args={['#00beee']} />
         <SimCamera />
         <SimLights />
-        <SimWater />
+        {/*<SimWater />*/}
         <SimVehicle />
         <SimTiles />
         <SimControls />

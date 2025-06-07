@@ -13,7 +13,7 @@ const SimVehicle = () => {
   const { sizeX, sizeZ, barriers, finish } = useGrid();
   const { vehicleRef, startPosition, startRotation, position, rotation, isMoving, moveQueue, reset,
     setPosition, setRotation, setIsMoving, queueMoves, setCurrentMove } = useVehicle();
-  const { animationSpeed } = useSettings();
+  const { animationSpeed, selectedTab } = useSettings();
   const { setModalVisible, setModalHeader, setModalBody, setModalFooter } = useUI();
 
   const currentMoveRef = useRef<MoveCommand | null>(null);
@@ -154,6 +154,8 @@ const SimVehicle = () => {
       }
     });
   }, [scene]);
+
+  if (!selectedTab) return;
 
   return <primitive ref={vehicleRef} object={scene}
                     position={[startPosition.x, startPosition.y, startPosition.z]}

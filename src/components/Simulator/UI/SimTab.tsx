@@ -31,7 +31,8 @@ const SimTab = ({id, label, isChecked, onTabChange, remove} : Props) => {
           onChange={() => onTabChange(id)}
         />
         <span className={'cursor-pointer'}>{label}</span>
-        <span className={`ml-2 cursor-pointer hover:font-bold ${isMoving || modalVisible ? 'hidden' : ''}`} onClick={() => remove(id)}>
+        <span className={`ml-2 cursor-pointer hover:font-bold ${isMoving || modalVisible ? 'hidden' : ''}`}
+              onClick={() => remove(id)}>
           <BsXLg size={10} className={`${isChecked ? 'text-white' : 'text-dark-neutrals-200'} inline stroke-2 cursor-pointer`} />
         </span>
       </label>

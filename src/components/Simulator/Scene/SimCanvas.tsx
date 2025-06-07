@@ -6,7 +6,6 @@ import SimCamera from "./SimCamera.tsx";
 import SimTiles from "./SimTiles.tsx";
 import SimLights from "./SimLights.tsx";
 import SimControls from "./SimControls.tsx";
-import SimWater from "./SimWater.tsx";
 
 const SimCanvas = () => {
   const { loadTextures } = useSettings();
@@ -21,7 +20,6 @@ const SimCanvas = () => {
         <color attach={"background"} args={['#00beee']} />
         <SimCamera />
         <SimLights />
-        {/*<SimWater />*/}
         <SimVehicle />
         <SimTiles />
         <SimControls />

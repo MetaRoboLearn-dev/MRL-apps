@@ -20,7 +20,11 @@ const GridProvider = ({ children }: PropsWithChildren) => {
   // ucitavanje iz local storage
   useEffect(() => {
     const raw = localStorage.getItem(selectedTab || '');
-    if (!raw) return;
+    if (!raw) {
+      setSizeX(0);
+      setSizeZ(0);
+      return
+    }
 
     const data = JSON.parse(raw);
     setSizeX(data.sizeX);
@@ -32,7 +36,6 @@ const GridProvider = ({ children }: PropsWithChildren) => {
         )
       )
     );
-
 
     setStickers(
       (data.stickers || []).map(({ index, sticker, rotation }: { index: number; sticker: string; rotation: number }) => {

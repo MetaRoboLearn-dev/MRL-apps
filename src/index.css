@@ -70,3 +70,13 @@
     --color-dark-neutrals-800: #0d0f0f;
     --color-dark-neutrals-900: #0a0c0c;
 }
+
+.scrollbar-blue{
+    scrollbar-color: #0a0c0c #005456;
+    scrollbar-width: thin;
+}
+
+.scrollbar-red{
+    scrollbar-color: #8c211d #b43a30;
+    scrollbar-width: thin;
+}

@@ -5,9 +5,9 @@ const SimBarrierMenu = () => {
   const {selectedBarrier, setSelectedBarrier} = useSettings();
 
   return (
-    <div className={'overflow-y-scroll h-full pb-30'}>
+    <div className={'overflow-y-scroll h-full pb-30 scrollbar-blue'}>
       <ul
-        className={`flex mx-auto flex-col bg-white-smoke-600 rounded-2xl overflow-hidden shadow translate-y-5`}>
+        className={`flex mr-2 mx-auto flex-col bg-white-smoke-600 rounded-2xl overflow-hidden shadow translate-y-5`}>
         {Object.values(Barrier).map((label: string, index) => (
           <li key={index} className={'bg-white-smoke-400 text-center'}>
             <label className="block">

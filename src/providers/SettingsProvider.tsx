@@ -1,4 +1,4 @@
-import {PropsWithChildren, useState} from "react";
+import {PropsWithChildren, useEffect, useState} from "react";
 import {SettingsContext} from "./Context.tsx";
 import {Barrier, Sticker, Stickers, TileType} from "../types.ts";
 import {Texture, TextureLoader} from "three";
@@ -15,6 +15,8 @@ export const SettingsProvider = ({ children }: PropsWithChildren) => {
   const [animationSpeed, setSpeed] = useState<number>(0.07);
 
   const [textures, setTextures] = useState<Record<Sticker, Texture>>({} as Record<Sticker, Texture>);
+
+  const [robotUrl, setRobotUrl] = useState<string | null>(null);
 
   const setAnimationSpeed = (speed: number) => {
     // max 0.1, min 0.02, default 0.4
@@ -47,6 +49,13 @@ export const SettingsProvider = ({ children }: PropsWithChildren) => {
     });
   };
 
+  useEffect(() => {
+    const raw = localStorage.getItem('robotUrl');
+    if (!raw) setRobotUrl(null);
+
+    setRobotUrl(raw);
+  }, []);
+
   return (
     <SettingsContext.Provider value={{
       selectedTab, setSelectedTab,
@@ -57,7 +66,8 @@ export const SettingsProvider = ({ children }: PropsWithChildren) => {
       camMode, setCamMode,
       simFocused, setSimFocused,
       animationSpeed, setAnimationSpeed,
-      textures, loadTextures
+      textures, loadTextures,
+      robotUrl, setRobotUrl,
     }}>
       {children}
     </SettingsContext.Provider>

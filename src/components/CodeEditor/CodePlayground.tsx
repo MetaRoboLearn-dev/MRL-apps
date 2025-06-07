@@ -28,7 +28,7 @@ const CodePlayground = () => {
       rules: [
         { token: "keyword", foreground: colours['keyword']},
         { token: "identifier", foreground: colours['foreground'] },
-        { token: "number", foreground: colours['keyword'] },
+        { token: "number", foreground: colours['string'] },
         { token: "string", foreground: colours['string'] },
         { token: "comment", foreground: colours['comment']},
       ],

@@ -36,7 +36,7 @@ export enum Barrier {
   TREES = 'Drveće',
   FOUNTAIN = 'Fontana',
   LAKE = 'Jezero',
-  HOLE = 'Rupa',
+  FILED = 'Polje',
 }
 
 interface BarrierData {
@@ -58,9 +58,9 @@ export const Barriers: Record<Barrier, BarrierData> = {
     key: 'LAKE',
     image: 'textures/lake.png'
   },
-  [Barrier.HOLE]: {
-    key: 'HOLE',
-    image: 'textures/house_blue.png'
+  [Barrier.FILED]: {
+    key: 'FILED',
+    image: 'textures/field.png'
   },
 }
 
@@ -157,6 +157,8 @@ export interface SettingsContextType {
   setAnimationSpeed: (animationSpeed: number) => void;
   textures: Record<Sticker, Texture>;
   loadTextures: () => void;
+  robotUrl: string | null;
+  setRobotUrl: (robotUrl: string | null) => void;
 }
 
 export interface VehicleContextType {

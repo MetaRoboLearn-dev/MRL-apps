@@ -9,7 +9,10 @@ export const CodeProvider = ({ children }: PropsWithChildren) => {
 
   useEffect(() => {
     const raw = localStorage.getItem(selectedTab || '');
-    if (!raw) return;
+    if (!raw) {
+      setCode('');
+      return
+    }
 
     const data = JSON.parse(raw);
 

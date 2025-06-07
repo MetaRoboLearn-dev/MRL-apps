@@ -5,15 +5,27 @@ import {useCode} from "../../hooks/useCode.ts";
 import {useUI} from "../../hooks/useUI.ts";
 import {useSettings} from "../../hooks/useSettings.ts";
 import {useGrid} from "../../hooks/useGrid.ts";
+import {useState} from "react";
+import {BsGearFill} from "react-icons/bs";
 
 const Footer = () => {
   const { code } = useCode();
   const { queueMoves, moveQueue, isMoving, reset } = useVehicle();
   const { modalVisible } = useUI();
-  const { setSimFocused, camMode } = useSettings();
+  const { setSimFocused, camMode, robotUrl, setRobotUrl } = useSettings();
   const { start, finish } = useGrid();
 
+  const [urlInput, setUrlInput] = useState('');
+  const [editingUrl, setEditingUrl] = useState(false);
+
   const disabled = isMoving || modalVisible || start === null || finish === null;
+
+  const changeRobotUrl = () => {
+    setRobotUrl(urlInput)
+    if (!urlInput) return;
+    localStorage.setItem('robotUrl', urlInput);
+    setEditingUrl(false);
+  }
 
   const runCode = async (code: string) => {
     setSimFocused(false);
@@ -40,7 +52,7 @@ const Footer = () => {
   }
 
   const runRobot = async (code: string) => {
-    const url = "http://172.20.10.2:5000/execute";
+    const url = robotUrl + "/execute";
     try {
       const response = await fetch(url, {
         method: "POST",
@@ -60,7 +72,7 @@ const Footer = () => {
   }
 
   const abortRobot = async () => {
-    const url = "http://172.20.10.2:5000/abort";
+    const url = robotUrl + "/abort";
     try {
       const response = await fetch(url, {
         method: "POST",
@@ -100,20 +112,48 @@ const Footer = () => {
 
   return (
     <div className={'bg-white-smoke-500 px-15 w-full h-20 z-10 flex items-center justify-end select-none'}>
-      <button disabled={disabled}
-              className={`bg-tomato-500 text-light-cyan-200 font-display font-bold text-xl px-3 py-3 rounded flex items-center ml-8 
+      {robotUrl && !editingUrl ? (
+        <>
+          <button disabled={disabled}
+                  className={`bg-dark-neutrals-100 text-dark-neutrals-400 font-display font-bold text-xl px-3 py-3 rounded flex items-center ml-2 
+                          ${disabled ? 'bg-dark-neutrals-400 text-dark-neutrals-600' : 'hover:cursor-pointer hover:bg-dark-neutrals-200'} transition`}
+                  onClick={() => {
+                    setEditingUrl(true);
+                    setUrlInput(robotUrl)
+                  }}>
+            <BsGearFill size={18} />
+          </button>
+          <button disabled={disabled}
+                  className={`bg-tomato-500 text-light-cyan-200 font-display font-bold text-xl px-3 py-3 rounded flex items-center ml-2 
                     ${disabled ? 'bg-tomato-700 text-light-cyan-700' : 'hover:cursor-pointer hover:bg-tomato-600'} transition`}
-              onClick={abortRobot}>
-        <FaStop size={18}/>
-      </button>
+                  onClick={abortRobot}>
+            <FaStop size={18}/>
+          </button>
 
-      <button disabled={disabled}
-              className={`bg-sunglow-500 text-dark-neutrals-400 font-display font-bold text-xl pl-5 pr-8 py-2 rounded flex items-center ml-2 
+          <button disabled={disabled}
+                  className={`bg-sunglow-500 text-dark-neutrals-400 font-display font-bold text-xl pl-5 pr-8 py-2 rounded flex items-center ml-2 
                       ${disabled ? 'bg-sunglow-700' : 'hover:cursor-pointer hover:bg-sunglow-600'} transition`}
-              onClick={() => runRobot(code)}>
-        <FaRobot size={24}/>
-        <span className={'ml-4'}>Upogoni</span>
-      </button>
+                  onClick={() => runRobot(code)}>
+            <FaRobot size={24}/>
+            <span className={'ml-4'}>Upogoni</span>
+          </button>
+        </>
+      ) : (
+        <>
+          <input type='text'
+                 placeholder={'Unesite adresu'}
+                 value={urlInput}
+                 onChange={(e) => setUrlInput(e.target.value)}
+                 className={'bg-light-cyan-50 p-2 rounded border-2 border-dark-neutrals-100 font-display'}/>
+          <button disabled={disabled}
+                  className={`bg-sunglow-500 text-dark-neutrals-400 font-display font-bold text-xl pl-5 pr-8 py-2 rounded flex items-center ml-2 
+                      ${disabled ? 'bg-sunglow-700' : 'hover:cursor-pointer hover:bg-sunglow-600'} transition`}
+                  onClick={changeRobotUrl}>
+            <FaRobot size={24}/>
+            <span className={'ml-4'}>Spoji se</span>
+          </button>
+        </>
+      )}
 
       {!isMoving && moveQueue.length === 0 ? (
         <button disabled={disabled || camMode}
@@ -134,7 +174,6 @@ const Footer = () => {
           </button>
         </>
       )}
-
     </div>
   );
 };

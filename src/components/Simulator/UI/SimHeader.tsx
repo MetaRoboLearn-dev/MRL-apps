@@ -21,7 +21,7 @@ const SimHeader = () => {
         setSelectedTab('sim1');
       }
 
-      const keys = Object.keys(localStorage).filter((key) => key !== 'selectedID');
+      const keys = Object.keys(localStorage).filter((key) => key !== 'selectedID' && key !== 'robotUrl');
       setSimKeys(keys);
     };
 

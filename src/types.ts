@@ -48,19 +48,19 @@ interface BarrierData {
 export const Barriers: Record<Barrier, BarrierData> = {
   [Barrier.TREES]: {
     key: 'TREES',
-    image: 'textures/trees.png'
+    image: 'textures/trees.png',
   },
   [Barrier.FOUNTAIN]:{
     key: 'FOUNTAIN',
-    image: 'textures/fountain.png'
+    image: 'textures/fountain.png',
   },
   [Barrier.LAKE]: {
     key: 'LAKE',
-    image: 'textures/lake.png'
+    image: 'textures/lake.png',
   },
   [Barrier.FILED]: {
     key: 'FILED',
-    image: 'textures/field.png'
+    image: 'textures/field.png',
   },
 }
 
@@ -153,10 +153,14 @@ export interface SettingsContextType {
   setSimFocused: (simFocused: boolean) => void;
   camMode: boolean;
   setCamMode: (camMode: boolean) => void;
+  barriers3D: boolean;
+  setBarriers3D: (barriers3D: boolean) => void;
   animationSpeed: number;
   setAnimationSpeed: (animationSpeed: number) => void;
   textures: Record<Sticker, Texture>;
   loadTextures: () => void;
+  barrierTextures: Record<Barrier, Texture>;
+  loadBarrierTextures: () => void;
   robotUrl: string | null;
   setRobotUrl: (robotUrl: string | null) => void;
 }

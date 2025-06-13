@@ -14,7 +14,6 @@ const SimScreen = () => {
       ) : (
         <SimPlayground />
       )}
-
     </div>
   );
 };

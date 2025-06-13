@@ -27,9 +27,9 @@ const CamScreen = () => {
       <div className="flex flex-col items-center justify-center">
         {robotUrl ? (
           <img
-            className="bg-indigo-200"
-            width="320"
-            height="240"
+            className="bg-indigo-200 rotate-180"
+            width="640"
+            height="480"
             alt="Live camera feed"
             src={imageSrc || ""}
           />

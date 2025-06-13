@@ -1,6 +1,6 @@
 import {PropsWithChildren, useEffect, useState} from "react";
 import {SettingsContext} from "./Context.tsx";
-import {Barrier, Sticker, Stickers, TileType} from "../types.ts";
+import {Barrier, Barriers, Sticker, Stickers, TileType} from "../types.ts";
 import {Texture, TextureLoader} from "three";
 
 export const SettingsProvider = ({ children }: PropsWithChildren) => {
@@ -11,10 +11,12 @@ export const SettingsProvider = ({ children }: PropsWithChildren) => {
   const [selectedRotation, setSelectedRotation] = useState<number>(0);
 
   const [camMode, setCamMode] = useState<boolean>(false);
+  const [barriers3D, setBarriers3D] = useState<boolean>(false);
   const [simFocused, setSimFocused] = useState<boolean>(false);
   const [animationSpeed, setSpeed] = useState<number>(0.07);
 
   const [textures, setTextures] = useState<Record<Sticker, Texture>>({} as Record<Sticker, Texture>);
+  const [barrierTextures, setBarrierTextures] = useState<Record<Barrier, Texture>>({} as Record<Barrier, Texture>);
 
   const [robotUrl, setRobotUrl] = useState<string | null>(null);
 
@@ -49,6 +51,24 @@ export const SettingsProvider = ({ children }: PropsWithChildren) => {
     });
   };
 
+  const loadBarrierTextures = () => {
+    const loader = new TextureLoader();
+    const textureMap: Record<string, Texture> = {};
+    const entries = Object.entries(Barriers);
+    let loadedCount = 0;
+    const total = entries.length;
+
+    entries.forEach(([key, barrier]) => {
+      loader.load(barrier.image, (texture) => {
+        textureMap[key] = texture;
+        loadedCount++;
+        if (loadedCount === total) {
+          setBarrierTextures(textureMap);
+        }
+      });
+    });
+  }
+
   useEffect(() => {
     const raw = localStorage.getItem('robotUrl');
     if (!raw) setRobotUrl(null);
@@ -64,9 +84,11 @@ export const SettingsProvider = ({ children }: PropsWithChildren) => {
       selectedBarrier, setSelectedBarrier,
       selectedRotation, rotateBy90,
       camMode, setCamMode,
+      barriers3D, setBarriers3D,
       simFocused, setSimFocused,
       animationSpeed, setAnimationSpeed,
       textures, loadTextures,
+      barrierTextures, loadBarrierTextures,
       robotUrl, setRobotUrl,
     }}>
       {children}

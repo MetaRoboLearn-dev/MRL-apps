@@ -9,6 +9,8 @@ import {useState} from "react";
 import {BsGearFill} from "react-icons/bs";
 
 const Footer = () => {
+  const apiUrl = import.meta.env.VITE_API_URL;
+
   const { code } = useCode();
   const { queueMoves, moveQueue, isMoving, reset } = useVehicle();
   const { modalVisible } = useUI();
@@ -29,7 +31,7 @@ const Footer = () => {
 
   const runCode = async (code: string) => {
     setSimFocused(false);
-    const url = "http://127.0.0.1:8000/run-python";
+    const url = apiUrl + "/run-python";
     try {
       const response = await fetch(url, {
         method: "POST",

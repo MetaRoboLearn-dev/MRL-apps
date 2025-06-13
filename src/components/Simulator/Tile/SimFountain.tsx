@@ -1,8 +1,9 @@
-import {DoubleSide, TextureLoader} from "three";
+import {DoubleSide} from "three";
+import {useSettings} from "../../../hooks/useSettings.ts";
+import {Barrier} from "../../../types.ts";
 
 const SimFountain = () => {
-  const loader = new TextureLoader();
-  const texture = loader.load('textures/fountain.png');
+  const { barrierTextures } = useSettings();
 
   return (
     <group position={[0, -0.4, 0]}>
@@ -12,7 +13,7 @@ const SimFountain = () => {
       </mesh>
       <mesh position={[0, 0.555, 0]} rotation={[Math.PI / 2, 0, Math.PI]} scale={[0.7, 0.7, 0]}>
         <planeGeometry args={[1, 1]}/>
-        <meshBasicMaterial map={texture} transparent={true} side={DoubleSide}/>
+        <meshBasicMaterial map={barrierTextures[Barrier.FOUNTAIN]} transparent={true} side={DoubleSide}/>
       </mesh>
     </group>
   );

@@ -20,7 +20,6 @@ const SimHeader = () => {
         localStorage.setItem('sim1', JSON.stringify(data));
         setSelectedTab('sim1');
       }
-
       const keys = Object.keys(localStorage).filter((key) => key !== 'selectedID' && key !== 'robotUrl');
       setSimKeys(keys);
     };

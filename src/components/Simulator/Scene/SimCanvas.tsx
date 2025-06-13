@@ -8,10 +8,11 @@ import SimLights from "./SimLights.tsx";
 import SimControls from "./SimControls.tsx";
 
 const SimCanvas = () => {
-  const { loadTextures } = useSettings();
+  const { loadTextures, loadBarrierTextures } = useSettings();
 
   useEffect(() => {
     loadTextures();
+    loadBarrierTextures();
   }, []);
 
   return (

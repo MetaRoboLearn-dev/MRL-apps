@@ -1,7 +1,7 @@
 import Editor, { OnMount } from "@monaco-editor/react";
 import {useEffect, useRef} from "react";
 import * as monaco from "monaco-editor";
-import {useCode} from "../../hooks/useCode.ts"; // Import monaco types
+import {useCode} from "../../hooks/useCode.ts";
 
 const colours = {
   'background': '#fffbde',  // --color-sunglow-100
@@ -11,7 +11,7 @@ const colours = {
   'lineNumber.activeForeground': '#101414', // --color-dark-neutrals-700
 
   'keyword': '#b43a30', // --color-tomato-700
-  'comment': '#b49220', // --color-sunglow-700:
+  'comment': '#b49220', // --color-sunglow-700
   'string': '#008e91', // --color-turquoise-700
 }
 

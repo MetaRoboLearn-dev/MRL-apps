@@ -12,16 +12,56 @@ const CodeSnippets = ({active}: Props) => {
                       transition duration-400 ease-in-out
                       ${active ? 'translate-x-0' : 'translate-x-full'}`}>
 
-      <h1 className={'mb-5 w-full text-center font-display font-bold text-2xl tracking-wide text-dark-neutrals-400'}>Priručnik za Python!</h1>
+      <h1 className={'mb-5 w-full text-center font-display font-bold text-2xl tracking-wide text-dark-neutrals-400'}>Priručnik za korištenje!</h1>
 
-      <CodeSnippetEntry title={'For petlja'}>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla rhoncus, risus ut lacinia feugiat, ipsum ex blandit neque, et vestibulum est enim at quam. Phasellus vestibulum magna tempus, sagittis arcu a, iaculis lacus. Aliquam sed turpis risus. Integer vel neque non sem blandit varius eu sed erat. Aliquam erat volutpat. Suspendisse nec malesuada nunc. Nunc nulla justo, tristique ut lobortis eget, pharetra id orci. Morbi vitae orci varius enim dignissim luctus. Integer ultricies tortor a ipsum iaculis, ut dapibus sem suscipit. Sed hendrerit, mauris a lobortis fringilla, massa arcu rutrum velit, vitae ullamcorper nisi urna eu quam. Aenean viverra risus justo, mattis placerat dolor tincidunt eget. Pellentesque in venenatis nibh. Vivamus finibus vel enim et ultrices. Integer nulla justo, suscipit ac quam vitae, tristique eleifend tortor. Praesent volutpat semper ex, at aliquam ex ultrices id.
+      <CodeSnippetEntry title={'Uređivanje simulacije'}>
+        dummy
       </CodeSnippetEntry>
-      <CodeSnippetEntry title={'While petlja'}>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla rhoncus, risus ut lacinia feugiat, ipsum ex blandit neque, et vestibulum est enim at quam. Phasellus vestibulum magna tempus, sagittis arcu a, iaculis lacus. Aliquam sed turpis risus. Integer vel neque non sem blandit varius eu sed erat. Aliquam erat volutpat. Suspendisse nec malesuada nunc. Nunc nulla justo, tristique ut lobortis eget, pharetra id orci. Morbi vitae orci varius enim dignissim luctus. Integer ultricies tortor a ipsum iaculis, ut dapibus sem suscipit. Sed hendrerit, mauris a lobortis fringilla, massa arcu rutrum velit, vitae ullamcorper nisi urna eu quam. Aenean viverra risus justo, mattis placerat dolor tincidunt eget. Pellentesque in venenatis nibh. Vivamus finibus vel enim et ultrices. Integer nulla justo, suscipit ac quam vitae, tristique eleifend tortor. Praesent volutpat semper ex, at aliquam ex ultrices id.
+      <CodeSnippetEntry title={'Napredbe za kretanje'}>
+        <span className={'text-md'}> Kretanje automobila se postiže sljedećim naredbama: </span>
+        <table
+          cellPadding="8"
+          cellSpacing="0"
+          className="mx-auto table-auto mt-4 mb-8 border border-gray-300 rounded-md shadow-sm"
+        >
+          <thead>
+          <tr className="bg-gray-100">
+            <th className="px-4 py-2 text-left border-b">Poziv u kodu</th>
+            <th className="px-4 py-2 text-left border-b">Tip</th>
+            <th className="px-4 py-2 text-left border-b">Smjer</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr className="hover:bg-gray-50">
+            <td className="px-4 py-2 border-b font-mono">
+              <code>forward(duration, speed)</code>
+            </td>
+            <td className="px-4 py-2 border-b">Kretanje</td>
+            <td className="px-4 py-2 border-b">Naprijed</td>
+          </tr>
+          <tr className="hover:bg-gray-50">
+            <td className="px-4 py-2 border-b font-mono">
+              <code>back(duration, speed)</code>
+            </td>
+            <td className="px-4 py-2 border-b">Kretanje</td>
+            <td className="px-4 py-2 border-b">Nazad</td>
+          </tr>
+          </tbody>
+        </table>
+        <span className={'text-justify'}>Dok se u simulaciji parametri funkcija za pomicanje zanemaruju, oni imaju veliku ulogu u kretanju robota. Prvi parametar funkcije određuje trajanje kretanja u sekundama, dok drugi definira brzinu.</span>
       </CodeSnippetEntry>
-      <CodeSnippetEntry title={'Do while petlja'}>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla rhoncus, risus ut lacinia feugiat, ipsum ex blandit neque, et vestibulum est enim at quam. Phasellus vestibulum magna tempus, sagittis arcu a, iaculis lacus. Aliquam sed turpis risus. Integer vel neque non sem blandit varius eu sed erat. Aliquam erat volutpat. Suspendisse nec malesuada nunc. Nunc nulla justo, tristique ut lobortis eget, pharetra id orci. Morbi vitae orci varius enim dignissim luctus. Integer ultricies tortor a ipsum iaculis, ut dapibus sem suscipit. Sed hendrerit, mauris a lobortis fringilla, massa arcu rutrum velit, vitae ullamcorper nisi urna eu quam. Aenean viverra risus justo, mattis placerat dolor tincidunt eget. Pellentesque in venenatis nibh. Vivamus finibus vel enim et ultrices. Integer nulla justo, suscipit ac quam vitae, tristique eleifend tortor. Praesent volutpat semper ex, at aliquam ex ultrices id.       </CodeSnippetEntry>
+      <CodeSnippetEntry title={'Naredbe za rotiranje'}>
+        dummy
+      </CodeSnippetEntry>
+      <CodeSnippetEntry title={'Matematičke funkcije'}>
+        dummy
+      </CodeSnippetEntry>
+      <CodeSnippetEntry title={'Varijable u jeziku Python'}>
+        dummy
+      </CodeSnippetEntry>
+      <CodeSnippetEntry title={'Petlje u jeziku Python'}>
+        dummy
+      </CodeSnippetEntry>
     </div>
   );
 };

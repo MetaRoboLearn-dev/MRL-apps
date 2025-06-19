@@ -16,7 +16,6 @@ const SimControls = () => {
   useEffect(() => {
     const offsetX = Math.floor(sizeX / 2);
     const offsetZ = 2;
-
     const positions: THREE.Vector3[] = [];
 
     for (let x = 0; x < sizeX; x++) {
@@ -27,7 +26,6 @@ const SimControls = () => {
     }
 
     const box = new THREE.Box3().setFromPoints(positions);
-
     const min = box.min.clone();
     const max = box.max.clone();
 
@@ -69,7 +67,7 @@ const SimControls = () => {
   useEffect(() => {
     const box = new THREE.Box3(minPan.clone(), maxPan.clone());
     const helper = new THREE.Box3Helper(box, 0xffff00);
-    // scene.add(helper);
+    //scene.add(helper);
 
     return () => {
       scene.remove(helper);

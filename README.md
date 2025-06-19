@@ -4,7 +4,9 @@ _Code_  is a project developed and documented as part of an undergraduate thesis
 ## ℹ️ Overview
 The whole idea behind the application is to provide a fun and visually attractive way for primary and middle school children to develop their programming thinking and learn basic program flow. This is achieved by allowing them to write their code directly within the interface and run it either in a customizable 3D simulation of a car guiding it through a forest to reach its home, or on a real life robot vehicle that receives commands wirelessly.
 
-![screen1](https://github.com/user-attachments/assets/028b5605-954d-4c37-900e-9e2a0be13141)
+### Watch a demo!
+[![Watch the video](https://github.com/user-attachments/assets/028b5605-954d-4c37-900e-9e2a0be13141)](https://www.youtube.com/watch?v=wuDQilbsIxQ)
+_Clicking on the image will redirect you to YouTube._
 
 ## 🚀 Technology
 _Code_ is a responsive web application created using the following:

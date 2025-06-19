@@ -10,7 +10,6 @@ const CamScreen = () => {
     if (!robotUrl) return;
 
     const socket = io(robotUrl);
-
     socket.on("camera_frame", (data: { image: string }) => {
       setImageSrc(`data:image/jpeg;base64,${data.image}`);
     });

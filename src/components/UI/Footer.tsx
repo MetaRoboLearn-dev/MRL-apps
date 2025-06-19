@@ -95,7 +95,6 @@ const Footer = () => {
       .filter(step => step.trim() !== '')
       .map(step => {
         const command = step.trim().toLowerCase();
-
         if (command === 'naprijed') {
           return { type: 'move', direction: 'forward' }
         }

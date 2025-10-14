@@ -1,6 +1,7 @@
-import {RefObject, ReactNode} from "react";
+import {RefObject, ReactNode, useRef} from "react";
 import * as THREE from 'three';
 import {Texture} from "three";
+import * as Blockly from "blockly";
 
 // common use for 3d and movement
 export interface Position {
@@ -211,4 +212,10 @@ export interface UIContextType {
   setModalBody: (body: ReactNode) => void;
   modalFooter: ReactNode;
   setModalFooter: (footer: ReactNode) => void;
+}
+
+export interface BlockContextType {
+  workplaceInstance: RefObject<Blockly.WorkspaceSvg | null>;
+  code: string;
+  setCode: (code: string) => void;
 }

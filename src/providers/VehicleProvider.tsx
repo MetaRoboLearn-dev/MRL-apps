@@ -1,25 +1,34 @@
-import {PropsWithChildren, useEffect, useRef, useState} from "react";
+import {PropsWithChildren, useEffect, useMemo, useRef, useState} from "react";
 import {MoveCommand, Position, Rotation} from "../types.ts";
 import {VehicleContext} from "./Context.tsx";
 import {useGrid} from "../hooks/useGrid.ts";
 import * as THREE from "three";
 
-export const VehicleProvider = ({ children }: PropsWithChildren) => {
-  const { start, sizeX, sizeZ } = useGrid();
-
-  const calcStartPosition = (start: number | null, sizeX: number, sizeZ: number): Position => {
-    if (start === null) {
-      return { x: 0, y: -2, z: 0 };
-    }
-    return {
-      x: -Math.trunc(start / sizeZ) + Math.trunc(sizeX / 2),
-      y: 0.1,
-      z: -(start % sizeZ) + 2,
-    };
+const calcStartPosition = (start: number | null, sizeX: number, sizeZ: number): Position => {
+  if (start === null) {
+    return { x: 0, y: -2, z: 0 };
+  }
+  return {
+    x: -Math.trunc(start / sizeZ) + Math.trunc(sizeX / 2),
+    y: 0.1,
+    z: -(start % sizeZ) + 2,
   };
+};
 
-  const startPosition = calcStartPosition(start, sizeX, sizeZ)
-  const startRotation = { x: 0, y: -Math.PI / 2, z: 0 };
+const degToRad = (deg: number) => deg * Math.PI / 180;
+
+export const VehicleProvider = ({ children }: PropsWithChildren) => {
+  const { start, sizeX, sizeZ, startRotationOffset } = useGrid();
+
+  const startPosition = useMemo(
+    () => calcStartPosition(start, sizeX, sizeZ),
+    [start, sizeX, sizeZ]
+  );
+
+  const startRotation = useMemo<Rotation>(
+    () => ({ x: 0, y: -Math.PI / 2 + degToRad(startRotationOffset), z: 0 }),
+    [startRotationOffset]
+  );
 
   const [position, setPosition] = useState<Position>(startPosition);
   const [rotation, setRotation] = useState<Rotation>(startRotation);
@@ -30,8 +39,9 @@ export const VehicleProvider = ({ children }: PropsWithChildren) => {
   const vehicleRef = useRef<THREE.Object3D | null>(null);
 
   useEffect(() => {
-    setPosition(calcStartPosition(start, sizeX, sizeZ));
-  }, [sizeX, sizeZ, start])
+    setPosition(startPosition);
+    setRotation(startRotation);
+  }, [startPosition, startRotation]);
 
   const queueMoves = (moves: MoveCommand[]) => {
     if (start === null) return;

@@ -21,8 +21,9 @@ interface Props{
 const SimInterface = ({isHovered}: Props) => {
   const { simFocused, setSimFocused,
     selectedType, setSelectedType,
-    animationSpeed, rotateBy90 } = useSettings();
-  const { start, sizeX, sizeZ } = useGrid();
+    animationSpeed, rotateBy90,
+    selectedRotation} = useSettings();
+  const { start, sizeX, sizeZ, startRotationOffset } = useGrid();
   const { modalVisible } = useUI();
   const { position, rotation, isMoving, moveQueue } = useVehicle();
   const { isValidWorkspace } = useBlock();
@@ -33,7 +34,7 @@ const SimInterface = ({isHovered}: Props) => {
   const [showSideMenu, setShowSideMenu] = useState(false);
 
   const tileValues = Object.values(TileType);
-  const dev = true;
+  const dev = false;
 
   const selectNextType = () => {
     const nextIndex = (tileIndex + 1) % tileValues.length;
@@ -78,10 +79,12 @@ const SimInterface = ({isHovered}: Props) => {
       <div className={`${dev ? '' : 'hidden'} absolute w-full h-full text-white-smoke-50 text-lg text-left p-5 pointer-events-none`}>
         <h1>pos [x: {position.x}, y: {position.y}, z: {position.z}]</h1>
         <h1>rot [x: {rotation.x}, y: {rotation.y}, z: {rotation.z}]</h1>
+        <h1>selectedRotation: [{selectedRotation}]</h1>
         <h1>moveQueue: [{moveQueue.length}]</h1>
         <h1>isMoving: [{isMoving.toString()}]</h1>
         <h1>animationSpeed: [{animationSpeed}]</h1>
         <h1>start: [{start}]</h1>
+        <h1>startRotationOffset: [{startRotationOffset}]</h1>
         <h1>sizeX: [{sizeX}], sizeZ: [{sizeZ}]</h1>
         <h1>code: {code}</h1>
         <h1>validWorkspace: {isValidWorkspace.toString()}</h1>

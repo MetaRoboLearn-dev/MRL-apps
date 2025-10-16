@@ -192,6 +192,8 @@ export interface GridContextType {
   setSizeZ: (sizeZ: number) => void;
   start: number | null;
   setStart: (start: number | null) => void;
+  startRotationOffset: number;
+  setStartRotationOffset: (startRotation: number) => void;
   finish: number | null;
   setFinish: (finish: number | null) => void;
   barriers: Map<number, Barrier>;

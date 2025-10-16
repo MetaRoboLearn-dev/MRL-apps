@@ -9,6 +9,7 @@ const GridProvider = ({ children }: PropsWithChildren) => {
   const [sizeZ, setSizeZ] = useState<number>(0);
 
   const [start, setStart] = useState<number | null>(null);
+  const [startRotationOffset, setStartRotationOffset] = useState<number>(0);
   const [finish, setFinish] = useState<number | null>(null);
 
   // const [barriers, setBarriers] = useState<number[]>([]);
@@ -88,6 +89,7 @@ const GridProvider = ({ children }: PropsWithChildren) => {
       sizeX, setSizeX,
       sizeZ, setSizeZ,
       start, setStart,
+      startRotationOffset, setStartRotationOffset,
       finish, setFinish,
       barriers, setBarriers,
       stickers, setStickers

@@ -5,6 +5,7 @@ import {useSettings} from "../../../hooks/useSettings.ts";
 import SimBarrier from "./SimBarrier.tsx";
 import {useGrid} from "../../../hooks/useGrid.ts";
 import SimSticker from "./SimSticker.tsx";
+import SimVehicleOutline from "./SimVehicleOutline.tsx";
 
 interface Props {
   index: number;
@@ -14,6 +15,7 @@ interface Props {
 const SimTile = ({index, position}: Props) => {
   const { simFocused, selectedType, selectedSticker, selectedBarrier, selectedRotation } = useSettings();
   const { start, setStart,
+          setStartRotationOffset,
           finish, setFinish,
           barriers, setBarriers,
           stickers, setStickers } = useGrid();
@@ -63,6 +65,7 @@ const SimTile = ({index, position}: Props) => {
     switch (selectedType) {
       case TileType.START:
         setStart(index);
+        setStartRotationOffset(selectedRotation);
         break;
       case TileType.FINISH:
         setFinish(index);
@@ -115,6 +118,10 @@ const SimTile = ({index, position}: Props) => {
           sticker: selectedSticker,
           rotation: selectedRotation,
         }} />
+      ) : null}
+
+      {simFocused && isHovered && selectedType === TileType.START ? (
+        <SimVehicleOutline />
       ) : null}
     </group>
   )

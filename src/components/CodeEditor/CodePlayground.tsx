@@ -65,7 +65,7 @@ const CodePlayground = () => {
       defaultLanguage="python"
       theme="dark"
       value={code}
-      onChange={(value) => setCode(value || "")}
+      onChange={(value) => setCode(value || code)}
       options={{
         fontSize: 20,
         lineNumbers: "on",

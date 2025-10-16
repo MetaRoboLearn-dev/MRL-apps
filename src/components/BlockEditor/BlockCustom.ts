@@ -1,6 +1,24 @@
-import * as Blockly from "blockly/core";
-
 // motion blocks
+const start = {
+  type: "motion_start",
+  message0: "start",
+  args0: [],
+  nextStatement: "motion",
+  colour: "#5CB85C",
+  tooltip: "",
+  helpUrl: "",
+};
+
+const stop = {
+  type: "motion_stop",
+  message0: "stop",
+  args0: [],
+  previousStatement: "motion",
+  colour: "#D9534F",
+  tooltip: "",
+  helpUrl: "",
+};
+
 const goForward = {
   type: "motion_forward",
   message0: "go forward, duration: %1, speed: %2",
@@ -9,7 +27,7 @@ const goForward = {
       type: "field_number",
       name: "DURATION",
       value: 1,
-      min: 1,
+      min: 0.1,
     },
     {
       type: "field_number",
@@ -33,7 +51,7 @@ const goBackwards = {
       type: "field_number",
       name: "DURATION",
       value: 1,
-      min: 1,
+      min: 0.1,
     },
     {
       type: "field_number",
@@ -59,7 +77,7 @@ const turnLeft = {
       type: "field_number",
       name: "DURATION",
       value: 1,
-      min: 1,
+      min: 0.1,
     },
     {
       type: "field_number",
@@ -83,7 +101,7 @@ const turnRight = {
       type: "field_number",
       name: "DURATION",
       value: 1,
-      min: 1,
+      min: 0.1,
     },
     {
       type: "field_number",
@@ -98,6 +116,8 @@ const turnRight = {
 };
 
 export default [
+  start,
+  stop,
   goForward,
   goBackwards,
   turnLeft,

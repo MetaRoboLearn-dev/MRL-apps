@@ -2,6 +2,16 @@ import {pythonGenerator} from "blockly/python";
 import * as Blockly from "blockly";
 
 //// motion blocks
+// start
+pythonGenerator.forBlock["motion_start"] = function (): string {
+  return ``;
+};
+
+// stop
+pythonGenerator.forBlock["motion_stop"] = function (): string {
+  return ``;
+};
+
 // turn left
 pythonGenerator.forBlock["motion_turn_left"] = function (block: Blockly.Block): string {
   const number_speed: string = block.getFieldValue("SPEED");

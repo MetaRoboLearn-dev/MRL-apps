@@ -8,6 +8,14 @@ const toolbox = {
       contents: [
         {
           kind: "block",
+          type: "motion_start",
+        },
+        {
+          kind: "block",
+          type: "motion_stop",
+        },
+        {
+          kind: "block",
           type: "motion_forward",
         },
         {

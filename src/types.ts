@@ -1,4 +1,4 @@
-import {RefObject, ReactNode, useRef} from "react";
+import {RefObject, ReactNode} from "react";
 import * as THREE from 'three';
 import {Texture} from "three";
 import * as Blockly from "blockly";
@@ -164,6 +164,8 @@ export interface SettingsContextType {
   loadBarrierTextures: () => void;
   robotUrl: string | null;
   setRobotUrl: (robotUrl: string | null) => void;
+  isBlockEditor: boolean;
+  setIsBlockEditor: (isBlockEditor: boolean) => void;
 }
 
 export interface VehicleContextType {
@@ -215,7 +217,10 @@ export interface UIContextType {
 }
 
 export interface BlockContextType {
-  workplaceInstance: RefObject<Blockly.WorkspaceSvg | null>;
+  workspaceInstance: RefObject<Blockly.WorkspaceSvg | null>;
   code: string;
   setCode: (code: string) => void;
+  checkValidWorkspace: () => boolean;
+  isValidWorkspace: boolean;
+  setIsValidWorkspace: (isValidWorkspace: boolean) => void;
 }

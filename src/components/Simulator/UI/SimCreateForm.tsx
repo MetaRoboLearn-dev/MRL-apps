@@ -9,6 +9,7 @@ const SimCreateForm = () => {
   const [id, setId] = useState<string>('');
   const [x, setX] = useState<string>('');
   const [z, setZ] = useState<string>('');
+  const [mode, setMode] = useState<string>('python');
 
   const clear= () =>{
     setId('');
@@ -20,13 +21,16 @@ const SimCreateForm = () => {
     if(localStorage.getItem(id)) return
 
     localStorage.setItem(id, JSON.stringify({
+      "mode": mode,
       "sizeX": x,
       "sizeZ": z,
       "start": null,
+      "startRotationOffset": 0,
       "finish": null,
       "barriers": [],
       "stickers": [],
-      "code": ""
+      "code": "",
+      "blocks": ""
     }));
 
     setSelectedTab(id);
@@ -60,6 +64,56 @@ const SimCreateForm = () => {
                  className={'w-full bg-sunglow-600 p-2 rounded'}/>
         </div>
       </div>
+      <div className="flex justify-between w-full mt-3">
+        <div className="flex flex-col w-full">
+          <label className="mr-5 text-lg">Način</label>
+          <div className="flex w-full">
+            <label className="flex-1">
+              <input
+                type="radio"
+                name="mode"
+                value="python"
+                checked={mode === 'python'}
+                onChange={(e) => setMode(e.target.value)}
+                className="hidden"
+              />
+              <span
+                className={`block text-center py-1.5 transition cursor-pointer 
+          ${
+                  mode === 'python'
+                    ? 'bg-sunglow-600 text-black font-semibold'
+                    : 'bg-sunglow-600/50 hover:bg-sunglow-600/70'
+                } 
+          rounded-l-xl border border-sunglow-600 transition`}
+              >
+          Python
+        </span>
+            </label>
+            <label className="flex-1">
+              <input
+                type="radio"
+                name="mode"
+                value="blockly"
+                checked={mode === 'blockly'}
+                onChange={(e) => setMode(e.target.value)}
+                className="hidden"
+              />
+              <span
+                className={`block text-center py-1.5 transition cursor-pointer 
+          ${
+                  mode === 'blockly'
+                    ? 'bg-sunglow-600 text-black font-semibold'
+                    : 'bg-sunglow-600/50 hover:bg-sunglow-600/70'
+                } 
+          rounded-r-xl border border-sunglow-600 border-l-0`}
+              >
+          Blockly
+        </span>
+            </label>
+          </div>
+        </div>
+      </div>
+
       <div className={'text-lg pt-8 text-right'}>
         <span
           className={'bg-sunglow-600/70 px-4 py-2 rounded font-semibold transition hover:cursor-pointer hover:bg-sunglow-600 mr-3'}
@@ -67,13 +121,15 @@ const SimCreateForm = () => {
             setModalVisible(false);
             create();
             clear();
-          }}>Stvori</span>
+          }}>Stvori
+        </span>
         <span
           className={'bg-sunglow-600/70 px-4 py-2 rounded font-semibold transition hover:cursor-pointer hover:bg-sunglow-600'}
           onClick={() => {
             setModalVisible(false);
             clear();
-          }}>Odustani</span>
+          }}>Odustani
+        </span>
       </div>
     </>
   );

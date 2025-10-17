@@ -28,8 +28,9 @@ const CodeHeader = ({active, setActive}: Props) => {
           Uređivač koda
         </div>
 
-        <label className="flex items-center space-x-2">
+        <label className="flex items-center space-x-2 hidden">
           <input
+            disabled
             type="checkbox"
             checked={isBlockEditor}
             onChange={handleCheckboxChange}

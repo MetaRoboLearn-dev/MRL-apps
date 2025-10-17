@@ -220,8 +220,8 @@ export interface UIContextType {
 
 export interface BlockContextType {
   workspaceInstance: RefObject<Blockly.WorkspaceSvg | null>;
-  code: string;
-  setCode: (code: string) => void;
+  blocks: string;
+  setBlocks: (code: string) => void;
   checkValidWorkspace: () => boolean;
   isValidWorkspace: boolean;
   setIsValidWorkspace: (isValidWorkspace: boolean) => void;

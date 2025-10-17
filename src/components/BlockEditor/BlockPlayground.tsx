@@ -19,7 +19,7 @@ Blockly.common.defineBlocksWithJsonArray(BlockCustom);
 
 const BlockPlayground = () => {
   const workspaceRef = useRef<HTMLDivElement>(null);
-  const { workspaceInstance, checkValidWorkspace, setIsValidWorkspace } = useBlock();
+  const { workspaceInstance, checkValidWorkspace, setIsValidWorkspace, setBlocks } = useBlock();
   const { setCode } = useCode();
 
   useEffect(() => {
@@ -39,13 +39,27 @@ const BlockPlayground = () => {
     });
 
     let timeout: ReturnType<typeof setTimeout>;
-    const onWorkspaceChange = () => {
+    const onWorkspaceChange = (event: Blockly.Events.Abstract) => {
+      if (
+        event.type === 'ui' ||
+        event.type === 'viewport_change' ||
+        event.type === 'bubble_open' ||
+        event.type === 'bubble_move'
+      ) {
+        return;
+      }
+
       clearTimeout(timeout);
       timeout = setTimeout(() => {
         const code = pythonGenerator.workspaceToCode(workspaceInstance.current!);
+        const workspace = Blockly.getMainWorkspace();
+        const xml = Blockly.Xml.workspaceToDom(workspace);
+        const xmlText = Blockly.Xml.domToText(xml);
+
         setCode(code);
+        setBlocks(xmlText);
         setIsValidWorkspace(checkValidWorkspace());
-      }, 200);
+      }, 300);
     };
 
     workspaceInstance.current.addChangeListener(onWorkspaceChange);

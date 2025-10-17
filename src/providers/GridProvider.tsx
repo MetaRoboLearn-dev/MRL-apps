@@ -30,6 +30,7 @@ const GridProvider = ({ children }: PropsWithChildren) => {
     const data = JSON.parse(raw);
     setSizeX(data.sizeX);
     setSizeZ(data.sizeZ);
+    setStartRotationOffset(data.startRotationOffset);
     setBarriers(
       new Map(
         (data.barriers || []).map(
@@ -70,6 +71,7 @@ const GridProvider = ({ children }: PropsWithChildren) => {
     const updated = {
       ...parsed,
       start,
+      startRotationOffset,
       finish,
       barriers: [...barriers.entries()].map(([index, barrier]) => [
        index, Barriers[barrier].key
@@ -82,7 +84,7 @@ const GridProvider = ({ children }: PropsWithChildren) => {
     };
 
     localStorage.setItem(selectedTab, JSON.stringify(updated));
-  }, [start, finish, barriers, stickers, selectedTab, loaded]);
+  }, [start, finish, barriers, stickers, selectedTab, loaded, startRotationOffset]);
 
   return (
     <GridContext.Provider value={{

@@ -26,7 +26,7 @@ const SimInterface = ({isHovered}: Props) => {
   const { start, sizeX, sizeZ, startRotationOffset } = useGrid();
   const { modalVisible } = useUI();
   const { position, rotation, isMoving, moveQueue } = useVehicle();
-  const { isValidWorkspace } = useBlock();
+  const { isValidWorkspace, blocks } = useBlock();
   const { code } = useCode();
 
   const [tileIndex, setTileIndex] = useState(0);
@@ -34,7 +34,7 @@ const SimInterface = ({isHovered}: Props) => {
   const [showSideMenu, setShowSideMenu] = useState(false);
 
   const tileValues = Object.values(TileType);
-  const dev = false;
+  const dev = true;
 
   const selectNextType = () => {
     const nextIndex = (tileIndex + 1) % tileValues.length;
@@ -87,6 +87,7 @@ const SimInterface = ({isHovered}: Props) => {
         <h1>startRotationOffset: [{startRotationOffset}]</h1>
         <h1>sizeX: [{sizeX}], sizeZ: [{sizeZ}]</h1>
         <h1>code: {code}</h1>
+        <h1>blocks: {blocks}</h1>
         <h1>validWorkspace: {isValidWorkspace.toString()}</h1>
       </div>
 

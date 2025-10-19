@@ -2,9 +2,10 @@ import Editor, { OnMount } from "@monaco-editor/react";
 import {useEffect, useRef} from "react";
 import * as monaco from "monaco-editor";
 import {useCode} from "../../hooks/useCode.ts";
+import {useSettings} from "../../hooks/useSettings.ts";
 
 const colours = {
-  'background': '#fffbde',  // --color-sunglow-100
+  'background': '#fffbde',
   'foreground': '#676767',  // --color-white-smoke-900
   'lineHighlightBackground': '#ffeb9e', // --color-sunglow-200
   'lineNumber.foreground': '#454949', // --color-dark-neutrals-400
@@ -18,6 +19,7 @@ const colours = {
 const CodePlayground = () => {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const { code, setCode } = useCode();
+  const { selectedTab } = useSettings();
 
   const handleEditorDidMount: OnMount = (editor, monaco) => {
     editorRef.current = editor;
@@ -64,8 +66,11 @@ const CodePlayground = () => {
       height="100%"
       defaultLanguage="python"
       theme="dark"
-      value={code}
-      onChange={(value) => setCode(value || code)}
+      value={code ?? ''}
+      onChange={(value) => setCode(value ?? '')}
+      // Important: avoid reusing previous model across tabs/mode switches
+      keepCurrentModel={false}
+      path={`python/${selectedTab}`}  // isolates models per tab
       options={{
         fontSize: 20,
         lineNumbers: "on",

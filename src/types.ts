@@ -225,4 +225,6 @@ export interface BlockContextType {
   checkValidWorkspace: () => boolean;
   isValidWorkspace: boolean;
   setIsValidWorkspace: (isValidWorkspace: boolean) => void;
+  loaded: boolean;
+  setLoaded: (loaded: boolean) => void;
 }

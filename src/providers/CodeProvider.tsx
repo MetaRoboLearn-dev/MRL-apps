@@ -8,6 +8,8 @@ export const CodeProvider = ({ children }: PropsWithChildren) => {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
+    setLoaded(false);
+
     const raw = localStorage.getItem(selectedTab || '');
     if (!raw) {
       setCode('');
@@ -16,7 +18,7 @@ export const CodeProvider = ({ children }: PropsWithChildren) => {
 
     const data = JSON.parse(raw);
 
-    setCode(data.code);
+    setCode(data.code || '');
     setLoaded(true)
   }, [selectedTab]);
 
@@ -27,6 +29,7 @@ export const CodeProvider = ({ children }: PropsWithChildren) => {
       const current = localStorage.getItem(selectedTab);
       const parsed = current ? JSON.parse(current) : {};
 
+      // Only update code, don't clear blocks
       const updated = {
         ...parsed,
         code,
@@ -40,7 +43,7 @@ export const CodeProvider = ({ children }: PropsWithChildren) => {
 
   return (
     <CodeContext.Provider value={{
-      code, setCode
+      code, setCode,
     }}>
       {children}
     </CodeContext.Provider>

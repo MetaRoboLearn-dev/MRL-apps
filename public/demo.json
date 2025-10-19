@@ -24,6 +24,6 @@
     {"index":17,"sticker":"RESTAURANT","rotation": 270.0},
     {"index":12,"sticker":"HOUSE_YELLOW","rotation": 0.0}
   ],
-  "code":"turn_left(1.0, 60.0)\nbroj_koraka = 1 + 1\nfor korak in range(broj_koraka):\n    forward(1.0, 30.0)\nturn_right(1.0, 60.0)\nbroj_koraka = 1 + 2\nfor korak in range(broj_koraka):\n    forward(1.0, 30.0)\nturn_right(1.0, 60.0)\nbroj_koraka = 2 * 2\nfor korak in range(broj_koraka):\n    forward(1.0, 30.0)\nturn_left(1.0, 60.0)\nbroj_koraka = 2\nfor korak in range(broj_koraka):\n    forward(1.0, 30.0)\nturn_left(1.0, 60.0)\nbroj_koraka = 2\nfor korak in range(broj_koraka):\n    forward(1.0, 30.0)",
+  "code":"broj_koraka = 1 + 1\nfor korak in range(broj_koraka):\n    forward(1.0, 30.0)\nturn_right(1.0, 60.0)\nbroj_koraka = 1 + 2\nfor korak in range(broj_koraka):\n    forward(1.0, 30.0)\nturn_right(1.0, 60.0)\nbroj_koraka = 2 * 2\nfor korak in range(broj_koraka):\n    forward(1.0, 30.0)\nturn_left(1.0, 60.0)\nbroj_koraka = 2\nfor korak in range(broj_koraka):\n    forward(1.0, 30.0)\nturn_left(1.0, 60.0)\nbroj_koraka = 2\nfor korak in range(broj_koraka):\n    forward(1.0, 30.0)",
   "blocks": ""
 }

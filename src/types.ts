@@ -1,7 +1,6 @@
 import {RefObject, ReactNode} from "react";
 import * as THREE from 'three';
 import {Texture} from "three";
-import * as Blockly from "blockly";
 
 // common use for 3d and movement
 export interface Position {
@@ -205,6 +204,8 @@ export interface GridContextType {
 export interface CodeContextType {
   code: string;
   setCode: (code: string) => void;
+  blocks: string;
+  setBlocks: (code: string) => void;
 }
 
 export interface UIContextType {
@@ -216,15 +217,4 @@ export interface UIContextType {
   setModalBody: (body: ReactNode) => void;
   modalFooter: ReactNode;
   setModalFooter: (footer: ReactNode) => void;
-}
-
-export interface BlockContextType {
-  workspaceInstance: RefObject<Blockly.WorkspaceSvg | null>;
-  blocks: string;
-  setBlocks: (code: string) => void;
-  checkValidWorkspace: () => boolean;
-  isValidWorkspace: boolean;
-  setIsValidWorkspace: (isValidWorkspace: boolean) => void;
-  loaded: boolean;
-  setLoaded: (loaded: boolean) => void;
 }

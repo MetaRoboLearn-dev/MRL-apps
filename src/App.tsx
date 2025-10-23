@@ -6,7 +6,6 @@ import GridProvider from "./providers/GridProvider.tsx";
 import UIProvider from "./providers/UIProvider.tsx";
 import {useGLTF} from "@react-three/drei";
 import {TextureLoader} from "three";
-import {BlockProvider} from "./providers/BlockProvider.tsx";
 
 function App() {
   const loader = new TextureLoader();
@@ -20,13 +19,11 @@ function App() {
     <UIProvider>
       <SettingsProvider>
         <CodeProvider>
-          <BlockProvider>
-            <GridProvider>
-              <VehicleProvider>
-                <MainPage />
-              </VehicleProvider>
-            </GridProvider>
-          </BlockProvider>
+          <GridProvider>
+            <VehicleProvider>
+              <MainPage />
+            </VehicleProvider>
+          </GridProvider>
         </CodeProvider>
       </SettingsProvider>
     </UIProvider>

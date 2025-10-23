@@ -10,7 +10,6 @@ import {
 } from "@blockly/continuous-toolbox";
 import BlockCustom from "./BlockCustom.ts";
 import { pythonGenerator } from "blockly/python";
-import { useBlock } from "../../hooks/useBlock.ts";
 import "./BlockCustomGenerator.ts";
 import {useCode} from "../../hooks/useCode.ts";
 
@@ -19,9 +18,9 @@ Blockly.common.defineBlocksWithJsonArray(BlockCustom);
 
 const BlockPlayground = ({mode}: {mode: string}) => {
   const workspaceRef = useRef<HTMLDivElement>(null);
-  const currentModeRef = useRef<string>(mode); // Track current mode with ref
-  const { workspaceInstance, checkValidWorkspace, setIsValidWorkspace, setBlocks } = useBlock();
-  const { setCode } = useCode();
+  const currentModeRef = useRef<string>(mode);
+  const workspaceInstance = useRef<Blockly.WorkspaceSvg | null>(null);
+  const { setCode, setBlocks } = useCode();
 
   useEffect(() => {
     currentModeRef.current = mode;
@@ -64,7 +63,7 @@ const BlockPlayground = ({mode}: {mode: string}) => {
 
           setCode(code);
           setBlocks(xmlText);
-          setIsValidWorkspace(checkValidWorkspace());
+          // setIsValidWorkspace(checkValidWorkspace());
         }, 300);
       }
     };
@@ -78,7 +77,7 @@ const BlockPlayground = ({mode}: {mode: string}) => {
     };
   }, []);
 
-  return <div ref={workspaceRef} className="w-full h-full bg-white" />;
+  return <div ref={workspaceRef} className="w-full h-full min-h-1/2 bg-white" />;
 };
 
 export default BlockPlayground;

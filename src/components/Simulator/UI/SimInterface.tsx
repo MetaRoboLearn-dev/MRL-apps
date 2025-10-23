@@ -10,9 +10,7 @@ import {TbCircleDashedLetterA, TbCircleDashedLetterD} from "react-icons/tb";
 import SimTileDropdown from "./SimTileDropdown.tsx";
 import SimSpeedSlider from "./SimSpeedSlider.tsx";
 import SimSideMenu from "./SimSideMenu.tsx";
-// import {useBlock} from "../../../hooks/useBlock.ts";
 import {useCode} from "../../../hooks/useCode.ts";
-import {useBlock} from "../../../hooks/useBlock.ts";
 
 interface Props{
   isHovered: boolean,
@@ -26,15 +24,14 @@ const SimInterface = ({isHovered}: Props) => {
   const { start, sizeX, sizeZ, startRotationOffset } = useGrid();
   const { modalVisible } = useUI();
   const { position, rotation, isMoving, moveQueue } = useVehicle();
-  const { isValidWorkspace, blocks } = useBlock();
-  const { code } = useCode();
+  const { code, blocks} = useCode();
 
   const [tileIndex, setTileIndex] = useState(0);
   const [showTileDropdown, setShowTileDropdown] = useState(false);
   const [showSideMenu, setShowSideMenu] = useState(false);
 
   const tileValues = Object.values(TileType);
-  const dev = false;
+  const dev = true;
 
   const selectNextType = () => {
     const nextIndex = (tileIndex + 1) % tileValues.length;
@@ -88,7 +85,7 @@ const SimInterface = ({isHovered}: Props) => {
         <h1>sizeX: [{sizeX}], sizeZ: [{sizeZ}]</h1>
         <h1>code: {code}</h1>
         <h1>blocks: {blocks}</h1>
-        <h1>validWorkspace: {isValidWorkspace.toString()}</h1>
+        {/*<h1>validWorkspace: {isValidWorkspace.toString()}</h1>*/}
       </div>
 
       <div className={`absolute bottom-5 text-lg text-center font-semibold text-dark-neutrals-500 bg-white/80 px-4 py-2 rounded shadow transition-opacity duration-200 select-none

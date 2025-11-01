@@ -43,7 +43,7 @@ const BlockPlayground = ({mode}: {mode: string}) => {
       },
       toolbox,
       theme: customTheme,
-      maxInstances: { 'motion_start': 1 },
+      maxInstances: { 'robot_start': 1 },
     });
 
     // Force a refresh of the toolbox

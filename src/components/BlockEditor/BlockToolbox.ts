@@ -3,15 +3,27 @@ const toolbox = {
   contents: [
     {
       kind: "category",
-      name: "Motion",
-      categorystyle: "motion_category",
+      name: "AI",
+      categorystyle: "ai_category",
       contents: [
-        { kind: "block", type: "motion_start" },
-        { kind: "block", type: "motion_stop" },
-        { kind: "block", type: "motion_forward" },
-        { kind: "block", type: "motion_backwards" },
-        { kind: "block", type: "motion_turn_left" },
-        { kind: "block", type: "motion_turn_right" },
+        { kind: "block", type: "get_detected_objects" },
+        { kind: "block", type: "get_detected_objects_conf" },
+      ]
+    },
+    {
+      kind: "category",
+      name: "Robot",
+      categorystyle: "robot_category",
+      contents: [
+        { kind: "block", type: "robot_start" },
+        { kind: "block", type: "robot_stop" },
+        { kind: "block", type: "robot_forward" },
+        { kind: "block", type: "robot_backwards" },
+        { kind: "block", type: "robot_turn_left" },
+        { kind: "block", type: "robot_turn_right" },
+        { kind: "block", type: "robot_sleep" },
+        { kind: "block", type: "robot_display_char" },
+        { kind: "block", type: "robot_display_clear" },
       ],
     },
     {

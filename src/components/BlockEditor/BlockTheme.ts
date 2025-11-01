@@ -1,7 +1,16 @@
 import * as Blockly from "blockly/core";
 
-const getColor = (color: string) =>
-  getComputedStyle(document.documentElement).getPropertyValue(color).trim();
+const parseColor = (color: string): string => {
+  const ctx = document.createElement("canvas").getContext("2d");
+  if (!ctx) return color;
+  ctx.fillStyle = color;
+  return ctx.fillStyle;
+};
+
+const getColor = (color: string) => {
+  const value = getComputedStyle(document.documentElement).getPropertyValue(color).trim();
+  return parseColor(value);
+};
 
 const createCustomTheme = () => {
   return Blockly.Theme.defineTheme("customTheme", {

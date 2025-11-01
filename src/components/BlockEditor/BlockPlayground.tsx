@@ -1,6 +1,6 @@
 import { useRef, useEffect } from "react";
 import * as Blockly from "blockly";
-import customTheme from "./BlockTheme.ts";
+import customThemeGetter from "./BlockTheme.ts";
 import toolbox from "./BlockToolbox.ts";
 import {
   ContinuousToolbox,
@@ -24,10 +24,16 @@ const BlockPlayground = ({mode}: {mode: string}) => {
 
   useEffect(() => {
     currentModeRef.current = mode;
+    if (workspaceInstance.current) {
+      setTimeout(() => Blockly.svgResize(workspaceInstance.current!), 50);
+    }
   }, [mode]);
+
 
   useEffect(() => {
     if (!workspaceRef.current) return;
+
+    const customTheme = customThemeGetter();
 
     workspaceInstance.current = Blockly.inject(workspaceRef.current, {
       plugins: {
@@ -39,6 +45,11 @@ const BlockPlayground = ({mode}: {mode: string}) => {
       theme: customTheme,
       maxInstances: { 'motion_start': 1 },
     });
+
+    // Force a refresh of the toolbox
+    workspaceInstance.current.refreshToolboxSelection();
+
+    setTimeout(() => Blockly.svgResize(workspaceInstance.current!), 50);
 
     let timeout: ReturnType<typeof setTimeout>;
     const onWorkspaceChange = (event: Blockly.Events.Abstract) => {
@@ -63,7 +74,6 @@ const BlockPlayground = ({mode}: {mode: string}) => {
 
           setCode(code);
           setBlocks(xmlText);
-          // setIsValidWorkspace(checkValidWorkspace());
         }, 300);
       }
     };
@@ -75,7 +85,7 @@ const BlockPlayground = ({mode}: {mode: string}) => {
       workspaceInstance.current?.dispose();
       workspaceInstance.current = null;
     };
-  }, []);
+  }, [setCode, setBlocks]);
 
   return <div ref={workspaceRef} className="w-full h-full min-h-1/2 bg-white" />;
 };

@@ -19,13 +19,13 @@ const CodeScreen = () => {
   return (
     <div className={'w-3/5 flex flex-col items-center justify-center box-border'}>
       <CodeHeader active={active} setActive={setActive}/>
-      <div className={'bg-sunglow-400 w-full h-[0px] flex-grow pt-2 pb-2.5 z-20 relative'}>
-        <span className={parsed.mode === "blockly" ? "" : "hidden"}>
+      <div className="bg-sunglow-400 w-full flex-1 pt-2 pb-2.5 z-20 relative">
+        <div className={parsed.mode === "blockly" ? "w-full h-full" : "hidden"}>
           <BlockPlayground mode={parsed.mode} />
-        </span>
-        <span className={parsed.mode === "python" ? "" : "hidden"}>
+        </div>
+        <div className={parsed.mode === "python" ? "w-full h-full" : "hidden"}>
           <CodePlayground />
-        </span>
+        </div>
         <CodeSnippets active={active} />
       </div>
     </div>

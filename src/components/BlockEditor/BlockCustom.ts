@@ -115,6 +115,23 @@ const turnRight = {
   colour: "#008e91",
 };
 
+const listsChar = {
+  type: "lists_char",
+  message0: "make list of characters from %1",
+  args0: [
+    {
+      type: "input_value",
+      name: "TEXT",
+      check: "String",
+    },
+  ],
+  output: "Array",
+  colour: "#4a148c",
+  tooltip: "Creates a list containing each character of the given text.",
+  helpUrl: "",
+};
+
+
 export default [
   start,
   stop,
@@ -122,4 +139,5 @@ export default [
   goBackwards,
   turnLeft,
   turnRight,
+  listsChar
 ]

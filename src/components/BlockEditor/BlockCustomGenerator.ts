@@ -43,3 +43,10 @@ pythonGenerator.forBlock["motion_backwards"] = function (block: Blockly.Block): 
 
   return `back(${number_duration}, ${number_speed})\n`;
 };
+
+//// list blocks
+pythonGenerator.forBlock["lists_char"] = function (block: Blockly.Block) {
+  const text = pythonGenerator.valueToCode(block, "TEXT", 0) || "''";
+  const code = `list(${text})`;
+  return [code, 0];
+};

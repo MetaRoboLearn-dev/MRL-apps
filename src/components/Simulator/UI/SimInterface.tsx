@@ -31,7 +31,7 @@ const SimInterface = ({isHovered}: Props) => {
   const [showSideMenu, setShowSideMenu] = useState(false);
 
   const tileValues = Object.values(TileType);
-  const dev = true;
+  const dev = false;
 
   const selectNextType = () => {
     const nextIndex = (tileIndex + 1) % tileValues.length;

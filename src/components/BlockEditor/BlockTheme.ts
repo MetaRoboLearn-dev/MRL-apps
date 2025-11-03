@@ -1,10 +1,15 @@
 import * as Blockly from "blockly/core";
 
 const parseColor = (color: string): string => {
+  if (!color || color.startsWith("oklch")) return "";
   const ctx = document.createElement("canvas").getContext("2d");
   if (!ctx) return color;
-  ctx.fillStyle = color;
-  return ctx.fillStyle;
+  try {
+    ctx.fillStyle = color;
+    return ctx.fillStyle;
+  } catch {
+    return "";
+  }
 };
 
 const getColor = (color: string) => {

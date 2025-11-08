@@ -47,7 +47,7 @@ const BlockPlayground = ({mode}: {mode: string}) => {
     });
 
     // Force a refresh of the toolbox
-    workspaceInstance.current.refreshToolboxSelection();
+    // workspaceInstance.current.refreshToolboxSelection();
 
     setTimeout(() => Blockly.svgResize(workspaceInstance.current!), 50);
 
@@ -59,11 +59,11 @@ const BlockPlayground = ({mode}: {mode: string}) => {
         event.type === 'change' ||
         event.type === 'move'
       ) {
+        // Clear any pending timeout
+        clearTimeout(timeout);
 
-        timeout = setTimeout(() => {
-          console.log(currentModeRef.current);
+        const updateCode = () => {
           if (currentModeRef.current === 'python') {
-            clearTimeout(timeout);
             return;
           }
 
@@ -74,7 +74,15 @@ const BlockPlayground = ({mode}: {mode: string}) => {
 
           setCode(code);
           setBlocks(xmlText);
-        }, 300);
+        };
+
+        // Instant update for non-move events
+        if (event.type !== 'move') {
+          updateCode();
+        } else {
+          // Debounce move events for performance
+          timeout = setTimeout(updateCode, 300);
+        }
       }
     };
 
@@ -82,10 +90,16 @@ const BlockPlayground = ({mode}: {mode: string}) => {
 
     return () => {
       clearTimeout(timeout);
-      workspaceInstance.current?.dispose();
-      workspaceInstance.current = null;
+      if (workspaceInstance.current) {
+        try {
+          workspaceInstance.current.dispose();
+        } catch (e) {
+          console.warn('Workspace disposal error:', e);
+        }
+        workspaceInstance.current = null;
+      }
     };
-  }, [setCode, setBlocks]);
+  }, []);
 
   return <div ref={workspaceRef} className="w-full h-full min-h-1/2 bg-white" />;
 };

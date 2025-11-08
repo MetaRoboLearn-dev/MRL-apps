@@ -1,38 +1,47 @@
-import {PropsWithChildren, useEffect, useState} from "react";
+import {PropsWithChildren, useCallback, useEffect, useRef, useState} from "react";
 import {CodeContext} from "./Context.tsx";
 import {useSettings} from "../hooks/useSettings.ts";
 import * as Blockly from "blockly";
 
 export const CodeProvider = ({ children }: PropsWithChildren) => {
   const { selectedTab } = useSettings();
-  const [code, setCode] = useState<string>('');
+  const [code, setCodeState] = useState<string>('');
   const [blocks, setBlocks] = useState<string>('')
   const [loaded, setLoaded] = useState(false);
 
+  const codeRef = useRef('');
+  const modeRef = useRef('');
+
+  // In your useCode hook or wherever you define setCode
+  const setCode = useCallback((code: string) => {
+    setCodeState(code);
+    codeRef.current = code;
+  }, []); // Empty dependency array since it only uses setState and ref
+
   // TODO - implementirat ovaj check u tipku za simuliranje
   // i pliz razmisli jel stvarno zelis da ovo bude tu
-  const [isValidWorkspace, setIsValidWorkspace] = useState<boolean>(false);
-
-  const checkValidWorkspace = () => {
-    const workspace = Blockly.getMainWorkspace();
-    if (!workspace) return false;
-
-    const topBlocks = workspace.getTopBlocks();
-    // const allBlocks = workspace.getAllBlocks();
-
-    // TODO - ovaj dio treba regulirat jer postoje funkcije
-    if (topBlocks.length !== 1) return false;
-
-    if (topBlocks[0].type != 'motion_start') return false;
-
-    // TODO - pogledat kak da ovo napravim pravilo, jer ima svakakvih vrsti blockova
-    // const endingBlocks = allBlocks.filter(block => block.getNextBlock() === null);
-    // const allEndWithStop = endingBlocks.every(block => block.type === 'motion_stop');
-    //
-    // if (!allEndWithStop) return false;
-
-    return true;
-  }
+  // const [isValidWorkspace, setIsValidWorkspace] = useState<boolean>(false);
+  //
+  // const checkValidWorkspace = () => {
+  //   const workspace = Blockly.getMainWorkspace();
+  //   if (!workspace) return false;
+  //
+  //   const topBlocks = workspace.getTopBlocks();
+  //   // const allBlocks = workspace.getAllBlocks();
+  //
+  //   // TODO - ovaj dio treba regulirat jer postoje funkcije
+  //   if (topBlocks.length !== 1) return false;
+  //
+  //   if (topBlocks[0].type != 'motion_start') return false;
+  //
+  //   // TODO - pogledat kak da ovo napravim pravilo, jer ima svakakvih vrsti blockova
+  //   // const endingBlocks = allBlocks.filter(block => block.getNextBlock() === null);
+  //   // const allEndWithStop = endingBlocks.every(block => block.type === 'motion_stop');
+  //   //
+  //   // if (!allEndWithStop) return false;
+  //
+  //   return true;
+  // }
 
   // Loading code and blocks from localStorage
   useEffect(() => {
@@ -54,6 +63,7 @@ export const CodeProvider = ({ children }: PropsWithChildren) => {
 
     setCode(data.code || '');
     setBlocks(data.blocks || '');
+    modeRef.current = data.mode;
 
     if (data.blocks) {
       const xml = Blockly.utils.xml.textToDom(data.blocks);
@@ -97,7 +107,6 @@ export const CodeProvider = ({ children }: PropsWithChildren) => {
       };
 
       localStorage.setItem(selectedTab, JSON.stringify(updated));
-      console.log(updated)
     } catch (err) {
       console.error("Failed to update localStorage entry:", err);
     }
@@ -105,8 +114,9 @@ export const CodeProvider = ({ children }: PropsWithChildren) => {
 
   return (
     <CodeContext.Provider value={{
-      code, setCode,
-      blocks, setBlocks
+      code, setCode, codeRef,
+      blocks, setBlocks,
+      modeRef
     }}>
       {children}
     </CodeContext.Provider>

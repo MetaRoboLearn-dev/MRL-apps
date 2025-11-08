@@ -1,17 +1,17 @@
 import {FaPlay, FaStop, FaRobot} from "react-icons/fa";
 import {useVehicle} from "../../hooks/useVehicle.ts";
-import {MoveCommand} from "../../types.ts";
 import {useCode} from "../../hooks/useCode.ts";
 import {useUI} from "../../hooks/useUI.ts";
 import {useSettings} from "../../hooks/useSettings.ts";
 import {useGrid} from "../../hooks/useGrid.ts";
 import {useState} from "react";
 import {BsGearFill} from "react-icons/bs";
+import * as Blockly from "blockly";
+import {abort_robot, run_code, run_robot} from "../../api/robotApi.ts";
+import {pythonGenerator} from "blockly/python";
 
 const Footer = () => {
-  const apiUrl = import.meta.env.VITE_API_URL;
-
-  const { code } = useCode();
+  const { codeRef, modeRef } = useCode();
   const { queueMoves, moveQueue, isMoving, reset } = useVehicle();
   const { modalVisible } = useUI();
   const { setSimFocused, camMode, robotUrl, setRobotUrl } = useSettings();
@@ -29,86 +29,27 @@ const Footer = () => {
     setEditingUrl(false);
   }
 
-  const runCode = async (code: string) => {
+  // ovo mozda cak stavit u codeProdiver
+  const getCurrentCode = (): string => {
+    if (modeRef.current === 'python') {
+      return codeRef.current;
+    } else {
+      Blockly.hideChaff();
+      const workspace = Blockly.getMainWorkspace();
+      return pythonGenerator.workspaceToCode(workspace);
+    }
+  }
+
+  const runCode = async () => {
     setSimFocused(false);
-    const url = apiUrl + "/run-python";
-    try {
-      const response = await fetch(url, {
-        method: "POST",
-        body: JSON.stringify({ code: code }),
-        headers: {
-          "Content-Type": "application/json",
-        }
-      });
-      if (response.ok) {
-        const data = await response.json();
-        const steps = data.output.split('\n');
-        const processedSteps = processSteps(steps);
-        queueMoves(processedSteps);
-      }
-    } catch (e) {
-      if(e instanceof Error) {
-        console.error(e.message);
-      }
-    }
+    const code = getCurrentCode();
+    const steps = await run_code(code);
+    if (steps) queueMoves(steps);
   }
 
-  const runRobot = async (code: string) => {
-    const url = robotUrl + "/execute";
-    try {
-      const response = await fetch(url, {
-        method: "POST",
-        body: JSON.stringify({ code: code }),
-        headers: {
-          "Content-Type": "application/json",
-        }
-      });
-      if (response.ok) {
-        console.log('ok, ', code);
-      }
-    } catch (e) {
-      if(e instanceof Error) {
-        console.error(e.message);
-      }
-    }
-  }
-
-  const abortRobot = async () => {
-    const url = robotUrl + "/abort";
-    try {
-      const response = await fetch(url, {
-        method: "POST",
-      })
-      if (!response.ok) {
-        console.log('abort not ok');
-      }
-    } catch (e) {
-      if(e instanceof Error) {
-        console.error(e.message);
-      }
-    }
-
-  }
-
-  const processSteps = (steps: string[]): MoveCommand[] => {
-    return steps
-      .filter(step => step.trim() !== '')
-      .map(step => {
-        const command = step.trim().toLowerCase();
-        if (command === 'naprijed') {
-          return { type: 'move', direction: 'forward' }
-        }
-        else if (command === 'nazad') {
-          return { type: 'move', direction: 'backward' }
-        }
-        else if (command === 'lijevo') {
-          return { type: 'rotate', direction: 'left' }
-        }
-        else if (command === 'desno') {
-          return { type: 'rotate', direction: 'right' }
-        }
-        return { type: 'invalid', command }
-      })
+  const runRobot = async () => {
+    const code = getCurrentCode();
+    await run_robot(code, robotUrl);
   }
 
   return (
@@ -127,14 +68,14 @@ const Footer = () => {
           <button disabled={disabled}
                   className={`bg-tomato-500 text-light-cyan-200 font-display font-bold text-xl px-3 py-3 rounded flex items-center ml-2 
                     ${disabled ? 'bg-tomato-700 text-light-cyan-700' : 'hover:cursor-pointer hover:bg-tomato-600'} transition`}
-                  onClick={abortRobot}>
+                  onClick={() => abort_robot(robotUrl)}>
             <FaStop size={18}/>
           </button>
 
           <button disabled={disabled}
                   className={`bg-sunglow-500 text-dark-neutrals-400 font-display font-bold text-xl pl-5 pr-8 py-2 rounded flex items-center ml-2 
                       ${disabled ? 'bg-sunglow-700' : 'hover:cursor-pointer hover:bg-sunglow-600'} transition`}
-                  onClick={() => runRobot(code)}>
+                  onClick={runRobot}>
             <FaRobot size={24}/>
             <span className={'ml-4'}>Upogoni</span>
           </button>
@@ -160,7 +101,7 @@ const Footer = () => {
         <button disabled={disabled || camMode}
                 className={`bg-turquoise-500 text-light-cyan-200 font-display font-bold text-xl pl-5 pr-8 py-2 rounded flex items-center ml-8 
                   ${disabled || camMode ? 'bg-turquoise-700 text-light-cyan-700' : 'hover:cursor-pointer hover:bg-turquoise-600'} transition`}
-                onClick={() => runCode(code)}>
+                onClick={runCode}>
           <FaPlay size={18}/>
           <span className={'ml-4'}>Simuliraj</span>
         </button>

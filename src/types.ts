@@ -204,8 +204,10 @@ export interface GridContextType {
 export interface CodeContextType {
   code: string;
   setCode: (code: string) => void;
+  codeRef: RefObject<string>;
   blocks: string;
   setBlocks: (code: string) => void;
+  modeRef: RefObject<string>;
 }
 
 export interface UIContextType {

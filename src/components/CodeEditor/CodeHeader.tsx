@@ -1,14 +1,9 @@
-import {useSettings} from "../../hooks/useSettings.ts";
-import {ChangeEvent} from "react";
-
 interface Props {
   active: boolean;
   setActive: (active: boolean) => void;
 }
 
 const CodeHeader = ({active, setActive}: Props) => {
-  const { isBlockEditor, setIsBlockEditor } = useSettings();
-
   const style = active
     ? 'bg-tomato-600 hover:translate-y-1'
     : 'bg-tomato-300 pt-2 pb-3.5 translate-y-2.5 hover:bg-tomato-600 hover:translate-y-1.5';
@@ -17,27 +12,12 @@ const CodeHeader = ({active, setActive}: Props) => {
     setActive(!active);
   }
 
-  const handleCheckboxChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setIsBlockEditor(e.target.checked);
-  }
-
   return (
     <div className="bg-white px-4 w-full h-14 flex justify-between items-end z-10">
       <div className="flex items-center space-x-4">
         <div className="bg-sunglow-400 text-dark-neutrals-400 font-bold font-display mx-1 py-2 px-4 rounded-t-lg">
           Uređivač koda
         </div>
-
-        <label className="flex items-center space-x-2 hidden">
-          <input
-            disabled
-            type="checkbox"
-            checked={isBlockEditor}
-            onChange={handleCheckboxChange}
-            className="accent-sunglow-400"
-          />
-          <span className="text-dark-neutrals-400 font-medium">Block Editor</span>
-        </label>
       </div>
 
       <div

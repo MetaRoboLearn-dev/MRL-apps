@@ -20,8 +20,6 @@ export const SettingsProvider = ({ children }: PropsWithChildren) => {
 
   const [robotUrl, setRobotUrl] = useState<string | null>(null);
 
-  const [isBlockEditor, setIsBlockEditor] = useState<boolean>(false);
-
   const setAnimationSpeed = (speed: number) => {
     // max 0.1, min 0.02, default 0.4
     setSpeed(speed / 1000);
@@ -92,7 +90,6 @@ export const SettingsProvider = ({ children }: PropsWithChildren) => {
       textures, loadTextures,
       barrierTextures, loadBarrierTextures,
       robotUrl, setRobotUrl,
-      isBlockEditor, setIsBlockEditor
     }}>
       {children}
     </SettingsContext.Provider>

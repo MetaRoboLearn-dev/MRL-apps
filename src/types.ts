@@ -163,8 +163,6 @@ export interface SettingsContextType {
   loadBarrierTextures: () => void;
   robotUrl: string | null;
   setRobotUrl: (robotUrl: string | null) => void;
-  isBlockEditor: boolean;
-  setIsBlockEditor: (isBlockEditor: boolean) => void;
 }
 
 export interface VehicleContextType {
@@ -207,6 +205,7 @@ export interface CodeContextType {
   codeRef: RefObject<string>;
   blocks: string;
   setBlocks: (code: string) => void;
+  blocksRef: RefObject<string>;
   modeRef: RefObject<string>;
 }
 

@@ -18,7 +18,7 @@ const colours = {
 
 const CodePlayground = () => {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
-  const { code, setCode } = useCode();
+  const { codeRef, setCode } = useCode();
   const { selectedTab } = useSettings();
 
   const handleEditorDidMount: OnMount = (editor, monaco) => {
@@ -66,7 +66,7 @@ const CodePlayground = () => {
       height="100%"
       defaultLanguage="python"
       theme="dark"
-      value={code ?? ''}
+      value={codeRef.current ?? ''}
       onChange={(value) => setCode(value ?? '')}
       // Important: avoid reusing previous model across tabs/mode switches
       keepCurrentModel={false}

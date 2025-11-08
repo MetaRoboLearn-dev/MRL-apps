@@ -16,23 +16,19 @@ import {useCode} from "../../hooks/useCode.ts";
 registerContinuousToolbox();
 Blockly.common.defineBlocksWithJsonArray(BlockCustom);
 
-const BlockPlayground = ({mode}: {mode: string}) => {
+const BlockPlayground = () => {
   const workspaceRef = useRef<HTMLDivElement>(null);
-  const currentModeRef = useRef<string>(mode);
   const workspaceInstance = useRef<Blockly.WorkspaceSvg | null>(null);
-  const { setCode, setBlocks } = useCode();
+  const { setCode, setBlocks, modeRef } = useCode();
 
   useEffect(() => {
-    currentModeRef.current = mode;
     if (workspaceInstance.current) {
       setTimeout(() => Blockly.svgResize(workspaceInstance.current!), 50);
     }
-  }, [mode]);
-
+  }, [modeRef.current]);
 
   useEffect(() => {
     if (!workspaceRef.current) return;
-
     const customTheme = customThemeGetter();
 
     workspaceInstance.current = Blockly.inject(workspaceRef.current, {
@@ -46,11 +42,6 @@ const BlockPlayground = ({mode}: {mode: string}) => {
       maxInstances: { 'robot_start': 1 },
     });
 
-    // Force a refresh of the toolbox
-    // workspaceInstance.current.refreshToolboxSelection();
-
-    setTimeout(() => Blockly.svgResize(workspaceInstance.current!), 50);
-
     let timeout: ReturnType<typeof setTimeout>;
     const onWorkspaceChange = (event: Blockly.Events.Abstract) => {
       if (
@@ -59,11 +50,9 @@ const BlockPlayground = ({mode}: {mode: string}) => {
         event.type === 'change' ||
         event.type === 'move'
       ) {
-        // Clear any pending timeout
         clearTimeout(timeout);
-
         const updateCode = () => {
-          if (currentModeRef.current === 'python') {
+          if (modeRef.current === 'python') {
             return;
           }
 
@@ -76,11 +65,9 @@ const BlockPlayground = ({mode}: {mode: string}) => {
           setBlocks(xmlText);
         };
 
-        // Instant update for non-move events
         if (event.type !== 'move') {
           updateCode();
         } else {
-          // Debounce move events for performance
           timeout = setTimeout(updateCode, 300);
         }
       }

@@ -6,17 +6,22 @@ import * as Blockly from "blockly";
 export const CodeProvider = ({ children }: PropsWithChildren) => {
   const { selectedTab } = useSettings();
   const [code, setCodeState] = useState<string>('');
-  const [blocks, setBlocks] = useState<string>('')
+  const [blocks, setBlocksState] = useState<string>('')
   const [loaded, setLoaded] = useState(false);
 
   const codeRef = useRef('');
+  const blocksRef = useRef('');
   const modeRef = useRef('');
 
-  // In your useCode hook or wherever you define setCode
   const setCode = useCallback((code: string) => {
     setCodeState(code);
     codeRef.current = code;
-  }, []); // Empty dependency array since it only uses setState and ref
+  }, []);
+
+  const setBlocks = useCallback((blocks: string) => {
+    setBlocksState(blocks);
+    blocksRef.current = blocks;
+  }, []);
 
   // TODO - implementirat ovaj check u tipku za simuliranje
   // i pliz razmisli jel stvarno zelis da ovo bude tu
@@ -83,8 +88,8 @@ export const CodeProvider = ({ children }: PropsWithChildren) => {
 
       const updated = {
         ...parsed,
-        code,
-        blocks,
+        code: codeRef.current,
+        blocks: blocksRef.current,
       };
 
       localStorage.setItem(selectedTab, JSON.stringify(updated));
@@ -103,7 +108,7 @@ export const CodeProvider = ({ children }: PropsWithChildren) => {
 
       const updated = {
         ...parsed,
-        blocks,
+        blocks: blocksRef.current,
       };
 
       localStorage.setItem(selectedTab, JSON.stringify(updated));
@@ -115,7 +120,7 @@ export const CodeProvider = ({ children }: PropsWithChildren) => {
   return (
     <CodeContext.Provider value={{
       code, setCode, codeRef,
-      blocks, setBlocks,
+      blocks, setBlocks, blocksRef,
       modeRef
     }}>
       {children}

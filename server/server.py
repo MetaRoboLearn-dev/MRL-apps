@@ -6,7 +6,11 @@ import contextlib
 import math
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, 
+     origins=["http://localhost:3000"],
+     methods=["GET", "POST", "OPTIONS"],
+     allow_headers=["Content-Type"],
+     supports_credentials=True)
 
 # Configs
 EXEC_TIMEOUT = 2  # seconds
@@ -55,6 +59,9 @@ def run_user_code(code: str, output: io.StringIO, error: io.StringIO):
     except Exception as e:
         error.write(f"{type(e).__name__}: {str(e)}\n")
 
+@app.route('/health', methods=['GET'])
+def health():
+    return jsonify({"status": "ok"}), 200
 
 @app.route('/run-python', methods=['POST'])
 def run_python():
@@ -89,4 +96,4 @@ def run_python():
     })
 
 if __name__ == '__main__':
-    app.run(debug=True, port=8000)
+    app.run(host='0.0.0.0', port=8000, debug=True)

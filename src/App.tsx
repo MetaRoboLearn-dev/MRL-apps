@@ -8,6 +8,7 @@ import {useGLTF} from "@react-three/drei";
 import {TextureLoader} from "three";
 
 function App() {
+  // TODO - check if this really is needed after changing to /src/img
   const loader = new TextureLoader();
   loader.load('textures/fountain.png');
   loader.load('textures/lake.png');

@@ -8,6 +8,7 @@ import {useState} from "react";
 import {BsGearFill} from "react-icons/bs";
 import {abort_robot,} from "../../api/robotApi.ts";
 
+// TODO - change the buttons, make it more neat
 const Footer = () => {
   const { runCode, runRobot } = useCode();
   const { queueMoves, moveQueue, isMoving, reset } = useVehicle();

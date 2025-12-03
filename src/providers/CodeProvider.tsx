@@ -104,6 +104,9 @@ export const CodeProvider = ({ children }: PropsWithChildren) => {
   //   return true;
   // }
 
+  // TODO - check this and potentially rewrite it, what currently happens is that on tab change
+  //  it fires action_log() several times with the same data. Think there is a lot of redundancy in the code
+  //  look into a better way of doing this, maybe using one useEffect for saving instead of two, use getCurrentCode()
   // Loading code and blocks from localStorage
   useEffect(() => {
     const blockly_workspace = Blockly.getMainWorkspace();

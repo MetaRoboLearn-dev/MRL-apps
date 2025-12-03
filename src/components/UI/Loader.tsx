@@ -11,7 +11,7 @@ const Loader = () => {
   }
 
   fade();
-
+  // TODO - check why the logo doesnt load instantly
   return (
     <div
       className={`fixed w-full h-full bg-turquoise-600 z-100 flex justify-center items-center ${hide ? 'opacity-0 pointer-events-none' : ''} transition ease-out duration-500`}>

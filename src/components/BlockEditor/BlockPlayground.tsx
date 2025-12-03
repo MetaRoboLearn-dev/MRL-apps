@@ -17,6 +17,8 @@ import {useCode} from "../../hooks/useCode.ts";
 registerContinuousToolbox();
 Blockly.common.defineBlocksWithJsonArray(BlockCustom);
 
+// TODO - this code is ugly, also add logging back after you optimize CodeProvider
+//  also try to make this code and CodePlayground have a similar layout
 const BlockPlayground = () => {
   const workspaceRef = useRef<HTMLDivElement>(null);
   const workspaceInstance = useRef<Blockly.WorkspaceSvg | null>(null);

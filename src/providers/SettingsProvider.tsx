@@ -34,6 +34,10 @@ export const SettingsProvider = ({ children }: PropsWithChildren) => {
       setSelectedRotation(new_rot)
   }
 
+  // TODO - This is a BIG one, the dir /public is not used used properly here, it should only use STATIC images (research pls).
+  //  Every non-static image should be in src/img, stuff like sticker and barrier images (but research aswell pls)
+  //  Also what this does, it preloads all the stickers and barrier images so it doesn't flicker on every change
+  //  (not sure why it happens but my guess is because its in /public)
   const loadTextures = () => {
     const loader = new TextureLoader();
     const textureMap: Record<string, Texture> = {};

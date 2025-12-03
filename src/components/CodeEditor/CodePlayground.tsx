@@ -16,6 +16,7 @@ const colours = {
   'string': '#008e91', // --color-turquoise-700
 }
 
+// TODO - add debouncing to code changes
 const CodePlayground = () => {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const { codeRef, setCode } = useCode();

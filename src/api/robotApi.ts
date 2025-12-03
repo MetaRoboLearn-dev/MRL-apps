@@ -1,30 +1,7 @@
-import {MoveCommand} from "../types.ts";
-
-const apiUrl = import.meta.env.VITE_API_URL;
-
-const processSteps = (steps: string[]): MoveCommand[] => {
-  return steps
-    .filter(step => step.trim() !== '')
-    .map(step => {
-      const command = step.trim().toLowerCase();
-      if (command === 'naprijed') {
-        return { type: 'move', direction: 'forward' }
-      }
-      else if (command === 'nazad') {
-        return { type: 'move', direction: 'backward' }
-      }
-      else if (command === 'lijevo') {
-        return { type: 'rotate', direction: 'left' }
-      }
-      else if (command === 'desno') {
-        return { type: 'rotate', direction: 'right' }
-      }
-      return { type: 'invalid', command }
-    })
-}
+// const apiUrl = import.meta.env.VITE_API_URL;
 
 export const run_code = async (code: string) => {
-  const url = apiUrl + "/run-python";
+  const url = "api/run-python";
   try {
     const response = await fetch(url, {
       method: "POST",
@@ -34,9 +11,7 @@ export const run_code = async (code: string) => {
       }
     });
     if (response.ok) {
-      const data = await response.json();
-      const steps = data.output.split('\n');
-      return processSteps(steps);
+      return await response.json();
     }
   } catch (e) {
     if(e instanceof Error) {

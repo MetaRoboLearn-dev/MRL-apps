@@ -1,4 +1,4 @@
-import {FaPlay, FaStop, FaRobot} from "react-icons/fa";
+import {FaPlay, FaRobot, FaStop} from "react-icons/fa";
 import {useVehicle} from "../../hooks/useVehicle.ts";
 import {useCode} from "../../hooks/useCode.ts";
 import {useUI} from "../../hooks/useUI.ts";
@@ -6,15 +6,13 @@ import {useSettings} from "../../hooks/useSettings.ts";
 import {useGrid} from "../../hooks/useGrid.ts";
 import {useState} from "react";
 import {BsGearFill} from "react-icons/bs";
-import * as Blockly from "blockly";
-import {abort_robot, run_code, run_robot} from "../../api/robotApi.ts";
-import {pythonGenerator} from "blockly/python";
+import {abort_robot,} from "../../api/robotApi.ts";
 
 const Footer = () => {
-  const { codeRef, modeRef } = useCode();
+  const { runCode, runRobot } = useCode();
   const { queueMoves, moveQueue, isMoving, reset } = useVehicle();
   const { modalVisible } = useUI();
-  const { setSimFocused, camMode, robotUrl, setRobotUrl } = useSettings();
+  const { camMode, robotUrl, setRobotUrl } = useSettings();
   const { start, finish } = useGrid();
 
   const [urlInput, setUrlInput] = useState('');
@@ -27,29 +25,6 @@ const Footer = () => {
     if (!urlInput) return;
     localStorage.setItem('robotUrl', urlInput);
     setEditingUrl(false);
-  }
-
-  // ovo mozda cak stavit u codeProdiver
-  const getCurrentCode = (): string => {
-    if (modeRef.current === 'python') {
-      return codeRef.current;
-    } else {
-      Blockly.hideChaff();
-      const workspace = Blockly.getMainWorkspace();
-      return pythonGenerator.workspaceToCode(workspace);
-    }
-  }
-
-  const runCode = async () => {
-    setSimFocused(false);
-    const code = getCurrentCode();
-    const steps = await run_code(code);
-    if (steps) queueMoves(steps);
-  }
-
-  const runRobot = async () => {
-    const code = getCurrentCode();
-    await run_robot(code, robotUrl);
   }
 
   return (
@@ -101,7 +76,13 @@ const Footer = () => {
         <button disabled={disabled || camMode}
                 className={`bg-turquoise-500 text-light-cyan-200 font-display font-bold text-xl pl-5 pr-8 py-2 rounded flex items-center ml-8 
                   ${disabled || camMode ? 'bg-turquoise-700 text-light-cyan-700' : 'hover:cursor-pointer hover:bg-turquoise-600'} transition`}
-                onClick={runCode}>
+                onClick={() => {
+                  runCode().then((moves) => {
+                    if (moves) {
+                      queueMoves(moves);
+                    }
+                  });
+                }}>
           <FaPlay size={18}/>
           <span className={'ml-4'}>Simuliraj</span>
         </button>

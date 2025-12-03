@@ -1,9 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import threading
-import io
-import contextlib
-import math
+from db import db_log_get, db_log_action
+from sb import sb_run_python
 
 app = Flask(__name__)
 CORS(app, 
@@ -12,88 +10,26 @@ CORS(app,
      allow_headers=["Content-Type"],
      supports_credentials=True)
 
-# Configs
-EXEC_TIMEOUT = 2  # seconds
-MAX_OUTPUT_LEN = 1024  # 1 KB
-
-def forward(a = 0, b = 0):
-    print('naprijed')
-
-def back(a = 0, b = 0):
-    print('nazad')
-
-def turn_left(a = 0, b = 0):
-    print('lijevo')
-
-def turn_right(a = 0, b = 0):
-    print('desno')
-
-# Whitelisted built-ins
-safe_builtins = {
-    "forward": forward,
-    "back": back,
-    "turn_left": turn_left,
-    "turn_right": turn_right,
-    "abs": abs,
-    "bool": bool,
-    "dict": dict,
-    "enumerate": enumerate,
-    "float": float,
-    "int": int,
-    "len": len,
-    "list": list,
-    "max": max,
-    "min": min,
-    "range": range,
-    "set": set,
-    "str": str,
-    "sum": sum,
-    "zip": zip,
-    "math": math,
-}
-
-def run_user_code(code: str, output: io.StringIO, error: io.StringIO):
-    try:
-        with contextlib.redirect_stdout(output), contextlib.redirect_stderr(error):
-            exec(code, {"__builtins__": {}}, safe_builtins)
-    except Exception as e:
-        error.write(f"{type(e).__name__}: {str(e)}\n")
-
 @app.route('/health', methods=['GET'])
 def health():
     return jsonify({"status": "ok"}), 200
 
+@app.route('/log-get', methods=['GET'])
+def log_get():
+    return db_log_get()
+
+@app.route('/log-action', methods=['POST'])
+def log_action():
+    group = request.json.get("group", "")
+    mode = request.json.get("mode", "")
+    action = request.json.get("action", "")
+    value = request.json.get("value", "")
+    return db_log_action(group, mode, action, value)
+
 @app.route('/run-python', methods=['POST'])
 def run_python():
     code = request.json.get("code", "")
-
-    if "import" in code:
-        return jsonify({"error": "Import statements are not allowed."}), 400
-
-    stdout = io.StringIO()
-    stderr = io.StringIO()
-
-    thread = threading.Thread(target=run_user_code, args=(code, stdout, stderr))
-    thread.start()
-    thread.join(EXEC_TIMEOUT)
-
-    if thread.is_alive():
-        return jsonify({
-            "output": stdout.getvalue()[:MAX_OUTPUT_LEN],
-            "error": f"Execution timed out after {EXEC_TIMEOUT} seconds."
-        }), 408
-
-    output = stdout.getvalue()
-    error = stderr.getvalue()
-
-    # Truncate output if needed
-    if len(output) > MAX_OUTPUT_LEN:
-        output = output[:MAX_OUTPUT_LEN] + "\n...[output truncated]"
-
-    return jsonify({
-        "output": output,
-        "error": error
-    })
+    return sb_run_python(code)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000, debug=True)

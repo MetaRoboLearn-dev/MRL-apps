@@ -68,9 +68,8 @@ const CodePlayground = () => {
       theme="dark"
       value={codeRef.current ?? ''}
       onChange={(value) => setCode(value ?? '')}
-      // Important: avoid reusing previous model across tabs/mode switches
       keepCurrentModel={false}
-      path={`python/${selectedTab}`}  // isolates models per tab
+      path={`python/${selectedTab}`}
       options={{
         fontSize: 20,
         lineNumbers: "on",

@@ -43,8 +43,8 @@ export const VehicleProvider = ({ children }: PropsWithChildren) => {
     setRotation(startRotation);
   }, [startPosition, startRotation]);
 
-  const queueMoves = (moves: MoveCommand[]) => {
-    if (start === null) return;
+  const queueMoves = (moves: MoveCommand[] | null) => {
+    if (start === null || moves === null) return;
     setMoveQueue(moves);
     setIsMoving(true);
   };

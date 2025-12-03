@@ -2,9 +2,14 @@ import {PropsWithChildren, useCallback, useEffect, useRef, useState} from "react
 import {CodeContext} from "./Context.tsx";
 import {useSettings} from "../hooks/useSettings.ts";
 import * as Blockly from "blockly";
+import {pythonGenerator} from "blockly/python";
+import {MoveCommand} from "../types.ts";
+import {Action, log_action} from "../api/logApi.ts";
+import {run_code, run_robot} from "../api/robotApi.ts";
 
 export const CodeProvider = ({ children }: PropsWithChildren) => {
   const { selectedTab } = useSettings();
+  const { setSimFocused, robotUrl, groupName } = useSettings();
   const [code, setCodeState] = useState<string>('');
   const [blocks, setBlocksState] = useState<string>('')
   const [loaded, setLoaded] = useState(false);
@@ -22,6 +27,57 @@ export const CodeProvider = ({ children }: PropsWithChildren) => {
     setBlocksState(blocks);
     blocksRef.current = blocks;
   }, []);
+
+  const getCurrentCode = (): string => {
+    if (modeRef.current === 'python') {
+      return codeRef.current;
+    } else {
+      Blockly.hideChaff();
+      const workspace = Blockly.getMainWorkspace();
+      return pythonGenerator.workspaceToCode(workspace);
+    }
+  }
+
+  const processSteps = (steps: string[]): MoveCommand[] => {
+    return steps
+      .filter(step => step.trim() !== '')
+      .map(step => {
+        const command = step.trim().toLowerCase();
+        if (command === 'naprijed') {
+          return { type: 'move', direction: 'forward' }
+        }
+        else if (command === 'nazad') {
+          return { type: 'move', direction: 'backward' }
+        }
+        else if (command === 'lijevo') {
+          return { type: 'rotate', direction: 'left' }
+        }
+        else if (command === 'desno') {
+          return { type: 'rotate', direction: 'right' }
+        }
+        return { type: 'invalid', command }
+      })
+  }
+
+  const runCode = async () => {
+    setSimFocused(false);
+    const code = getCurrentCode();
+    log_action(groupName, modeRef.current, Action.SIM_RUN, code)
+    const compiled = await run_code(code);
+
+    if (compiled.error){
+      log_action(groupName, modeRef.current, Action.CODE_ERR, code)
+      return null;
+    }
+    return processSteps(compiled.output.split('\n'));
+    // if (steps) queueMoves(steps);
+  }
+
+  const runRobot = async () => {
+    const code = getCurrentCode();
+    log_action(groupName, modeRef.current, Action.ROBOT_RUN, code)
+    await run_robot(code, robotUrl);
+  }
 
   // TODO - implementirat ovaj check u tipku za simuliranje
   // i pliz razmisli jel stvarno zelis da ovo bude tu
@@ -121,7 +177,9 @@ export const CodeProvider = ({ children }: PropsWithChildren) => {
     <CodeContext.Provider value={{
       code, setCode, codeRef,
       blocks, setBlocks, blocksRef,
-      modeRef
+      modeRef,
+      getCurrentCode,
+      runCode, runRobot,
     }}>
       {children}
     </CodeContext.Provider>

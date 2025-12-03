@@ -19,6 +19,7 @@ export const SettingsProvider = ({ children }: PropsWithChildren) => {
   const [barrierTextures, setBarrierTextures] = useState<Record<Barrier, Texture>>({} as Record<Barrier, Texture>);
 
   const [robotUrl, setRobotUrl] = useState<string | null>(null);
+  const [groupName, setGroupName] = useState<string>("Grupa");
 
   const setAnimationSpeed = (speed: number) => {
     // max 0.1, min 0.02, default 0.4
@@ -90,6 +91,7 @@ export const SettingsProvider = ({ children }: PropsWithChildren) => {
       textures, loadTextures,
       barrierTextures, loadBarrierTextures,
       robotUrl, setRobotUrl,
+      groupName, setGroupName,
     }}>
       {children}
     </SettingsContext.Provider>

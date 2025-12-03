@@ -12,6 +12,7 @@ import BlockCustom from "./BlockCustom.ts";
 import { pythonGenerator } from "blockly/python";
 import "./BlockCustomGenerator.ts";
 import {useCode} from "../../hooks/useCode.ts";
+// import {log_action} from "../../api/logApi.ts";
 
 registerContinuousToolbox();
 Blockly.common.defineBlocksWithJsonArray(BlockCustom);
@@ -63,6 +64,10 @@ const BlockPlayground = () => {
 
           setCode(code);
           setBlocks(xmlText);
+
+          if (event.type !== 'move') return;
+          console.log(xmlText);
+          // log_action("grupa 1", "blockly", xmlText);
         };
 
         if (event.type !== 'move') {

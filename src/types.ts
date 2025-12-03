@@ -163,6 +163,8 @@ export interface SettingsContextType {
   loadBarrierTextures: () => void;
   robotUrl: string | null;
   setRobotUrl: (robotUrl: string | null) => void;
+  groupName: string;
+  setGroupName: (groupName: string) => void;
 }
 
 export interface VehicleContextType {
@@ -177,7 +179,7 @@ export interface VehicleContextType {
   isMoving: boolean;
   setIsMoving: (isMoving: boolean) => void;
   moveQueue: MoveCommand[];
-  queueMoves: (moves: MoveCommand[]) => void;
+  queueMoves: (moves: MoveCommand[] | null) => void;
   currentMove: MoveCommand | null;
   setCurrentMove: (currentMove: MoveCommand | null) => void;
 }
@@ -207,6 +209,9 @@ export interface CodeContextType {
   setBlocks: (code: string) => void;
   blocksRef: RefObject<string>;
   modeRef: RefObject<string>;
+  getCurrentCode: () => string;
+  runCode: () => Promise<MoveCommand[] | null>;
+  runRobot: () => Promise<void>;
 }
 
 export interface UIContextType {

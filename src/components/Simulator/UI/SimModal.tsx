@@ -4,7 +4,7 @@ const SimModal = () => {
   const { modalVisible, modalHeader, modalBody, modalFooter } = useUI();
 
   return (
-    <div className={`absolute w-full h-full bg-black/25 flex items-center justify-center transition-opacity duration-300 ease-in-out
+    <div className={`absolute w-full h-full bg-black/25 flex items-center justify-center transition-opacity duration-300 ease-in-out z-100
                     ${modalVisible ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
       <div className={`bg-sunglow-500 mx-auto min-w-80 max-w-120 p-6 rounded-md shadow-2xl text-dark-neutrals-500 transform transition-all duration-300 ease-in-out
                       ${modalVisible ? 'scale-100 translate-y-0' : 'scale-95 translate-y-4'}`}>

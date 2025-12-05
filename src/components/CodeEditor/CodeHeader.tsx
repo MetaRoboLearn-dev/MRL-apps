@@ -1,4 +1,6 @@
 import {useSettings} from "../../hooks/useSettings.ts";
+import {useUI} from "../../hooks/useUI.ts";
+import GroupNameForm from "../Forms/GroupNameForm.tsx";
 
 interface Props {
   active: boolean;
@@ -7,6 +9,15 @@ interface Props {
 
 const CodeHeader = ({active, setActive}: Props) => {
   const { groupName } = useSettings()
+  const { setModalVisible, modalVisible, setModalHeader, setModalBody, setModalFooter } = useUI();
+
+  const showModalWindow = () =>{
+    if (modalVisible) return;
+    setModalHeader('Izmjena naziva grupe');
+    setModalBody(<GroupNameForm />)
+    setModalFooter(null)
+    setModalVisible(true);
+  }
 
   const style = active
     ? 'bg-tomato-600 hover:translate-y-1'
@@ -25,7 +36,7 @@ const CodeHeader = ({active, setActive}: Props) => {
       </div>
 
       <div className={'text-dark-neutrals-400 font-bold font-display mx-1 py-2 px-4 rounded-t-lg select-none'}>
-        Vaša grupa: <span className={'font-extrabold'}>{groupName}</span>
+        Vaša grupa: <span className={'font-extrabold'} onClick={showModalWindow}>{groupName}</span>
       </div>
 
       <div

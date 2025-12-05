@@ -224,4 +224,5 @@ export interface UIContextType {
   setModalBody: (body: ReactNode) => void;
   modalFooter: ReactNode;
   setModalFooter: (footer: ReactNode) => void;
+  showModal: (header: string, body: ReactNode, footer?: ReactNode) => void;
 }

@@ -10,7 +10,7 @@ import SimSpeedSlider from "./SimSpeedSlider.tsx";
 import {BsArrowLeftCircleFill, BsChevronLeft, BsChevronRight, BsGearFill} from "react-icons/bs";
 import {TbCircleDashedLetterA, TbCircleDashedLetterD} from "react-icons/tb";
 import SimSideMenu from "./SimSideMenu.tsx";
-// import SimModal from "./SimModal.tsx";
+// import Modal from "./Modal.tsx";
 
 interface Props{
   isHovered: boolean,
@@ -137,7 +137,7 @@ const SimInterface = ({isHovered}: Props) => {
       </div>
 
       <SimSideMenu show={showSideMenu} setShow={setShowSideMenu} type={selectedType} />
-      {/*<SimModal/>*/}
+      {/*<Modal/>*/}
     </>
   );
 };

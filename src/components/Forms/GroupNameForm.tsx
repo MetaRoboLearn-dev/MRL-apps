@@ -9,6 +9,7 @@ const GroupNameForm = () => {
   const [newName, setNewName] = useState<string>(groupName);
 
   const set = () =>{
+    localStorage.setItem('group', newName);
     setGroupName(newName);
   }
 

@@ -1,6 +1,6 @@
 import {useState} from "react";
-import {useUI} from "../../../hooks/useUI.ts";
-import {useSettings} from "../../../hooks/useSettings.ts";
+import {useUI} from "../../hooks/useUI.ts";
+import {useSettings} from "../../hooks/useSettings.ts";
 
 const SimCreateForm = () => {
   const { setModalVisible } = useUI();

@@ -19,7 +19,7 @@ export const SettingsProvider = ({ children }: PropsWithChildren) => {
   const [barrierTextures, setBarrierTextures] = useState<Record<Barrier, Texture>>({} as Record<Barrier, Texture>);
 
   const [robotUrl, setRobotUrl] = useState<string | null>(null);
-  const [groupName, setGroupName] = useState<string>("Grupa");
+  const [groupName, setGroupName] = useState<string>(localStorage.getItem("group") || 'Grupa');
 
   const setAnimationSpeed = (speed: number) => {
     // max 0.1, min 0.02, default 0.4

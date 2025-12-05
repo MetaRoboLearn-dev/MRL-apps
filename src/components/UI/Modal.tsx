@@ -1,6 +1,6 @@
-import {useUI} from "../../../hooks/useUI.ts";
+import {useUI} from "../../hooks/useUI.ts";
 
-const SimModal = () => {
+const Modal = () => {
   const { modalVisible, modalHeader, modalBody, modalFooter } = useUI();
 
   return (
@@ -18,4 +18,4 @@ const SimModal = () => {
   );
 };
 
-export default SimModal;
+export default Modal;

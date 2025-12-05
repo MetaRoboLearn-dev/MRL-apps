@@ -3,7 +3,7 @@ import CodeScreen from "../components/CodeEditor/CodeScreen.tsx";
 import Navbar from "../components/UI/Navbar.tsx";
 import Footer from "../components/UI/Footer.tsx";
 import Loader from "../components/UI/Loader.tsx";
-import SimModal from "../components/Simulator/UI/SimModal.tsx";
+import Modal from "../components/UI/Modal.tsx";
 
 const MainPage = () => {
   return (
@@ -16,7 +16,7 @@ const MainPage = () => {
           <SimScreen/>
         </div>
         <Footer/>
-        <SimModal/>
+        <Modal/>
       </div>
     </>
   );

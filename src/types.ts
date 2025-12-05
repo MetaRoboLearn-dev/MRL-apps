@@ -210,6 +210,7 @@ export interface CodeContextType {
   blocksRef: RefObject<string>;
   modeRef: RefObject<string>;
   getCurrentCode: () => string;
+  getCurrentValue: () => string;
   runCode: () => Promise<MoveCommand[] | null>;
   runRobot: () => Promise<void>;
 }

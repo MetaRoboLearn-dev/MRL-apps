@@ -38,6 +38,14 @@ export const CodeProvider = ({ children }: PropsWithChildren) => {
     }
   }
 
+  const getCurrentValue = (): string => {
+    if (modeRef.current === 'python') {
+      return codeRef.current;
+    } else {
+      return blocksRef.current;
+    }
+  }
+
   const processSteps = (steps: string[]): MoveCommand[] => {
     return steps
       .filter(step => step.trim() !== '')
@@ -62,20 +70,21 @@ export const CodeProvider = ({ children }: PropsWithChildren) => {
   const runCode = async () => {
     setSimFocused(false);
     const code = getCurrentCode();
-    log_action(groupName, modeRef.current, Action.SIM_RUN, code)
+    const val = getCurrentValue();
+    log_action(groupName, modeRef.current, Action.SIM_RUN, val)
     const compiled = await run_code(code);
 
     if (compiled.error){
-      log_action(groupName, modeRef.current, Action.CODE_ERR, code)
+      log_action(groupName, modeRef.current, Action.CODE_ERR, val)
       return null;
     }
     return processSteps(compiled.output.split('\n'));
-    // if (steps) queueMoves(steps);
   }
 
   const runRobot = async () => {
     const code = getCurrentCode();
-    log_action(groupName, modeRef.current, Action.ROBOT_RUN, code)
+    const val = getCurrentValue();
+    log_action(groupName, modeRef.current, Action.ROBOT_RUN, val)
     await run_robot(code, robotUrl);
   }
 
@@ -151,6 +160,9 @@ export const CodeProvider = ({ children }: PropsWithChildren) => {
         blocks: blocksRef.current,
       };
 
+      console.log("spemanje koda");
+      log_action(groupName, modeRef.current, Action.CODE_EDIT, getCurrentValue())
+
       localStorage.setItem(selectedTab, JSON.stringify(updated));
     } catch (err) {
       console.error("Failed to update localStorage entry:", err);
@@ -181,7 +193,7 @@ export const CodeProvider = ({ children }: PropsWithChildren) => {
       code, setCode, codeRef,
       blocks, setBlocks, blocksRef,
       modeRef,
-      getCurrentCode,
+      getCurrentCode, getCurrentValue,
       runCode, runRobot,
     }}>
       {children}

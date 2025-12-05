@@ -20,3 +20,12 @@ export const log_action = (group:string, mode:string, action:Action, value:strin
     console.error("log_action failed:", err);
   });
 }
+
+// CREATE TABLE action_logs (
+//   id SERIAL PRIMARY KEY,
+//   group_name TEXT NOT NULL,
+//   app_mode TEXT NOT NULL,
+//   action_time TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+//   action_type TEXT NOT NULL,
+//   value TEXT NOT NULL
+// );

@@ -7,7 +7,7 @@ const SimScreen = () => {
   const { camMode } = useSettings();
 
   return (
-    <div className={`w-2/5 flex flex-col items-center justify-center box-border z-20`}>
+    <div className={`w-2/5 flex-center flex-col box-border z-20`}>
       <SimHeader />
       {camMode ? (
         <CamScreen />

@@ -45,8 +45,8 @@ const SimHeader = () => {
   };
 
   return (
-    <div className={'w-full flex justify-between items-end'}>
-      <ul className={"bg-white px-4 h-14 flex items-end"}>
+    <div className={'header flex-between font-display'}>
+      <ul className={"flex items-end"}>
         <CamTab />
         {simKeys.map((key) => (
           <SimTab

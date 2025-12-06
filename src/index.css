@@ -71,12 +71,65 @@
     --color-dark-neutrals-900: #0a0c0c;
 }
 
-.scrollbar-blue{
+/** {*/
+/*    @apply font-display*/
+/*}*/
+
+.flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.flex-between {
+    display: flex;
+    justify-content: space-between;
+}
+
+.scrollbar-blue {
     scrollbar-color: #0a0c0c #005456;
     scrollbar-width: thin;
 }
 
-.scrollbar-red{
+.scrollbar-red {
     scrollbar-color: #8c211d #b43a30;
     scrollbar-width: thin;
+}
+
+.text-dark {
+    @apply text-dark-neutrals-400;
+}
+
+.text-light {
+    @apply text-white-smoke-200;
+}
+
+.text-disabled-dark {
+    @apply text-dark-neutrals-200;
+}
+
+.header {
+    @apply bg-white w-full h-14 px-4 items-end;
+}
+
+.tab {
+    @apply font-bold mx-1 py-2 px-4 rounded-t-lg select-none;
+}
+
+/*FORMS*/
+.modal-form-button {
+    @apply bg-sunglow-600/70 px-4 py-2 rounded font-semibold transition hover:cursor-pointer hover:bg-sunglow-600;
+}
+
+.modal-form-input {
+    @apply w-full bg-sunglow-600 p-2 rounded;
+}
+
+/*BUTTONS*/
+.button-lg {
+    @apply font-display font-bold text-xl pl-5 pr-8 py-2 rounded flex items-center;
+}
+
+.button-square {
+    @apply font-display font-bold text-xl px-3 py-3 rounded flex items-center;
 }

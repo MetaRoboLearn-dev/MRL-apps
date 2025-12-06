@@ -4,7 +4,7 @@ const SimSpeedSlider = () => {
   const { animationSpeed, setAnimationSpeed } = useSettings();
 
   return (
-    <div className="flex items-center justify-center mb-2 font-bold">
+    <div className="flex-center mb-2 font-bold">
       <label className="text-md text-dark-neutrals-400 mr-4 whitespace-nowrap">
         Brzina
       </label>

@@ -21,19 +21,19 @@ const GroupNameForm = () => {
                placeholder={'Unesite oznaku'}
                value={newName}
                onChange={(e) => setNewName(e.target.value)}
-               className={'w-full bg-sunglow-600 p-2 rounded'}/>
+               className={'modal-form-input'}/>
       </div>
 
       <div className={'text-lg pt-8 text-right'}>
         <span
-          className={'bg-sunglow-600/70 px-4 py-2 rounded font-semibold transition hover:cursor-pointer hover:bg-sunglow-600 mr-3'}
+          className={'modal-form-button mr-3'}
           onClick={() => {
             setModalVisible(false);
             set();
-          }}>Stvori
+          }}>Spremi
         </span>
         <span
-          className={'bg-sunglow-600/70 px-4 py-2 rounded font-semibold transition hover:cursor-pointer hover:bg-sunglow-600'}
+          className={'modal-form-button'}
           onClick={() => {
             setModalVisible(false);
           }}>Odustani

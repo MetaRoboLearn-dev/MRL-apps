@@ -4,6 +4,7 @@ import Navbar from "../components/UI/Navbar.tsx";
 import Footer from "../components/UI/Footer.tsx";
 import Loader from "../components/UI/Loader.tsx";
 import Modal from "../components/UI/Modal.tsx";
+import {Slide, ToastContainer} from "react-toastify";
 
 const MainPage = () => {
   return (
@@ -18,6 +19,20 @@ const MainPage = () => {
         <Footer/>
         <Modal/>
       </div>
+
+      <ToastContainer
+        position="bottom-left"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable={false}
+        pauseOnHover
+        theme="light"
+        transition={Slide}
+      />
     </>
   );
 };

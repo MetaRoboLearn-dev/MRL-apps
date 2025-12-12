@@ -32,11 +32,18 @@ export const run_robot = async (code: string, robotUrl: string | null) => {
       }
     });
     if (response.ok) {
-      console.log('ok, ', code);
+      return response.json();
+    }
+    else {
+      return {
+        error: "Robot error",
+        status: response.status,
+        statusText: response.statusText
+      }
     }
   } catch (e) {
     if(e instanceof Error) {
-      console.error(e.message);
+      return e;
     }
   }
 }

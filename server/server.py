@@ -14,6 +14,10 @@ CORS(app,
 def health():
     return jsonify({"status": "ok"}), 200
 
+@app.route('/execute', methods=['POST'])
+def execute():
+    return jsonify({"status": "ok"}), 200
+
 @app.route('/log-get', methods=['GET'])
 def log_get():
     return db_log_get()

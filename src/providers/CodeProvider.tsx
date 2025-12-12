@@ -6,6 +6,7 @@ import {pythonGenerator} from "blockly/python";
 import {MoveCommand} from "../types.ts";
 import {Action, log_action} from "../api/logApi.ts";
 import {run_code, run_robot} from "../api/robotApi.ts";
+import {toast} from "react-toastify";
 
 export const CodeProvider = ({ children }: PropsWithChildren) => {
   const { selectedTab } = useSettings();
@@ -85,7 +86,11 @@ export const CodeProvider = ({ children }: PropsWithChildren) => {
     const code = getCurrentCode();
     const val = getCurrentValue();
     log_action(groupName, modeRef.current, Action.ROBOT_RUN, val)
-    await run_robot(code, robotUrl);
+    const res = await run_robot(code, robotUrl);
+    if (res.error) {
+      toast.error(res.status + " " + res.statusText);
+      log_action(groupName, modeRef.current, Action.ROBOT_RUN_FAIL, val)
+    }
   }
 
   // TODO - implementirat ovaj check u tipku za simuliranje

@@ -53,9 +53,16 @@ export const abort_robot = async (robotUrl: string | null) => {
   try {
     const response = await fetch(url, {
       method: "POST",
-    })
-    if (!response.ok) {
-      console.log('abort not ok');
+    });
+    if (response.ok) {
+      return response.json();
+    }
+    else {
+      return {
+        error: "Robot error",
+        status: response.status,
+        statusText: response.statusText
+      }
     }
   } catch (e) {
     if(e instanceof Error) {

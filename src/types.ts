@@ -226,3 +226,8 @@ export interface UIContextType {
   setModalFooter: (footer: ReactNode) => void;
   showModal: (header: string, body: ReactNode, footer?: ReactNode) => void;
 }
+
+export interface ToastContextType {
+  showToast: (message: string) => void;
+  closeToast: (id: number) => void;
+}

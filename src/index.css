@@ -75,6 +75,14 @@
 /*    @apply font-display*/
 /*}*/
 
+.text-dark {
+    @apply text-dark-neutrals-400;
+}
+
+.text-light {
+    @apply text-white-smoke-200;
+}
+
 .flex-center {
     display: flex;
     justify-content: center;
@@ -94,14 +102,6 @@
 .scrollbar-red {
     scrollbar-color: #8c211d #b43a30;
     scrollbar-width: thin;
-}
-
-.text-dark {
-    @apply text-dark-neutrals-400;
-}
-
-.text-light {
-    @apply text-white-smoke-200;
 }
 
 .text-disabled-dark {
@@ -132,4 +132,61 @@
 
 .button-square {
     @apply font-display font-bold text-xl px-3 py-3 rounded flex items-center;
+}
+
+/*TOAST*/
+
+.toast-container {
+    @apply font-display fixed top-5 left-1/2 -translate-x-1/2 z-50 select-none;
+}
+
+.toast {
+    @apply flex items-center w-80;
+    @apply p-3.5 mb-3 rounded;
+}
+
+.toast-success {
+    @apply bg-emerald-500 text-light-cyan-50;
+}
+
+.toast-error {
+    @apply bg-tomato-600 text-light-cyan-50;
+}
+
+.toast-text {
+    @apply mr-2;
+}
+
+.toast-close {
+    @apply text-xs ml-auto cursor-pointer;
+}
+
+.toast-enter {
+    animation: slideIn 0.2s ease-out forwards;
+}
+
+.toast-exit {
+    animation: slideOut 0.2s ease-in forwards;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideOut {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
 }

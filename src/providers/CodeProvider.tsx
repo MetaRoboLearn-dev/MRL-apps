@@ -6,9 +6,10 @@ import {pythonGenerator} from "blockly/python";
 import {MoveCommand} from "../types.ts";
 import {Action, log_action} from "../api/logApi.ts";
 import {run_code, run_robot} from "../api/robotApi.ts";
-import {toast} from "react-toastify";
+import {useToast} from "../hooks/useToast.ts";
 
 export const CodeProvider = ({ children }: PropsWithChildren) => {
+  const { showToast } = useToast()
   const { selectedTab } = useSettings();
   const { setSimFocused, robotUrl, groupName } = useSettings();
   const [code, setCodeState] = useState<string>('');
@@ -88,7 +89,7 @@ export const CodeProvider = ({ children }: PropsWithChildren) => {
     log_action(groupName, modeRef.current, Action.ROBOT_RUN, val)
     const res = await run_robot(code, robotUrl);
     if (res.error) {
-      toast.error(res.status + " " + res.statusText);
+      showToast(res.status + " " + res.statusText);
       log_action(groupName, modeRef.current, Action.ROBOT_RUN_FAIL, val)
     }
   }

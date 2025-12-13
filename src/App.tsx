@@ -6,6 +6,7 @@ import GridProvider from "./providers/GridProvider.tsx";
 import UIProvider from "./providers/UIProvider.tsx";
 import {useGLTF} from "@react-three/drei";
 import {TextureLoader} from "three";
+import ToastProvider from "./providers/ToastProvider.tsx";
 
 function App() {
   // TODO - check if this really is needed after changing to /src/img
@@ -17,17 +18,19 @@ function App() {
   useGLTF('models/Tree_small.glb');
 
   return (
-    <UIProvider>
-      <SettingsProvider>
-        <CodeProvider>
-          <GridProvider>
-            <VehicleProvider>
-              <MainPage />
-            </VehicleProvider>
-          </GridProvider>
-        </CodeProvider>
-      </SettingsProvider>
-    </UIProvider>
+    <ToastProvider>
+      <UIProvider>
+        <SettingsProvider>
+          <CodeProvider>
+            <GridProvider>
+              <VehicleProvider>
+                <MainPage />
+              </VehicleProvider>
+            </GridProvider>
+          </CodeProvider>
+        </SettingsProvider>
+      </UIProvider>
+    </ToastProvider>
   );
 }
 

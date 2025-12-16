@@ -140,6 +140,10 @@
     @apply font-display fixed top-5 left-1/2 -translate-x-1/2 z-50 select-none;
 }
 
+.toast-container-sim {
+    @apply font-display relative z-50 select-none;
+}
+
 .toast {
     @apply flex items-center w-80;
     @apply p-3.5 mb-3 rounded;

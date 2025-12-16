@@ -7,6 +7,8 @@ export const enum Action {
   SIM_END_STUCK = "sim_end_stuck",
   ROBOT_RUN = "robot_run",
   ROBOT_RUN_FAIL = "robot_run_fail",
+  ROBOT_END_SUCC = "robot_end_succ",
+  ROBOT_END_FAIL = "robot_end_fail"
 }
 
 export const log_action = (group:string, mode:string, action:Action, value:string) => {

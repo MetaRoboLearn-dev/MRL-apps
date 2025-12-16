@@ -11,7 +11,7 @@ import {useToast} from "../hooks/useToast.ts";
 export const CodeProvider = ({ children }: PropsWithChildren) => {
   const { showToast } = useToast()
   const { selectedTab } = useSettings();
-  const { setSimFocused, robotUrl, groupName } = useSettings();
+  const { setSimFocused, robotUrl, groupName, setAwaitingReview } = useSettings();
   const [code, setCodeState] = useState<string>('');
   const [blocks, setBlocksState] = useState<string>('')
   const [loaded, setLoaded] = useState(false);
@@ -91,6 +91,9 @@ export const CodeProvider = ({ children }: PropsWithChildren) => {
     if (res.error) {
       showToast(res.status + " " + res.statusText);
       log_action(groupName, modeRef.current, Action.ROBOT_RUN_FAIL, val)
+    }
+    else {
+      setAwaitingReview(true);
     }
   }
 

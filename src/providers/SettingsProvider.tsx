@@ -20,6 +20,7 @@ export const SettingsProvider = ({ children }: PropsWithChildren) => {
 
   const [robotUrl, setRobotUrl] = useState<string | null>(null);
   const [groupName, setGroupName] = useState<string>(localStorage.getItem("group") || 'Grupa');
+  const [awaitingReview, setAwaitingReview] = useState<boolean>(false);
 
   const setAnimationSpeed = (speed: number) => {
     // max 0.1, min 0.02, default 0.4
@@ -96,6 +97,7 @@ export const SettingsProvider = ({ children }: PropsWithChildren) => {
       barrierTextures, loadBarrierTextures,
       robotUrl, setRobotUrl,
       groupName, setGroupName,
+      awaitingReview, setAwaitingReview
     }}>
       {children}
     </SettingsContext.Provider>

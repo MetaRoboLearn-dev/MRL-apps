@@ -14,7 +14,7 @@ import ButtonConnect from "../Footer/ButtonConnect.tsx";
 const Footer = () => {
   const { moveQueue, isMoving } = useVehicle();
   const { modalVisible } = useUI();
-  const { camMode, robotUrl } = useSettings();
+  const { camMode, robotUrl, awaitingReview } = useSettings();
   const { start, finish } = useGrid();
 
   const [urlInput, setUrlInput] = useState('');
@@ -30,7 +30,7 @@ const Footer = () => {
                           setEditingUrl={setEditingUrl}
                           setUrlInput={setUrlInput}/>
           <ButtonRobotStop disabled={disabled} />
-          <ButtonRobotRun disabled={disabled} />
+          <ButtonRobotRun disabled={disabled || awaitingReview} />
         </>
       ) : (
         <ButtonConnect disabled={disabled}

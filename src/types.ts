@@ -165,6 +165,8 @@ export interface SettingsContextType {
   setRobotUrl: (robotUrl: string | null) => void;
   groupName: string;
   setGroupName: (groupName: string) => void;
+  awaitingReview: boolean;
+  setAwaitingReview: (awaitingReview: boolean) => void;
 }
 
 export interface VehicleContextType {

@@ -36,6 +36,7 @@ const ToastProvider = ({children} : PropsWithChildren) => {
               <Toast
                 key={toast.id}
                 message={toast.message}
+                type={"ROBOT_RUN"}
                 close={() => closeToast(toast.id)} />
             )
           })}

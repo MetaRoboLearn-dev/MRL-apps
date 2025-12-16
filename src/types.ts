@@ -71,11 +71,13 @@ export enum Sticker {
   ROAD_TURN = 'Zavoj',
   HOUSE_GREEN = 'Zelena kuća',
   HOUSE_RED = 'Crvena kuća',
+  HOUSE_RED_SANTA = 'Crvena kuća (Djed Mraz)',
   HOUSE_BLUE = 'Plava kuća',
   HOUSE_YELLOW = 'Žuta kuća',
   POST_OFFICE = 'Pošta',
   RESTAURANT = 'Restoran',
   WAREHOUSE = 'Skladište',
+  ELF_WORKSHOP = 'Radionica patuljaka',
 }
 
 interface StickerData {
@@ -113,6 +115,10 @@ export const Stickers: Record<Sticker, StickerData> = {
     key: 'HOUSE_RED',
     image: 'textures/house_red.png',
   },
+  [Sticker.HOUSE_RED_SANTA]: {
+    key: 'HOUSE_RED_SANTA',
+    image: 'textures/house_red_santa.png',
+  },
   [Sticker.HOUSE_BLUE]: {
     key: 'HOUSE_BLUE',
     image: 'textures/house_blue.png',
@@ -132,6 +138,10 @@ export const Stickers: Record<Sticker, StickerData> = {
   [Sticker.WAREHOUSE]: {
     key: 'WAREHOUSE',
     image: 'textures/warehouse.png',
+  },
+  [Sticker.ELF_WORKSHOP]: {
+    key: 'ELF_WORKSHOP',
+    image: 'textures/elf_workshop.png',
   },
 };
 

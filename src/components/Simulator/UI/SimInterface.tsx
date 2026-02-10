@@ -1,16 +1,16 @@
 import {useSettings} from "../../../hooks/useSettings.ts";
 import {TileType} from "../../../types.ts";
 import {useVehicle} from "../../../hooks/useVehicle.ts";
-import SimModal from "./SimModal.tsx";
 import {useUI} from "../../../hooks/useUI.ts";
 import {useGrid} from "../../../hooks/useGrid.ts";
 import {useEffect, useState} from "react";
+import SimTileDropdown from "./SimTileDropdown.tsx";
+import {useCode} from "../../../hooks/useCode.ts";
+import SimSpeedSlider from "./SimSpeedSlider.tsx";
 import {BsArrowLeftCircleFill, BsChevronLeft, BsChevronRight, BsGearFill} from "react-icons/bs";
 import {TbCircleDashedLetterA, TbCircleDashedLetterD} from "react-icons/tb";
-import SimTileDropdown from "./SimTileDropdown.tsx";
-import SimSpeedSlider from "./SimSpeedSlider.tsx";
 import SimSideMenu from "./SimSideMenu.tsx";
-import {useCode} from "../../../hooks/useCode.ts";
+// import Modal from "./Modal.tsx";
 
 interface Props{
   isHovered: boolean,
@@ -31,7 +31,7 @@ const SimInterface = ({isHovered}: Props) => {
   const [showSideMenu, setShowSideMenu] = useState(false);
 
   const tileValues = Object.values(TileType);
-  const dev = true;
+  const dev = false;
 
   const selectNextType = () => {
     const nextIndex = (tileIndex + 1) % tileValues.length;
@@ -99,6 +99,13 @@ const SimInterface = ({isHovered}: Props) => {
 
         <SimTileDropdown show={showTileDropdown} setShow={setShowTileDropdown} />
 
+        <div
+          className={`${selectedType === TileType.STICKER || selectedType === TileType.START ? 'flex' : 'hidden'} mb-2 flex justify-center items-center`}>
+          <span className={'text-lg font-bold text-dark-neutrals-400 mr-4 whitespace-nowrap'}>
+            Pritisni R za rotaciju!
+          </span>
+        </div>
+
         <SimSpeedSlider />
 
         <div className={'flex justify-between'}>
@@ -130,7 +137,7 @@ const SimInterface = ({isHovered}: Props) => {
       </div>
 
       <SimSideMenu show={showSideMenu} setShow={setShowSideMenu} type={selectedType} />
-      <SimModal/>
+      {/*<Modal/>*/}
     </>
   );
 };

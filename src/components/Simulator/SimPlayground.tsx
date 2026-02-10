@@ -6,7 +6,7 @@ const SimPlayground = () => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <div className={`bg-turquoise-50 flex flex-col flex-grow items-center justify-center w-full
+    <div className={`bg-turquoise-50 flex-center flex-col flex-grow w-full
               border-t-8 border-y-10 border-turquoise-700 relative overflow-hidden`}
          onMouseEnter={() => setIsHovered(true)}
          onMouseLeave={() => setIsHovered(false)}>

@@ -19,6 +19,7 @@ const GridProvider = ({ children }: PropsWithChildren) => {
   const [loaded, setLoaded] = useState(false);
 
   // ucitavanje iz local storage
+  // TODO - same as CodeProvider, most likely has a lot of redundancy. Check it out and optimize if possible
   useEffect(() => {
     const raw = localStorage.getItem(selectedTab || '');
     if (!raw) {

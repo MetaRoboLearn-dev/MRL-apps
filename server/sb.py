@@ -1,14 +1,9 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
 import threading
 import io
 import contextlib
 import math
+from flask import jsonify
 
-app = Flask(__name__)
-CORS(app)
-
-# Configs
 EXEC_TIMEOUT = 2  # seconds
 MAX_OUTPUT_LEN = 1024  # 1 KB
 
@@ -24,7 +19,6 @@ def turn_left(a = 0, b = 0):
 def turn_right(a = 0, b = 0):
     print('desno')
 
-# Whitelisted built-ins
 safe_builtins = {
     "forward": forward,
     "back": back,
@@ -55,11 +49,7 @@ def run_user_code(code: str, output: io.StringIO, error: io.StringIO):
     except Exception as e:
         error.write(f"{type(e).__name__}: {str(e)}\n")
 
-
-@app.route('/run-python', methods=['POST'])
-def run_python():
-    code = request.json.get("code", "")
-
+def sb_run_python(code):
     if "import" in code:
         return jsonify({"error": "Import statements are not allowed."}), 400
 
@@ -87,6 +77,3 @@ def run_python():
         "output": output,
         "error": error
     })
-
-if __name__ == '__main__':
-    app.run(debug=True, port=8000)

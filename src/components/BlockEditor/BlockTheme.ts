@@ -1,10 +1,15 @@
 import * as Blockly from "blockly/core";
 
 const parseColor = (color: string): string => {
+  if (!color || color.startsWith("oklch")) return "";
   const ctx = document.createElement("canvas").getContext("2d");
   if (!ctx) return color;
-  ctx.fillStyle = color;
-  return ctx.fillStyle;
+  try {
+    ctx.fillStyle = color;
+    return ctx.fillStyle;
+  } catch {
+    return "";
+  }
 };
 
 const getColor = (color: string) => {
@@ -16,7 +21,7 @@ const createCustomTheme = () => {
   return Blockly.Theme.defineTheme("customTheme", {
     base: Blockly.Themes.Classic,
     categoryStyles: {
-      motion_category: {
+      robot_category: {
         colour: getColor("--color-turquoise-700"),
       },
       list_category: {
@@ -40,6 +45,9 @@ const createCustomTheme = () => {
       procedure_category: {
         colour: getColor("--color-purple-600") || "#A55EEA",
       },
+      ai_category: {
+        colour: "#006045",
+      }
     },
     blockStyles: {
       list_blocks: {

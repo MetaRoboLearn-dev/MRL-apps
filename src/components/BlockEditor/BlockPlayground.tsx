@@ -12,27 +12,26 @@ import BlockCustom from "./BlockCustom.ts";
 import { pythonGenerator } from "blockly/python";
 import "./BlockCustomGenerator.ts";
 import {useCode} from "../../hooks/useCode.ts";
+// import {log_action} from "../../api/logApi.ts";
 
 registerContinuousToolbox();
 Blockly.common.defineBlocksWithJsonArray(BlockCustom);
 
-const BlockPlayground = ({mode}: {mode: string}) => {
+// TODO - this code is ugly, also add logging back after you optimize CodeProvider
+//  also try to make this code and CodePlayground have a similar layout
+const BlockPlayground = () => {
   const workspaceRef = useRef<HTMLDivElement>(null);
-  const currentModeRef = useRef<string>(mode);
   const workspaceInstance = useRef<Blockly.WorkspaceSvg | null>(null);
-  const { setCode, setBlocks } = useCode();
+  const { setCode, setBlocks, modeRef } = useCode();
 
   useEffect(() => {
-    currentModeRef.current = mode;
     if (workspaceInstance.current) {
       setTimeout(() => Blockly.svgResize(workspaceInstance.current!), 50);
     }
-  }, [mode]);
-
+  }, [modeRef.current]);
 
   useEffect(() => {
     if (!workspaceRef.current) return;
-
     const customTheme = customThemeGetter();
 
     workspaceInstance.current = Blockly.inject(workspaceRef.current, {
@@ -43,13 +42,8 @@ const BlockPlayground = ({mode}: {mode: string}) => {
       },
       toolbox,
       theme: customTheme,
-      maxInstances: { 'motion_start': 1 },
+      maxInstances: { 'robot_start': 1 },
     });
-
-    // Force a refresh of the toolbox
-    workspaceInstance.current.refreshToolboxSelection();
-
-    setTimeout(() => Blockly.svgResize(workspaceInstance.current!), 50);
 
     let timeout: ReturnType<typeof setTimeout>;
     const onWorkspaceChange = (event: Blockly.Events.Abstract) => {
@@ -59,11 +53,9 @@ const BlockPlayground = ({mode}: {mode: string}) => {
         event.type === 'change' ||
         event.type === 'move'
       ) {
-
-        timeout = setTimeout(() => {
-          console.log(currentModeRef.current);
-          if (currentModeRef.current === 'python') {
-            clearTimeout(timeout);
+        clearTimeout(timeout);
+        const updateCode = () => {
+          if (modeRef.current === 'python') {
             return;
           }
 
@@ -74,7 +66,17 @@ const BlockPlayground = ({mode}: {mode: string}) => {
 
           setCode(code);
           setBlocks(xmlText);
-        }, 300);
+
+          if (event.type !== 'move') return;
+          console.log(xmlText);
+          // log_action("grupa 1", "blockly", xmlText);
+        };
+
+        if (event.type !== 'move') {
+          updateCode();
+        } else {
+          timeout = setTimeout(updateCode, 300);
+        }
       }
     };
 
@@ -82,10 +84,16 @@ const BlockPlayground = ({mode}: {mode: string}) => {
 
     return () => {
       clearTimeout(timeout);
-      workspaceInstance.current?.dispose();
-      workspaceInstance.current = null;
+      if (workspaceInstance.current) {
+        try {
+          workspaceInstance.current.dispose();
+        } catch (e) {
+          console.warn('Workspace disposal error:', e);
+        }
+        workspaceInstance.current = null;
+      }
     };
-  }, [setCode, setBlocks]);
+  }, []);
 
   return <div ref={workspaceRef} className="w-full h-full min-h-1/2 bg-white" />;
 };

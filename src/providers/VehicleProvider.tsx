@@ -17,6 +17,7 @@ const calcStartPosition = (start: number | null, sizeX: number, sizeZ: number): 
 
 const degToRad = (deg: number) => deg * Math.PI / 180;
 
+// TODO - OH BOY, check this out i think this is bad, so much redundancy and useless code making it complicated for no reason
 export const VehicleProvider = ({ children }: PropsWithChildren) => {
   const { start, sizeX, sizeZ, startRotationOffset } = useGrid();
 
@@ -43,8 +44,8 @@ export const VehicleProvider = ({ children }: PropsWithChildren) => {
     setRotation(startRotation);
   }, [startPosition, startRotation]);
 
-  const queueMoves = (moves: MoveCommand[]) => {
-    if (start === null) return;
+  const queueMoves = (moves: MoveCommand[] | null) => {
+    if (start === null || moves === null) return;
     setMoveQueue(moves);
     setIsMoving(true);
   };

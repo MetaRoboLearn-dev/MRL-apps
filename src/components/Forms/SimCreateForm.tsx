@@ -1,6 +1,6 @@
 import {useState} from "react";
-import {useUI} from "../../../hooks/useUI.ts";
-import {useSettings} from "../../../hooks/useSettings.ts";
+import {useUI} from "../../hooks/useUI.ts";
+import {useSettings} from "../../hooks/useSettings.ts";
 
 const SimCreateForm = () => {
   const { setModalVisible } = useUI();
@@ -44,7 +44,7 @@ const SimCreateForm = () => {
                placeholder={'Unesite oznaku'}
                value={id}
                onChange={(e) => setId(e.target.value)}
-               className={'w-full bg-sunglow-600 p-2 rounded'}/>
+               className={'modal-form-input'}/>
       </div>
       <div className={'flex justify-between w-full'}>
         <div className={'flex flex-col mr-2'}>
@@ -53,7 +53,7 @@ const SimCreateForm = () => {
                  placeholder={'Unesite širinu'}
                  value={x}
                  onChange={(e) => setX(e.target.value)}
-                 className={'w-full bg-sunglow-600 p-2 rounded'}/>
+                 className={'modal-form-input'}/>
         </div>
         <div className={'flex flex-col'}>
           <label className={'mr-5 text-lg'}>Dužina</label>
@@ -61,7 +61,7 @@ const SimCreateForm = () => {
                  placeholder={'Unesite dužinu'}
                  value={z}
                  onChange={(e) => setZ(e.target.value)}
-                 className={'w-full bg-sunglow-600 p-2 rounded'}/>
+                 className={'modal-form-input'}/>
         </div>
       </div>
       <div className="flex justify-between w-full mt-3">
@@ -81,7 +81,7 @@ const SimCreateForm = () => {
                 className={`block text-center py-1.5 transition cursor-pointer 
           ${
                   mode === 'python'
-                    ? 'bg-sunglow-600 text-black font-semibold'
+                    ? 'bg-sunglow-600 font-semibold'
                     : 'bg-sunglow-600/50 hover:bg-sunglow-600/70'
                 } 
           rounded-l-xl border border-sunglow-600 transition`}
@@ -102,7 +102,7 @@ const SimCreateForm = () => {
                 className={`block text-center py-1.5 transition cursor-pointer 
           ${
                   mode === 'blockly'
-                    ? 'bg-sunglow-600 text-black font-semibold'
+                    ? 'bg-sunglow-600 font-semibold'
                     : 'bg-sunglow-600/50 hover:bg-sunglow-600/70'
                 } 
           rounded-r-xl border border-sunglow-600 border-l-0`}
@@ -116,7 +116,7 @@ const SimCreateForm = () => {
 
       <div className={'text-lg pt-8 text-right'}>
         <span
-          className={'bg-sunglow-600/70 px-4 py-2 rounded font-semibold transition hover:cursor-pointer hover:bg-sunglow-600 mr-3'}
+          className={'modal-form-button mr-3'}
           onClick={() => {
             setModalVisible(false);
             create();
@@ -124,7 +124,7 @@ const SimCreateForm = () => {
           }}>Stvori
         </span>
         <span
-          className={'bg-sunglow-600/70 px-4 py-2 rounded font-semibold transition hover:cursor-pointer hover:bg-sunglow-600'}
+          className={'modal-form-button'}
           onClick={() => {
             setModalVisible(false);
             clear();

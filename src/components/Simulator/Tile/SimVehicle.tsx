@@ -8,12 +8,15 @@ import {useFrame} from "@react-three/fiber";
 import {useSettings} from "../../../hooks/useSettings.ts";
 import {useGrid} from "../../../hooks/useGrid.ts";
 import {useUI} from "../../../hooks/useUI.ts";
+import {Action, log_action} from "../../../api/logApi.ts";
+import {useCode} from "../../../hooks/useCode.ts";
 
 const SimVehicle = () => {
+  const { modeRef, getCurrentValue } = useCode();
   const { sizeX, sizeZ, barriers, finish } = useGrid();
   const { vehicleRef, startPosition, startRotation, position, rotation, isMoving, moveQueue, reset,
     setPosition, setRotation, setIsMoving, queueMoves, setCurrentMove } = useVehicle();
-  const { animationSpeed, selectedTab } = useSettings();
+  const { animationSpeed, selectedTab, groupName } = useSettings();
   const { setModalVisible, setModalHeader, setModalBody, setModalFooter } = useUI();
 
   const currentMoveRef = useRef<MoveCommand | null>(null);
@@ -37,15 +40,19 @@ const SimVehicle = () => {
   }
 
   const showModalWindow = (type: string) => {
+    const val = getCurrentValue();
     if (type === 'succ'){
+      log_action(groupName, modeRef.current, Action.SIM_END_SUCC, val)
       setModalHeader('Čestitke!');
       setModalBody('Uspješno ste uputili vozilo do cilja, svaka čast!');
     }
     else if (type === 'fail'){
+      log_action(groupName, modeRef.current, Action.SIM_END_FAIL, val)
       setModalHeader('Uuuups!');
       setModalBody('Niste stigli do kraja, pokušajte ponovno!');
     }
     else if (type === 'stuck'){
+      log_action(groupName, modeRef.current, Action.SIM_END_STUCK, val)
       setModalHeader('Uuuups!');
       setModalBody('Negdje ste zapeli na putu, pokušajte ponovno!');
     }

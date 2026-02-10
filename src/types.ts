@@ -71,11 +71,13 @@ export enum Sticker {
   ROAD_TURN = 'Zavoj',
   HOUSE_GREEN = 'Zelena kuća',
   HOUSE_RED = 'Crvena kuća',
+  HOUSE_RED_SANTA = 'Crvena kuća (Djed Mraz)',
   HOUSE_BLUE = 'Plava kuća',
   HOUSE_YELLOW = 'Žuta kuća',
   POST_OFFICE = 'Pošta',
   RESTAURANT = 'Restoran',
   WAREHOUSE = 'Skladište',
+  ELF_WORKSHOP = 'Radionica patuljaka',
 }
 
 interface StickerData {
@@ -113,6 +115,10 @@ export const Stickers: Record<Sticker, StickerData> = {
     key: 'HOUSE_RED',
     image: 'textures/house_red.png',
   },
+  [Sticker.HOUSE_RED_SANTA]: {
+    key: 'HOUSE_RED_SANTA',
+    image: 'textures/house_red_santa.png',
+  },
   [Sticker.HOUSE_BLUE]: {
     key: 'HOUSE_BLUE',
     image: 'textures/house_blue.png',
@@ -132,6 +138,10 @@ export const Stickers: Record<Sticker, StickerData> = {
   [Sticker.WAREHOUSE]: {
     key: 'WAREHOUSE',
     image: 'textures/warehouse.png',
+  },
+  [Sticker.ELF_WORKSHOP]: {
+    key: 'ELF_WORKSHOP',
+    image: 'textures/elf_workshop.png',
   },
 };
 
@@ -163,8 +173,10 @@ export interface SettingsContextType {
   loadBarrierTextures: () => void;
   robotUrl: string | null;
   setRobotUrl: (robotUrl: string | null) => void;
-  isBlockEditor: boolean;
-  setIsBlockEditor: (isBlockEditor: boolean) => void;
+  groupName: string;
+  setGroupName: (groupName: string) => void;
+  awaitingReview: boolean;
+  setAwaitingReview: (awaitingReview: boolean) => void;
 }
 
 export interface VehicleContextType {
@@ -179,7 +191,7 @@ export interface VehicleContextType {
   isMoving: boolean;
   setIsMoving: (isMoving: boolean) => void;
   moveQueue: MoveCommand[];
-  queueMoves: (moves: MoveCommand[]) => void;
+  queueMoves: (moves: MoveCommand[] | null) => void;
   currentMove: MoveCommand | null;
   setCurrentMove: (currentMove: MoveCommand | null) => void;
 }
@@ -204,8 +216,15 @@ export interface GridContextType {
 export interface CodeContextType {
   code: string;
   setCode: (code: string) => void;
+  codeRef: RefObject<string>;
   blocks: string;
   setBlocks: (code: string) => void;
+  blocksRef: RefObject<string>;
+  modeRef: RefObject<string>;
+  getCurrentCode: () => string;
+  getCurrentValue: () => string;
+  runCode: () => Promise<MoveCommand[] | null>;
+  runRobot: () => Promise<void>;
 }
 
 export interface UIContextType {
@@ -217,4 +236,10 @@ export interface UIContextType {
   setModalBody: (body: ReactNode) => void;
   modalFooter: ReactNode;
   setModalFooter: (footer: ReactNode) => void;
+  showModal: (header: string, body: ReactNode, footer?: ReactNode) => void;
+}
+
+export interface ToastContextType {
+  showToast: (message: string) => void;
+  closeToast: (id: number) => void;
 }

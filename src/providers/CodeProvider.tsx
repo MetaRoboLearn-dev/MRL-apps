@@ -1,39 +1,130 @@
-import {PropsWithChildren, useEffect, useState} from "react";
+import {PropsWithChildren, useCallback, useEffect, useRef, useState} from "react";
 import {CodeContext} from "./Context.tsx";
 import {useSettings} from "../hooks/useSettings.ts";
 import * as Blockly from "blockly";
+import {pythonGenerator} from "blockly/python";
+import {MoveCommand} from "../types.ts";
+import {Action, log_action} from "../api/logApi.ts";
+import {run_code, run_robot} from "../api/robotApi.ts";
+import {useToast} from "../hooks/useToast.ts";
 
 export const CodeProvider = ({ children }: PropsWithChildren) => {
+  const { showToast } = useToast()
   const { selectedTab } = useSettings();
-  const [code, setCode] = useState<string>('');
-  const [blocks, setBlocks] = useState<string>('')
+  const { setSimFocused, robotUrl, groupName, setAwaitingReview } = useSettings();
+  const [code, setCodeState] = useState<string>('');
+  const [blocks, setBlocksState] = useState<string>('')
   const [loaded, setLoaded] = useState(false);
+
+  const codeRef = useRef('');
+  const blocksRef = useRef('');
+  const modeRef = useRef('');
+
+  const setCode = useCallback((code: string) => {
+    setCodeState(code);
+    codeRef.current = code;
+  }, []);
+
+  const setBlocks = useCallback((blocks: string) => {
+    setBlocksState(blocks);
+    blocksRef.current = blocks;
+  }, []);
+
+  const getCurrentCode = (): string => {
+    if (modeRef.current === 'python') {
+      return codeRef.current;
+    } else {
+      Blockly.hideChaff();
+      const workspace = Blockly.getMainWorkspace();
+      return pythonGenerator.workspaceToCode(workspace);
+    }
+  }
+
+  const getCurrentValue = (): string => {
+    if (modeRef.current === 'python') {
+      return codeRef.current;
+    } else {
+      return blocksRef.current;
+    }
+  }
+
+  const processSteps = (steps: string[]): MoveCommand[] => {
+    return steps
+      .filter(step => step.trim() !== '')
+      .map(step => {
+        const command = step.trim().toLowerCase();
+        if (command === 'naprijed') {
+          return { type: 'move', direction: 'forward' }
+        }
+        else if (command === 'nazad') {
+          return { type: 'move', direction: 'backward' }
+        }
+        else if (command === 'lijevo') {
+          return { type: 'rotate', direction: 'left' }
+        }
+        else if (command === 'desno') {
+          return { type: 'rotate', direction: 'right' }
+        }
+        return { type: 'invalid', command }
+      })
+  }
+
+  const runCode = async () => {
+    setSimFocused(false);
+    const code = getCurrentCode();
+    const val = getCurrentValue();
+    log_action(groupName, modeRef.current, Action.SIM_RUN, val)
+    const compiled = await run_code(code);
+
+    if (compiled.error){
+      log_action(groupName, modeRef.current, Action.CODE_ERR, val)
+      return null;
+    }
+    return processSteps(compiled.output.split('\n'));
+  }
+
+  const runRobot = async () => {
+    const code = getCurrentCode();
+    const val = getCurrentValue();
+    log_action(groupName, modeRef.current, Action.ROBOT_RUN, val)
+    const res = await run_robot(code, robotUrl);
+    if (res.error) {
+      showToast(res.status + " " + res.statusText);
+      log_action(groupName, modeRef.current, Action.ROBOT_RUN_FAIL, val)
+    }
+    else {
+      setAwaitingReview(true);
+    }
+  }
 
   // TODO - implementirat ovaj check u tipku za simuliranje
   // i pliz razmisli jel stvarno zelis da ovo bude tu
-  const [isValidWorkspace, setIsValidWorkspace] = useState<boolean>(false);
+  // const [isValidWorkspace, setIsValidWorkspace] = useState<boolean>(false);
+  //
+  // const checkValidWorkspace = () => {
+  //   const workspace = Blockly.getMainWorkspace();
+  //   if (!workspace) return false;
+  //
+  //   const topBlocks = workspace.getTopBlocks();
+  //   // const allBlocks = workspace.getAllBlocks();
+  //
+  //   // TODO - ovaj dio treba regulirat jer postoje funkcije
+  //   if (topBlocks.length !== 1) return false;
+  //
+  //   if (topBlocks[0].type != 'motion_start') return false;
+  //
+  //   // TODO - pogledat kak da ovo napravim pravilo, jer ima svakakvih vrsti blockova
+  //   // const endingBlocks = allBlocks.filter(block => block.getNextBlock() === null);
+  //   // const allEndWithStop = endingBlocks.every(block => block.type === 'motion_stop');
+  //   //
+  //   // if (!allEndWithStop) return false;
+  //
+  //   return true;
+  // }
 
-  const checkValidWorkspace = () => {
-    const workspace = Blockly.getMainWorkspace();
-    if (!workspace) return false;
-
-    const topBlocks = workspace.getTopBlocks();
-    // const allBlocks = workspace.getAllBlocks();
-
-    // TODO - ovaj dio treba regulirat jer postoje funkcije
-    if (topBlocks.length !== 1) return false;
-
-    if (topBlocks[0].type != 'motion_start') return false;
-
-    // TODO - pogledat kak da ovo napravim pravilo, jer ima svakakvih vrsti blockova
-    // const endingBlocks = allBlocks.filter(block => block.getNextBlock() === null);
-    // const allEndWithStop = endingBlocks.every(block => block.type === 'motion_stop');
-    //
-    // if (!allEndWithStop) return false;
-
-    return true;
-  }
-
+  // TODO - check this and potentially rewrite it, what currently happens is that on tab change
+  //  it fires action_log() several times with the same data. Think there is a lot of redundancy in the code
+  //  look into a better way of doing this, maybe using one useEffect for saving instead of two, use getCurrentCode()
   // Loading code and blocks from localStorage
   useEffect(() => {
     const blockly_workspace = Blockly.getMainWorkspace();
@@ -54,6 +145,7 @@ export const CodeProvider = ({ children }: PropsWithChildren) => {
 
     setCode(data.code || '');
     setBlocks(data.blocks || '');
+    modeRef.current = data.mode;
 
     if (data.blocks) {
       const xml = Blockly.utils.xml.textToDom(data.blocks);
@@ -73,9 +165,12 @@ export const CodeProvider = ({ children }: PropsWithChildren) => {
 
       const updated = {
         ...parsed,
-        code,
-        blocks,
+        code: codeRef.current,
+        blocks: blocksRef.current,
       };
+
+      console.log("spemanje koda");
+      log_action(groupName, modeRef.current, Action.CODE_EDIT, getCurrentValue())
 
       localStorage.setItem(selectedTab, JSON.stringify(updated));
     } catch (err) {
@@ -93,11 +188,10 @@ export const CodeProvider = ({ children }: PropsWithChildren) => {
 
       const updated = {
         ...parsed,
-        blocks,
+        blocks: blocksRef.current,
       };
 
       localStorage.setItem(selectedTab, JSON.stringify(updated));
-      console.log(updated)
     } catch (err) {
       console.error("Failed to update localStorage entry:", err);
     }
@@ -105,8 +199,11 @@ export const CodeProvider = ({ children }: PropsWithChildren) => {
 
   return (
     <CodeContext.Provider value={{
-      code, setCode,
-      blocks, setBlocks
+      code, setCode, codeRef,
+      blocks, setBlocks, blocksRef,
+      modeRef,
+      getCurrentCode, getCurrentValue,
+      runCode, runRobot,
     }}>
       {children}
     </CodeContext.Provider>

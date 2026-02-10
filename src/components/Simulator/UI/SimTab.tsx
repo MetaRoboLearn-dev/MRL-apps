@@ -15,12 +15,12 @@ const SimTab = ({id, label, isChecked, onTabChange, remove} : Props) => {
   const { modalVisible } = useUI();
 
   const style = isChecked ?
-    ('bg-turquoise-700 text-white font-bold py-2') :
-    ('bg-turquoise-50 text-dark-neutrals-200 pt-2 pb-3.5 translate-y-2.5 ' +
-      'hover:cursor-pointer hover:bg-turquoise-100 hover:text-white-smoke-900 hover:translate-y-1.5 transition');
+    ('bg-turquoise-700 text-light py-2') :
+    ('bg-turquoise-50 text-disabled-dark pt-2 pb-3.5 translate-y-1.5 ' +
+      'hover:cursor-pointer hover:bg-turquoise-100 hover:text-light hover:translate-y-0.5 transition');
 
   return (
-    <li className={`${style} font-display mx-1 px-4 rounded-t-lg cursor-pointer peer-checked:bg-turquoise-700`}>
+    <li className={`${style} tab peer-checked:bg-turquoise-700`}>
       <label className="block">
         <input
           type="radio"
@@ -31,9 +31,9 @@ const SimTab = ({id, label, isChecked, onTabChange, remove} : Props) => {
           onChange={() => onTabChange(id)}
         />
         <span className={'cursor-pointer'}>{label}</span>
-        <span className={`ml-2 cursor-pointer hover:font-bold ${isMoving || modalVisible ? 'hidden' : ''}`}
+        <span className={`ml-2 cursor-pointer ${isMoving || modalVisible ? 'hidden' : ''}`}
               onClick={() => remove(id)}>
-          <BsXLg size={10} className={`${isChecked ? 'text-white' : 'text-dark-neutrals-200'} inline stroke-2 cursor-pointer`} />
+          <BsXLg size={10} className={`${isChecked ? 'text-light' : 'text-disabled-dark'} inline stroke-2`} />
         </span>
       </label>
     </li>

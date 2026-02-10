@@ -19,8 +19,8 @@ export const SettingsProvider = ({ children }: PropsWithChildren) => {
   const [barrierTextures, setBarrierTextures] = useState<Record<Barrier, Texture>>({} as Record<Barrier, Texture>);
 
   const [robotUrl, setRobotUrl] = useState<string | null>(null);
-
-  const [isBlockEditor, setIsBlockEditor] = useState<boolean>(false);
+  const [groupName, setGroupName] = useState<string>(localStorage.getItem("group") || 'Grupa');
+  const [awaitingReview, setAwaitingReview] = useState<boolean>(false);
 
   const setAnimationSpeed = (speed: number) => {
     // max 0.1, min 0.02, default 0.4
@@ -35,6 +35,10 @@ export const SettingsProvider = ({ children }: PropsWithChildren) => {
       setSelectedRotation(new_rot)
   }
 
+  // TODO - This is a BIG one, the dir /public is not used used properly here, it should only use STATIC images (research pls).
+  //  Every non-static image should be in src/img, stuff like sticker and barrier images (but research aswell pls)
+  //  Also what this does, it preloads all the stickers and barrier images so it doesn't flicker on every change
+  //  (not sure why it happens but my guess is because its in /public)
   const loadTextures = () => {
     const loader = new TextureLoader();
     const textureMap: Record<string, Texture> = {};
@@ -92,7 +96,8 @@ export const SettingsProvider = ({ children }: PropsWithChildren) => {
       textures, loadTextures,
       barrierTextures, loadBarrierTextures,
       robotUrl, setRobotUrl,
-      isBlockEditor, setIsBlockEditor
+      groupName, setGroupName,
+      awaitingReview, setAwaitingReview
     }}>
       {children}
     </SettingsContext.Provider>

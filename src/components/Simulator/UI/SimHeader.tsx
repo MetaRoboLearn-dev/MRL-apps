@@ -20,7 +20,7 @@ const SimHeader = () => {
         localStorage.setItem('sim1', JSON.stringify(data));
         setSelectedTab('sim1');
       }
-      const keys = Object.keys(localStorage).filter((key) => key !== 'selectedID' && key !== 'robotUrl');
+      const keys = Object.keys(localStorage).filter((key) => key !== 'selectedID' && key !== 'robotUrl' && key !== 'group');
       setSimKeys(keys);
     };
 
@@ -41,12 +41,12 @@ const SimHeader = () => {
       setSelectedTab('');
     }
     localStorage.removeItem(id);
-    setSimKeys(Object.keys(localStorage).filter((key) => key !== 'selectedID'));
+    setSimKeys(Object.keys(localStorage).filter((key) => key !== 'selectedID' && key !== 'robotUrl' && key !== 'group'));
   };
 
   return (
-    <div className={'w-full flex justify-between items-end'}>
-      <ul className={"bg-white px-4 h-14 flex items-end"}>
+    <div className={'header flex-between font-display'}>
+      <ul className={"flex items-end"}>
         <CamTab />
         {simKeys.map((key) => (
           <SimTab

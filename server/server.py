@@ -1,9 +1,21 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from db import db_log_get, db_log_action
+from database import init_db
 from sb import sb_run_python
+from routes import user_routes, task_routes, activity_routes
+import models
 
 app = Flask(__name__)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:123@localhost:5432/mrl'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+init_db(app)
+
+app.register_blueprint(user_routes.bp)
+app.register_blueprint(task_routes.bp)
+app.register_blueprint(activity_routes.bp)
+
 CORS(app, 
      origins=["http://localhost:3000"],
      methods=["GET", "POST", "OPTIONS"],
@@ -17,18 +29,6 @@ def health():
 @app.route('/execute', methods=['POST'])
 def execute():
     return jsonify({"status": "ok"}), 200
-
-@app.route('/log-get', methods=['GET'])
-def log_get():
-    return db_log_get()
-
-@app.route('/log-action', methods=['POST'])
-def log_action():
-    group = request.json.get("group", "")
-    mode = request.json.get("mode", "")
-    action = request.json.get("action", "")
-    value = request.json.get("value", "")
-    return db_log_action(group, mode, action, value)
 
 @app.route('/run-python', methods=['POST'])
 def run_python():

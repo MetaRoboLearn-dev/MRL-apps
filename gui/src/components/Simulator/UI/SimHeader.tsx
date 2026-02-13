@@ -20,7 +20,7 @@ const SimHeader = () => {
         localStorage.setItem('sim1', JSON.stringify(data));
         setSelectedTab('sim1');
       }
-      const keys = Object.keys(localStorage).filter((key) => key !== 'selectedID' && key !== 'robotUrl' && key !== 'group');
+      const keys = Object.keys(localStorage).filter((key) => key !== 'selectedID' && key !== 'robotUrl' && key !== 'group' && !key.startsWith('tanstack'));
       setSimKeys(keys);
     };
 
@@ -41,7 +41,7 @@ const SimHeader = () => {
       setSelectedTab('');
     }
     localStorage.removeItem(id);
-    setSimKeys(Object.keys(localStorage).filter((key) => key !== 'selectedID' && key !== 'robotUrl' && key !== 'group'));
+    setSimKeys(Object.keys(localStorage).filter((key) => key !== 'selectedID' && key !== 'robotUrl' && key !== 'group' && !key.startsWith('tanstack')));
   };
 
   return (

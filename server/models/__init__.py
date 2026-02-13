@@ -3,6 +3,7 @@ from .user import Role
 from .task import Task
 from .activity import Activity
 from .activity_task import ActivityTask
+from .activity_task import Type
 from .user_started_task import UserStartedTask
-from .log import UserStartedTaskLog
-from .log import EventType
+from .user_task_log import UserTaskLog
+from .user_task_log import EventType

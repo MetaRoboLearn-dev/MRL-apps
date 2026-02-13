@@ -27,7 +27,7 @@ class UserRepository(BaseRepository[User]):
         role_id: Optional[int] = None,
         active_only: Optional[bool] = None,
         search: Optional[str] = None,
-        order_by_username: bool = True,
+        order_by_username: bool = False,
     ) -> list[User]:
         q = self.session.query(User)
 
@@ -49,6 +49,8 @@ class UserRepository(BaseRepository[User]):
 
         if order_by_username:
             q = q.order_by(User.username.asc())
+        else:
+            q = q.order_by(User.id.asc())
 
         return q.offset(skip).limit(limit).all()
 
@@ -115,42 +117,6 @@ class UserRepository(BaseRepository[User]):
         self.session.refresh(user)
         return user
 
-    # ---------- UPDATE LAST LOGIN ----------
-    def update_last_login(self, user_id: int) -> Optional[User]:
-        user = self.get_by_id(user_id)
-        if not user:
-            return None
-
-        user.last_login = utc_now()
-        self.session.commit()
-        self.session.refresh(user)
-        return user
-
-    # ---------- DELETE ----------
-    # def delete(self, user_id: int) -> bool:
-    #     user = self.get_by_id(user_id)
-    #     if not user:
-    #         return False
-    #
-    #     self.session.delete(user)
-    #     self.session.commit()
-    #     return True
-
     # ---------- EXISTS USERNAME ----------
     def exists_username(self, username: str) -> bool:
         return self.session.query(User.id).filter(User.username == username).first() is not None
-
-    # # ---------- DEACTIVATE ----------
-    # def deactivate(self, user_id: int, actor_user_id: int | None = None) -> User | None:
-    #     user = self.get_by_id(user_id)
-    #     if not user:
-    #         return None
-    #
-    #     user.active = False
-    #     user.updated_at = utc_now()
-    #     user.updated_by = actor_user_id
-    #
-    #     self.session.commit()
-    #     self.session.refresh(user)
-    #
-    #     return user

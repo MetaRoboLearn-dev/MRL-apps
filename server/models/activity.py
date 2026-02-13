@@ -20,6 +20,5 @@ class Activity(Base):
     active = Column(Boolean, nullable=False, default=True)
 
     activity_tasks = relationship('ActivityTask', back_populates='activity')
-    started_tasks = relationship('UserStartedTask', back_populates='activity')
     creator = relationship('User', back_populates='created_activities', foreign_keys="Activity.created_by")
-    updater = relationship('User', back_populates='updated_activities', foreign_keys="Activity.updated_by")
+    updater = relationship('User', foreign_keys="Activity.updated_by")

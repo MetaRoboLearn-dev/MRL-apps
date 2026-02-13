@@ -51,7 +51,7 @@ def list_users():
 
     try:
         active_only = parse_boolean_param(request.args.get("active_only"))
-        order_by_username = parse_boolean_param(request.args.get("order_by_username", "true"))
+        order_by_username = parse_boolean_param(request.args.get("order_by_username", "false"))
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
 
@@ -128,17 +128,6 @@ def update_user(user_id: int):
         if not user:
             return jsonify({"error": "User not found"}), 404
 
-        return jsonify(_user_to_dict(user)), 200
-
-
-# ---------- UPDATE LAST LOGIN ----------
-@bp.route("/<int:user_id>/last-login", methods=["POST"])
-def update_last_login(user_id: int):
-    with db_session() as session:
-        repo = UserRepository(session)
-        user = repo.update_last_login(user_id)
-        if not user:
-            return jsonify({"error": "User not found"}), 404
         return jsonify(_user_to_dict(user)), 200
 
 

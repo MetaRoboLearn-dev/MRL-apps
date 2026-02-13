@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from database import init_db
 from sb import sb_run_python
-from routes import user_routes, task_routes, activity_routes
+from routes import user_routes, task_routes, activity_routes, activity_task_routes, user_started_task_routes, user_task_log_routes
 import models
 
 app = Flask(__name__)
@@ -15,6 +15,9 @@ init_db(app)
 app.register_blueprint(user_routes.bp)
 app.register_blueprint(task_routes.bp)
 app.register_blueprint(activity_routes.bp)
+app.register_blueprint(activity_task_routes.bp)
+app.register_blueprint(user_started_task_routes.bp)
+app.register_blueprint(user_task_log_routes.bp)
 
 CORS(app, 
      origins=["http://localhost:3000"],

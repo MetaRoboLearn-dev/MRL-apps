@@ -4,6 +4,7 @@ from typing import Optional
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
 
+from models import ActivityTask
 from models.activity import Activity
 from repositories.base_repository import BaseRepository
 from utils import utc_now
@@ -40,6 +41,10 @@ class ActivityRepository(BaseRepository[Activity]):
             q = q.order_by(Activity.time_from.asc().nullslast(), Activity.id.asc())
 
         return q.offset(skip).limit(limit).all()
+
+    # ---------- READ ALL ACTIVITY TASKS ----------
+    def get_activity_tasks(self, entity_id: int) -> Optional[ActivityTask]:
+        return self.session.query(Activity.activity_tasks).filter(Activity.id == entity_id).first()
 
     # ---------- CREATE ----------
     def create(

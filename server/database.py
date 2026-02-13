@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session, Session
 from contextlib import contextmanager
-from seed import seed_roles
+from seed import seed_roles, seed_types
 from models.base import Base
 
 engine = None
@@ -30,6 +30,7 @@ def init_db(app=None):
 
     with Session(engine) as session:
         seed_roles(session)
+        seed_types(session)
 
 def get_db():
     """Get database session (use with context manager)"""

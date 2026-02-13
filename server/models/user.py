@@ -33,15 +33,10 @@ class User(Base):
     role = relationship('Role', back_populates='users')
 
     creator = relationship("User", foreign_keys='User.created_by', remote_side='User.id', back_populates="created_users")
-    updater = relationship("User", foreign_keys='User.updated_by', remote_side='User.id', back_populates="updated_users")
+    updater = relationship("User", foreign_keys='User.updated_by', remote_side='User.id')
 
+    # Check if this is really needed
     created_users = relationship("User", foreign_keys="User.created_by", back_populates="creator")
-    updated_users = relationship("User", foreign_keys="User.updated_by", back_populates="updater")
-
-    started_tasks = relationship('UserStartedTask',back_populates='user')
-
     created_activities = relationship('Activity', back_populates='creator', foreign_keys='Activity.created_by')
-    updated_activities = relationship('Activity', back_populates='updater', foreign_keys='Activity.updated_by')
-
     created_tasks = relationship('Task', back_populates='creator', foreign_keys='Task.created_by')
-    updated_tasks = relationship('Task', back_populates='updater', foreign_keys='Task.updated_by')
+    started_tasks = relationship('UserStartedTask', back_populates='starter', foreign_keys='UserStartedTask.started_by')

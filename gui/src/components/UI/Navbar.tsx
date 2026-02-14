@@ -13,6 +13,9 @@ const Navbar = () => {
         <Link to="/about" className="[&.active]:font-bold">
           About
         </Link>
+        {/*<Link to="/admin" className="[&.active]:font-bold">*/}
+        {/*  Admin*/}
+        {/*</Link>*/}
         <Link to="/admin/users" className="[&.active]:font-bold">
           Users
         </Link>
@@ -22,6 +25,13 @@ const Navbar = () => {
         <Link to="/admin/tasks" className="[&.active]:font-bold">
           Tasks
         </Link>
+        {/*<Link*/}
+        {/*  to="/admin/users/$userId"*/}
+        {/*  className="[&.active]:font-bold"*/}
+        {/*  params={{userId: '2'}}*/}
+        {/*  search={{ skip:2, limit: 10 }}>*/}
+        {/*  User 2*/}
+        {/*</Link>*/}
       </div>
     </div>
   );

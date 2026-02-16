@@ -5,5 +5,6 @@ export const Route = createFileRoute('/admin/tasks/$taskId/')({
 })
 
 function RouteComponent() {
-  return <div>Hello "/admin/tasks/$taskId/"!</div>
+  const { taskId } = Route.useParams()
+  return <div>Hello "/admin/tasks/{taskId}"!</div>
 }

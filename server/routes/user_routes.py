@@ -19,6 +19,7 @@ def _user_to_dict(user):
         "first_name": user.first_name,
         "last_name": user.last_name,
         "role_id": user.role_id,
+        "role_name": user.role.name if user.role else None,
         "active": getattr(user, "active", None),
         "last_login": user.last_login.isoformat() if user.last_login else None,
         "created_at": user.created_at.isoformat() if user.created_at else None,

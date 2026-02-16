@@ -1,5 +1,5 @@
 from typing import Optional, Iterable, Any
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import or_
 
 from models.user import User
@@ -29,7 +29,7 @@ class UserRepository(BaseRepository[User]):
         search: Optional[str] = None,
         order_by_username: bool = False,
     ) -> list[User]:
-        q = self.session.query(User)
+        q = self.session.query(User).options(joinedload(User.role))
 
         if role_id is not None:
             q = q.filter(User.role_id == role_id)

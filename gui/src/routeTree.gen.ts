@@ -16,7 +16,9 @@ import { Route as AdminUsersIndexRouteImport } from './routes/admin/users/index'
 import { Route as AdminTasksIndexRouteImport } from './routes/admin/tasks/index'
 import { Route as AdminActivitiesIndexRouteImport } from './routes/admin/activities/index'
 import { Route as AdminUsersNewRouteImport } from './routes/admin/users/new'
+import { Route as AdminTasksNewRouteImport } from './routes/admin/tasks/new'
 import { Route as AdminUsersUserIdIndexRouteImport } from './routes/admin/users/$userId/index'
+import { Route as AdminTasksTaskIdIndexRouteImport } from './routes/admin/tasks/$taskId/index'
 import { Route as AdminUsersUserIdEditRouteImport } from './routes/admin/users/$userId/edit'
 
 const AboutRoute = AboutRouteImport.update({
@@ -54,9 +56,19 @@ const AdminUsersNewRoute = AdminUsersNewRouteImport.update({
   path: '/users/new',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminTasksNewRoute = AdminTasksNewRouteImport.update({
+  id: '/tasks/new',
+  path: '/tasks/new',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AdminUsersUserIdIndexRoute = AdminUsersUserIdIndexRouteImport.update({
   id: '/users/$userId/',
   path: '/users/$userId/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminTasksTaskIdIndexRoute = AdminTasksTaskIdIndexRouteImport.update({
+  id: '/tasks/$taskId/',
+  path: '/tasks/$taskId/',
   getParentRoute: () => AdminRouteRoute,
 } as any)
 const AdminUsersUserIdEditRoute = AdminUsersUserIdEditRouteImport.update({
@@ -69,22 +81,26 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
   '/about': typeof AboutRoute
+  '/admin/tasks/new': typeof AdminTasksNewRoute
   '/admin/users/new': typeof AdminUsersNewRoute
   '/admin/activities/': typeof AdminActivitiesIndexRoute
   '/admin/tasks/': typeof AdminTasksIndexRoute
   '/admin/users/': typeof AdminUsersIndexRoute
   '/admin/users/$userId/edit': typeof AdminUsersUserIdEditRoute
+  '/admin/tasks/$taskId/': typeof AdminTasksTaskIdIndexRoute
   '/admin/users/$userId/': typeof AdminUsersUserIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
   '/about': typeof AboutRoute
+  '/admin/tasks/new': typeof AdminTasksNewRoute
   '/admin/users/new': typeof AdminUsersNewRoute
   '/admin/activities': typeof AdminActivitiesIndexRoute
   '/admin/tasks': typeof AdminTasksIndexRoute
   '/admin/users': typeof AdminUsersIndexRoute
   '/admin/users/$userId/edit': typeof AdminUsersUserIdEditRoute
+  '/admin/tasks/$taskId': typeof AdminTasksTaskIdIndexRoute
   '/admin/users/$userId': typeof AdminUsersUserIdIndexRoute
 }
 export interface FileRoutesById {
@@ -92,11 +108,13 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
   '/about': typeof AboutRoute
+  '/admin/tasks/new': typeof AdminTasksNewRoute
   '/admin/users/new': typeof AdminUsersNewRoute
   '/admin/activities/': typeof AdminActivitiesIndexRoute
   '/admin/tasks/': typeof AdminTasksIndexRoute
   '/admin/users/': typeof AdminUsersIndexRoute
   '/admin/users/$userId/edit': typeof AdminUsersUserIdEditRoute
+  '/admin/tasks/$taskId/': typeof AdminTasksTaskIdIndexRoute
   '/admin/users/$userId/': typeof AdminUsersUserIdIndexRoute
 }
 export interface FileRouteTypes {
@@ -105,33 +123,39 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/about'
+    | '/admin/tasks/new'
     | '/admin/users/new'
     | '/admin/activities/'
     | '/admin/tasks/'
     | '/admin/users/'
     | '/admin/users/$userId/edit'
+    | '/admin/tasks/$taskId/'
     | '/admin/users/$userId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/admin'
     | '/about'
+    | '/admin/tasks/new'
     | '/admin/users/new'
     | '/admin/activities'
     | '/admin/tasks'
     | '/admin/users'
     | '/admin/users/$userId/edit'
+    | '/admin/tasks/$taskId'
     | '/admin/users/$userId'
   id:
     | '__root__'
     | '/'
     | '/admin'
     | '/about'
+    | '/admin/tasks/new'
     | '/admin/users/new'
     | '/admin/activities/'
     | '/admin/tasks/'
     | '/admin/users/'
     | '/admin/users/$userId/edit'
+    | '/admin/tasks/$taskId/'
     | '/admin/users/$userId/'
   fileRoutesById: FileRoutesById
 }
@@ -192,11 +216,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminUsersNewRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/admin/tasks/new': {
+      id: '/admin/tasks/new'
+      path: '/tasks/new'
+      fullPath: '/admin/tasks/new'
+      preLoaderRoute: typeof AdminTasksNewRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/admin/users/$userId/': {
       id: '/admin/users/$userId/'
       path: '/users/$userId'
       fullPath: '/admin/users/$userId/'
       preLoaderRoute: typeof AdminUsersUserIdIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/tasks/$taskId/': {
+      id: '/admin/tasks/$taskId/'
+      path: '/tasks/$taskId'
+      fullPath: '/admin/tasks/$taskId/'
+      preLoaderRoute: typeof AdminTasksTaskIdIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
     '/admin/users/$userId/edit': {
@@ -210,20 +248,24 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteRouteChildren {
+  AdminTasksNewRoute: typeof AdminTasksNewRoute
   AdminUsersNewRoute: typeof AdminUsersNewRoute
   AdminActivitiesIndexRoute: typeof AdminActivitiesIndexRoute
   AdminTasksIndexRoute: typeof AdminTasksIndexRoute
   AdminUsersIndexRoute: typeof AdminUsersIndexRoute
   AdminUsersUserIdEditRoute: typeof AdminUsersUserIdEditRoute
+  AdminTasksTaskIdIndexRoute: typeof AdminTasksTaskIdIndexRoute
   AdminUsersUserIdIndexRoute: typeof AdminUsersUserIdIndexRoute
 }
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminTasksNewRoute: AdminTasksNewRoute,
   AdminUsersNewRoute: AdminUsersNewRoute,
   AdminActivitiesIndexRoute: AdminActivitiesIndexRoute,
   AdminTasksIndexRoute: AdminTasksIndexRoute,
   AdminUsersIndexRoute: AdminUsersIndexRoute,
   AdminUsersUserIdEditRoute: AdminUsersUserIdEditRoute,
+  AdminTasksTaskIdIndexRoute: AdminTasksTaskIdIndexRoute,
   AdminUsersUserIdIndexRoute: AdminUsersUserIdIndexRoute,
 }
 

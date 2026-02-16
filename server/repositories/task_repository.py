@@ -1,8 +1,8 @@
 from typing import Optional
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, aliased
 from sqlalchemy import or_
 
-from models import Task
+from models import Task, User
 from repositories.base_repository import BaseRepository
 from utils import utc_now
 
@@ -15,17 +15,31 @@ class TaskRepository(BaseRepository[Task]):
     # def get_by_id(self, task_id: int) -> Optional[Task]:
     #     return self.session.query(Task).filter(Task.id == task_id).first()
 
-    # ---------- LIST ----------
-    def list(
-        self,
-        *,
-        skip: int = 0,
-        limit: int = 50,
-        active_only: Optional[bool] = None,
-        search: Optional[str] = None,
-        order_by_title: bool = True,
-    ) -> list[Task]:
-        q = self.session.query(Task)
+    # ---------- LIST PREVIEW ----------
+    def list_preview(
+            self,
+            *,
+            skip: int = 0,
+            limit: int = 50,
+            active_only: Optional[bool] = None,
+            search: Optional[str] = None,
+            order_by_title: bool = True,
+    ):
+        creator = aliased(User)
+
+        q = self.session.query(
+            Task.id,
+            Task.title,
+            Task.description,
+            Task.size_x,
+            Task.size_z,
+            Task.created_at,
+            Task.created_by,
+            Task.active,
+            creator.username,
+            creator.first_name,
+            creator.last_name
+        ).outerjoin(creator, Task.created_by == creator.id)
 
         if active_only:
             q = q.filter(Task.active.is_(True))
@@ -42,7 +56,26 @@ class TaskRepository(BaseRepository[Task]):
         if order_by_title:
             q = q.order_by(Task.title.asc())
 
-        return q.offset(skip).limit(limit).all()
+        results = q.offset(skip).limit(limit).all()
+        return [
+            {
+                "id": row.id,
+                "title": row.title,
+                "description": row.description,
+                "size_x": row.size_x,
+                "size_z": row.size_z,
+                "created_at": row.created_at,
+                "created_by": row.created_by,
+                "active": row.active,
+                "creator": {
+                    "username": row.username,
+                    "name": row.first_name,
+                    "last_name": row.last_name
+                } if row.username else None
+            }
+            for row in results
+        ]
+
 
     # ---------- CREATE ----------
     from typing import Optional

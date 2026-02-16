@@ -13,6 +13,12 @@ export type User = {
   last_login: Date | null
 }
 
+export type UserBasic = {
+  username: string;
+  name: string;
+  last_name: string;
+};
+
 export type CreateUserRequest = {
   username: string
   password_hash: string

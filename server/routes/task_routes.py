@@ -8,7 +8,7 @@ bp = Blueprint("tasks", __name__, url_prefix="/api/tasks")
 
 def _actor_user_id() -> int | None:
     v = request.headers.get("X-Actor-User-Id")
-    return int(v) if v and v.isdigit() else None
+    return int(v) if v and v.isdigit() else 1
 
 
 def _task_to_dict(task):
@@ -61,14 +61,14 @@ def list_tasks():
 
     with db_session() as session:
         repo = TaskRepository(session)
-        tasks = repo.list(
+        tasks = repo.list_preview(
             skip=skip,
             limit=limit,
             active_only=active_only,
             search=search,
             order_by_title=order_by_title,
         )
-        return jsonify([_task_to_dict(t) for t in tasks]), 200
+        return tasks, 200
 
 
 # ---------- CREATE ----------

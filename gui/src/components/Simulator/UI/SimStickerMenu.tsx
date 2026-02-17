@@ -23,7 +23,7 @@ const SimStickerMenu = () => {
               className="text-md font-semibold px-4 py-2 cursor-pointer text-dark-neutrals-400
                             hover:bg-turquoise-700 hover:text-white-smoke-50
                             peer-checked:bg-turquoise-700 peer-checked:text-white-smoke-50">
-              <img src={'textures/x.png'} alt={'img'}/>
+              <img src={'/textures/x.png'} alt={'img'}/>
               UKLONI
             </div>
           </label>

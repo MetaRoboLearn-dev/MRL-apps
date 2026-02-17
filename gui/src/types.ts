@@ -48,19 +48,19 @@ interface BarrierData {
 export const Barriers: Record<Barrier, BarrierData> = {
   [Barrier.TREES]: {
     key: 'TREES',
-    image: 'textures/trees.png',
+    image: '/textures/trees.png',
   },
   [Barrier.FOUNTAIN]:{
     key: 'FOUNTAIN',
-    image: 'textures/fountain.png',
+    image: '/textures/fountain.png',
   },
   [Barrier.LAKE]: {
     key: 'LAKE',
-    image: 'textures/lake.png',
+    image: '/textures/lake.png',
   },
   [Barrier.FILED]: {
     key: 'FILED',
-    image: 'textures/field.png',
+    image: '/textures/field.png',
   },
 }
 
@@ -89,59 +89,59 @@ interface StickerData {
 export const Stickers: Record<Sticker, StickerData> = {
   [Sticker.ROAD_INTERSECT]: {
     key: 'ROAD_INTERSECT',
-    image: 'textures/road_intersect.png',
+    image: '/textures/road_intersect.png',
     scale: 1,
   },
   [Sticker.ROAD_T]: {
     key: 'ROAD_T',
-    image: 'textures/road_t.png',
+    image: '/textures/road_t.png',
     scale: 1,
   },
   [Sticker.ROAD_STRAIGHT]: {
     key: 'ROAD_STRAIGHT',
-    image: 'textures/road_straight.png',
+    image: '/textures/road_straight.png',
     scale: 1,
   },
   [Sticker.ROAD_TURN]: {
     key: 'ROAD_TURN',
-    image: 'textures/road_turn.png',
+    image: '/textures/road_turn.png',
     scale: 1,
   },
   [Sticker.HOUSE_GREEN]: {
     key: 'HOUSE_GREEN',
-    image: 'textures/house_green.png',
+    image: '/textures/house_green.png',
   },
   [Sticker.HOUSE_RED]: {
     key: 'HOUSE_RED',
-    image: 'textures/house_red.png',
+    image: '/textures/house_red.png',
   },
   [Sticker.HOUSE_RED_SANTA]: {
     key: 'HOUSE_RED_SANTA',
-    image: 'textures/house_red_santa.png',
+    image: '/textures/house_red_santa.png',
   },
   [Sticker.HOUSE_BLUE]: {
     key: 'HOUSE_BLUE',
-    image: 'textures/house_blue.png',
+    image: '/textures/house_blue.png',
   },
   [Sticker.HOUSE_YELLOW]: {
     key: 'HOUSE_YELLOW',
-    image: 'textures/house_yellow.png',
+    image: '/textures/house_yellow.png',
   },
   [Sticker.POST_OFFICE]: {
     key: 'POST_OFFICE',
-    image: 'textures/post_office.png',
+    image: '/textures/post_office.png',
   },
   [Sticker.RESTAURANT]: {
     key: 'RESTAURANT',
-    image: 'textures/restoraunt.png',
+    image: '/textures/restoraunt.png',
   },
   [Sticker.WAREHOUSE]: {
     key: 'WAREHOUSE',
-    image: 'textures/warehouse.png',
+    image: '/textures/warehouse.png',
   },
   [Sticker.ELF_WORKSHOP]: {
     key: 'ELF_WORKSHOP',
-    image: 'textures/elf_workshop.png',
+    image: '/textures/elf_workshop.png',
   },
 };
 

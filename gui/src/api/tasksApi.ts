@@ -16,3 +16,16 @@ export const getTasksPreview = async (params: {
   const response = await fetch(`/api/tasks/?${queryParams}`);
   return response.json();
 }
+
+export const getTaskById = async (taskId: string)=>{
+  const response = await fetch(`/api/tasks/${taskId}`)
+
+  if (!response.ok) {
+    if (response.status === 404) {
+      throw new Error('Task not found')
+    }
+    throw new Error('Failed to fetch task')
+  }
+
+  return response.json()
+}

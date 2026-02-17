@@ -10,9 +10,9 @@ const getRandomRotation = () =>
 const SimTree = () => {
   const { barriers3D, barrierTextures } = useSettings();
 
-  const big = useGLTF('models/Tree_big.glb').scene;
-  const medium = useGLTF('models/Tree_medium.glb').scene;
-  const small = useGLTF('models/Tree_small.glb').scene;
+  const big = useGLTF('/models/Tree_big.glb').scene;
+  const medium = useGLTF('/models/Tree_medium.glb').scene;
+  const small = useGLTF('/models/Tree_small.glb').scene;
 
   const group = useMemo(() => {
     const container = new Group();

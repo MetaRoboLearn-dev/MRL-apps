@@ -7,7 +7,7 @@ export const Route = createFileRoute('/admin')({
 
 function RouteComponent() {
   return (
-    <div className={'w-9/10 mx-auto'}>
+    <div className={''}>
       {/*<span>Hello "/admin/"!</span>*/}
       <Outlet/>
     </div>

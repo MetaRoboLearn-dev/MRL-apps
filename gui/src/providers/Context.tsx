@@ -1,13 +1,13 @@
 import {createContext} from "react";
 import {
   VehicleContextType,
-  SettingsContextType,
+  TaskConfigType,
   GridContextType,
   CodeContextType,
   UIContextType, ToastContextType,
 } from "../types.ts";
 
-export const SettingsContext = createContext<SettingsContextType | null>(null);
+export const TaskConfigContext = createContext<TaskConfigType | null>(null);
 export const GridContext = createContext<GridContextType | null>(null)
 export const CodeContext = createContext<CodeContextType | null>(null)
 export const VehicleContext = createContext<VehicleContextType | null>(null);

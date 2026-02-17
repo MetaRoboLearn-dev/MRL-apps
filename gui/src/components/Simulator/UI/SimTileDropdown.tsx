@@ -1,5 +1,5 @@
 import {TileType} from "../../../types.ts";
-import {useSettings} from "../../../hooks/useSettings.ts";
+import {useTaskConfig} from "../../../hooks/useTaskConfig.ts";
 
 interface Props {
   show: boolean;
@@ -7,7 +7,7 @@ interface Props {
 }
 
 const SimTileDropdown = ({show, setShow} : Props) => {
-  const { selectedType, setSelectedType } = useSettings();
+  const { selectedType, setSelectedType } = useTaskConfig();
 
   return (
     <ul

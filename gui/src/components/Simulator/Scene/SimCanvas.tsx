@@ -1,5 +1,5 @@
 import {useEffect} from "react";
-import {useSettings} from "../../../hooks/useSettings.ts";
+import {useTaskConfig} from "../../../hooks/useTaskConfig.ts";
 import {Canvas} from "@react-three/fiber";
 import SimVehicle from "../Tile/SimVehicle.tsx";
 import SimCamera from "./SimCamera.tsx";
@@ -8,7 +8,7 @@ import SimLights from "./SimLights.tsx";
 import SimControls from "./SimControls.tsx";
 
 const SimCanvas = () => {
-  const { loadTextures, loadBarrierTextures } = useSettings();
+  const { loadTextures, loadBarrierTextures } = useTaskConfig();
 
   useEffect(() => {
     loadTextures();

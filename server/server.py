@@ -33,7 +33,7 @@ def health():
 def execute():
     return jsonify({"status": "ok"}), 200
 
-@app.route('/run-python', methods=['POST'])
+@app.route('/api/run-python', methods=['POST'])
 def run_python():
     code = request.json.get("code", "")
     return sb_run_python(code)

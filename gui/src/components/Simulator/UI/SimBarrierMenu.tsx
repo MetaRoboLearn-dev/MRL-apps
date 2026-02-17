@@ -1,8 +1,8 @@
 import {Barrier, Barriers} from "../../../types.ts";
-import {useSettings} from "../../../hooks/useSettings.ts";
+import {useTaskConfig} from "../../../hooks/useTaskConfig.ts";
 
 const SimBarrierMenu = () => {
-  const {selectedBarrier, setSelectedBarrier, barriers3D, setBarriers3D} = useSettings();
+  const {selectedBarrier, setSelectedBarrier, barriers3D, setBarriers3D} = useTaskConfig();
 
   return (
     <>

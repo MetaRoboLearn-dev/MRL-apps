@@ -1,7 +1,7 @@
-import {useSettings} from "../../../hooks/useSettings.ts";
+import {useTaskConfig} from "../../../hooks/useTaskConfig.ts";
 
 const SimSpeedSlider = () => {
-  const { animationSpeed, setAnimationSpeed } = useSettings();
+  const { animationSpeed, setAnimationSpeed } = useTaskConfig();
 
   return (
     <div className="flex-center mb-2 font-bold">

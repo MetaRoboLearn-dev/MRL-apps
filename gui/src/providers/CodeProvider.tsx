@@ -1,23 +1,25 @@
 import {PropsWithChildren, useCallback, useRef, useState} from "react";
 import {CodeContext} from "./Context.tsx";
-import {useSettings} from "../hooks/useSettings.ts";
+import {useTaskConfig} from "../hooks/useTaskConfig.ts";
 import * as Blockly from "blockly";
 import {pythonGenerator} from "blockly/python";
 import {MoveCommand} from "../types.ts";
-import {Action, log_action} from "../api/logApi.ts";
 import {run_code, run_robot} from "../api/robotApi.ts";
 import {useToast} from "../hooks/useToast.ts";
+import {Task} from "../types/tasksTypes.ts";
 
-export const CodeProvider = ({ children }: PropsWithChildren) => {
+interface Props {
+  task: Task
+}
+
+export const CodeProvider = ({ task: t, children }: PropsWithChildren<Props>) => {
   const { showToast } = useToast()
-  // const { selectedTab } = useSettings();
-  const { setSimFocused, robotUrl, groupName, setAwaitingReview } = useSettings();
-  const [code, setCodeState] = useState<string>('');
-  const [blocks, setBlocksState] = useState<string>('')
-  // const [loaded, setLoaded] = useState(false);
+  const { setSimFocused, robotUrl, setAwaitingReview } = useTaskConfig();
+  const [code, setCodeState] = useState<string>(t.code || '');
+  const [blocks, setBlocksState] = useState<string>(t.blocks || '')
 
-  const codeRef = useRef('');
-  const blocksRef = useRef('');
+  const codeRef = useRef(t.code || '');
+  const blocksRef = useRef(t.blocks || '');
   const modeRef = useRef('');
 
   const setCode = useCallback((code: string) => {
@@ -72,12 +74,12 @@ export const CodeProvider = ({ children }: PropsWithChildren) => {
   const runCode = async () => {
     setSimFocused(false);
     const code = getCurrentCode();
-    const val = getCurrentValue();
-    log_action(groupName, modeRef.current, Action.SIM_RUN, val)
+    // const val = getCurrentValue();
+    // log_action(groupName, modeRef.current, Action.SIM_RUN, val)
     const compiled = await run_code(code);
 
     if (compiled.error){
-      log_action(groupName, modeRef.current, Action.CODE_ERR, val)
+      // log_action(groupName, modeRef.current, Action.CODE_ERR, val)
       return null;
     }
     return processSteps(compiled.output.split('\n'));
@@ -85,12 +87,12 @@ export const CodeProvider = ({ children }: PropsWithChildren) => {
 
   const runRobot = async () => {
     const code = getCurrentCode();
-    const val = getCurrentValue();
-    log_action(groupName, modeRef.current, Action.ROBOT_RUN, val)
+    // const val = getCurrentValue();
+    // log_action(groupName, modeRef.current, Action.ROBOT_RUN, val)
     const res = await run_robot(code, robotUrl);
     if (res.error) {
       showToast(res.status + " " + res.statusText);
-      log_action(groupName, modeRef.current, Action.ROBOT_RUN_FAIL, val)
+      // log_action(groupName, modeRef.current, Action.ROBOT_RUN_FAIL, val)
     }
     else {
       setAwaitingReview(true);

@@ -1,14 +1,14 @@
 import { useEffect, useMemo } from "react";
 import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
-import {useSettings} from "../../../hooks/useSettings.ts";
+import {useTaskConfig} from "../../../hooks/useTaskConfig.ts";
 
 const degToRad = (deg: number) => deg * Math.PI / 180;
 
 const SimVehicleOutline = () => {
   const { scene } = useGLTF("/Car.glb");
 
-  const { selectedRotation } = useSettings();
+  const { selectedRotation } = useTaskConfig();
 
   const clonedScene = useMemo(() => scene.clone(true), [scene]);
 

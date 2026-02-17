@@ -1,7 +1,7 @@
 import {Sticker, Stickers} from "../../../types.ts";
-import {useSettings} from "../../../hooks/useSettings.ts";
+import {useTaskConfig} from "../../../hooks/useTaskConfig.ts";
 const SimStickerMenu = () => {
-  const { selectedSticker, setSelectedSticker } = useSettings();
+  const { selectedSticker, setSelectedSticker } = useTaskConfig();
 
   return (
     <div className={'overflow-y-scroll h-full pb-30 scrollbar-blue'}>

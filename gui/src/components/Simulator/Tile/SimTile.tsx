@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import {TileType} from "../../../types.ts";
 import {ThreeEvent} from "@react-three/fiber";
-import {useSettings} from "../../../hooks/useSettings.ts";
+import {useTaskConfig} from "../../../hooks/useTaskConfig.ts";
 import SimBarrier from "./SimBarrier.tsx";
 import {useGrid} from "../../../hooks/useGrid.ts";
 import SimSticker from "./SimSticker.tsx";
@@ -13,7 +13,7 @@ interface Props {
 }
 
 const SimTile = ({index, position}: Props) => {
-  const { simFocused, selectedType, selectedSticker, selectedBarrier, selectedRotation } = useSettings();
+  const { simFocused, selectedType, selectedSticker, selectedBarrier, selectedRotation } = useTaskConfig();
   const { start, setStart,
           setStartRotationOffset,
           finish, setFinish,

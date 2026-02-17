@@ -1,26 +1,35 @@
 import {PropsWithChildren, useEffect, useState} from "react";
-import {SettingsContext} from "./Context.tsx";
+import {TaskConfigContext} from "./Context.tsx";
 import {Barrier, Barriers, Sticker, Stickers, TileType} from "../types.ts";
 import {Texture, TextureLoader} from "three";
 
-export const SettingsProvider = ({ children }: PropsWithChildren) => {
-  const [selectedTab, setSelectedTab] = useState<string>(localStorage.getItem("selectedID") || '');
+export const TaskConfigProvider = ({ children }: PropsWithChildren) => {
+
+  // Grid editing options
+  const [isEditable, setIsEditable] = useState<boolean>(false) // this is going to be true only while editing/creaing task
   const [selectedType, setSelectedType] = useState<TileType>(TileType.GROUND);
   const [selectedSticker, setSelectedSticker] = useState<Sticker | null>(null);
   const [selectedBarrier, setSelectedBarrier] = useState<Barrier>(Barrier.TREES);
   const [selectedRotation, setSelectedRotation] = useState<number>(0);
 
+  // Generic options
   const [camMode, setCamMode] = useState<boolean>(false);
   const [barriers3D, setBarriers3D] = useState<boolean>(false);
   const [simFocused, setSimFocused] = useState<boolean>(false);
   const [animationSpeed, setSpeed] = useState<number>(0.07);
+  // TODO - add to task model
+  const [isLogged, setIsLogged] = useState<boolean>(true) // by default true, but make sure its false while in editing/creating
 
+  // TODO - check this out maybe it isnt needed
   const [textures, setTextures] = useState<Record<Sticker, Texture>>({} as Record<Sticker, Texture>);
   const [barrierTextures, setBarrierTextures] = useState<Record<Barrier, Texture>>({} as Record<Barrier, Texture>);
 
+  // Robot related options
+  // TODO - replace robot url with call from broker api and dropdown
   const [robotUrl, setRobotUrl] = useState<string | null>(null);
-  const [groupName, setGroupName] = useState<string>(localStorage.getItem("group") || 'Grupa');
   const [awaitingReview, setAwaitingReview] = useState<boolean>(false);
+  // TODO - add to task model
+  const [hasRobotAccess, setHasRobotAccess] = useState<boolean>(true)
 
   const setAnimationSpeed = (speed: number) => {
     // max 0.1, min 0.02, default 0.4
@@ -83,8 +92,7 @@ export const SettingsProvider = ({ children }: PropsWithChildren) => {
   }, []);
 
   return (
-    <SettingsContext.Provider value={{
-      selectedTab, setSelectedTab,
+    <TaskConfigContext.Provider value={{
       selectedType, setSelectedType,
       selectedSticker, setSelectedSticker,
       selectedBarrier, setSelectedBarrier,
@@ -96,10 +104,9 @@ export const SettingsProvider = ({ children }: PropsWithChildren) => {
       textures, loadTextures,
       barrierTextures, loadBarrierTextures,
       robotUrl, setRobotUrl,
-      groupName, setGroupName,
       awaitingReview, setAwaitingReview
     }}>
       {children}
-    </SettingsContext.Provider>
+    </TaskConfigContext.Provider>
   );
 };

@@ -1,5 +1,5 @@
 import {BsGearFill} from "react-icons/bs";
-import {useSettings} from "../../hooks/useSettings.ts";
+import {useTaskConfig} from "../../hooks/useTaskConfig.ts";
 
 interface Props {
   disabled: boolean;
@@ -8,7 +8,7 @@ interface Props {
 }
 
 const ButtonSettings = ({disabled, setEditingUrl, setUrlInput}: Props) => {
-  const { robotUrl } = useSettings();
+  const { robotUrl } = useTaskConfig();
 
   return (
     <button disabled={disabled}

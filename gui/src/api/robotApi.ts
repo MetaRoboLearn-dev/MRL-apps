@@ -1,7 +1,7 @@
 // const apiUrl = import.meta.env.VITE_API_URL;
 
 export const run_code = async (code: string) => {
-  const url = "api/run-python";
+  const url = "/api/run-python";
   try {
     const response = await fetch(url, {
       method: "POST",

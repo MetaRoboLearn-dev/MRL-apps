@@ -1,7 +1,7 @@
-import {useSettings} from "../../../hooks/useSettings.ts";
+import {useTaskConfig} from "../../../hooks/useTaskConfig.ts";
 
 const CamTab = () => {
-  const { camMode, setCamMode } = useSettings();
+  const { camMode, setCamMode } = useTaskConfig();
 
   const style = camMode ?
     ('bg-indigo-700 font-bold py-2') :

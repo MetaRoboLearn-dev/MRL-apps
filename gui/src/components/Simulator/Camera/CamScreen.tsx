@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
-import { useSettings } from "../../../hooks/useSettings.ts";
+import { useTaskConfig } from "../../../hooks/useTaskConfig.ts";
 
 const CamScreen = () => {
-  const { robotUrl } = useSettings();
+  const { robotUrl } = useTaskConfig();
   const [imageSrc, setImageSrc] = useState<string | null>(null);
 
   useEffect(() => {

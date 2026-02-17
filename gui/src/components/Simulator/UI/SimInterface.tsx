@@ -1,4 +1,4 @@
-import {useSettings} from "../../../hooks/useSettings.ts";
+import {useTaskConfig} from "../../../hooks/useTaskConfig.ts";
 import {TileType} from "../../../types.ts";
 import {useVehicle} from "../../../hooks/useVehicle.ts";
 import {useUI} from "../../../hooks/useUI.ts";
@@ -20,7 +20,7 @@ const SimInterface = ({isHovered}: Props) => {
   const { simFocused, setSimFocused,
     selectedType, setSelectedType,
     animationSpeed, rotateBy90,
-    selectedRotation} = useSettings();
+    selectedRotation} = useTaskConfig();
   const { start, sizeX, sizeZ, startRotationOffset } = useGrid();
   const { modalVisible } = useUI();
   const { position, rotation, isMoving, moveQueue } = useVehicle();

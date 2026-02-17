@@ -1,6 +1,6 @@
 import {useVehicle} from "../../hooks/useVehicle.ts";
 import {useUI} from "../../hooks/useUI.ts";
-import {useSettings} from "../../hooks/useSettings.ts";
+import {useTaskConfig} from "../../hooks/useTaskConfig.ts";
 import {useGrid} from "../../hooks/useGrid.ts";
 import {useState} from "react";
 import ButtonSim from "../Footer/ButtonSim.tsx";
@@ -14,7 +14,7 @@ import ButtonConnect from "../Footer/ButtonConnect.tsx";
 const Footer = () => {
   const { moveQueue, isMoving } = useVehicle();
   const { modalVisible } = useUI();
-  const { camMode, robotUrl, awaitingReview } = useSettings();
+  const { camMode, robotUrl, awaitingReview } = useTaskConfig();
   const { start, finish } = useGrid();
 
   const [urlInput, setUrlInput] = useState('');

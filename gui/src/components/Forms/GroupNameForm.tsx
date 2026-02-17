@@ -1,16 +1,13 @@
 import {useUI} from "../../hooks/useUI.ts";
-import {useSettings} from "../../hooks/useSettings.ts";
 import {useState} from "react";
 
 const GroupNameForm = () => {
   const { setModalVisible } = useUI();
-  const { groupName, setGroupName } = useSettings();
 
-  const [newName, setNewName] = useState<string>(groupName);
+  const [newName, setNewName] = useState<string>('');
 
   const set = () =>{
     localStorage.setItem('group', newName);
-    setGroupName(newName);
   }
 
   return (

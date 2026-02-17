@@ -1,9 +1,9 @@
 import {DoubleSide} from "three";
-import {useSettings} from "../../../hooks/useSettings.ts";
+import {useTaskConfig} from "../../../hooks/useTaskConfig.ts";
 import {Barrier} from "../../../types.ts";
 
 const SimFountain = () => {
-  const { barrierTextures } = useSettings();
+  const { barrierTextures } = useTaskConfig();
 
   return (
     <group position={[0, -0.4, 0]}>

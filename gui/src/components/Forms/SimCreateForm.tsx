@@ -1,10 +1,8 @@
 import {useState} from "react";
 import {useUI} from "../../hooks/useUI.ts";
-import {useSettings} from "../../hooks/useSettings.ts";
 
 const SimCreateForm = () => {
   const { setModalVisible } = useUI();
-  const { setSelectedTab } = useSettings();
 
   const [id, setId] = useState<string>('');
   const [x, setX] = useState<string>('');
@@ -33,7 +31,7 @@ const SimCreateForm = () => {
       "blocks": ""
     }));
 
-    setSelectedTab(id);
+    // setSelectedTab(id);
   }
 
   return (

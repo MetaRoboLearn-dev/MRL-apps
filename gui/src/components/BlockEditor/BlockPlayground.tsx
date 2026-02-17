@@ -9,7 +9,6 @@ import {
   registerContinuousToolbox
 } from "@blockly/continuous-toolbox";
 import BlockCustom from "./BlockCustom.ts";
-import { pythonGenerator } from "blockly/python";
 import "./BlockCustomGenerator.ts";
 import {useCode} from "../../hooks/useCode.ts";
 // import {log_action} from "../../api/logApi.ts";
@@ -22,13 +21,7 @@ Blockly.common.defineBlocksWithJsonArray(BlockCustom);
 const BlockPlayground = () => {
   const workspaceRef = useRef<HTMLDivElement>(null);
   const workspaceInstance = useRef<Blockly.WorkspaceSvg | null>(null);
-  const { setCode, setBlocks, modeRef } = useCode();
-
-  useEffect(() => {
-    if (workspaceInstance.current) {
-      setTimeout(() => Blockly.svgResize(workspaceInstance.current!), 50);
-    }
-  }, [modeRef.current]);
+  const { blocks, setBlocks } = useCode();
 
   useEffect(() => {
     if (!workspaceRef.current) return;
@@ -55,20 +48,14 @@ const BlockPlayground = () => {
       ) {
         clearTimeout(timeout);
         const updateCode = () => {
-          if (modeRef.current === 'python') {
-            return;
-          }
-
-          const code = pythonGenerator.workspaceToCode(workspaceInstance.current!);
           const workspace = Blockly.getMainWorkspace();
           const xml = Blockly.Xml.workspaceToDom(workspace);
           const xmlText = Blockly.Xml.domToText(xml);
 
-          setCode(code);
           setBlocks(xmlText);
+          console.log('halo')
 
           if (event.type !== 'move') return;
-          console.log(xmlText);
           // log_action("grupa 1", "blockly", xmlText);
         };
 
@@ -79,6 +66,11 @@ const BlockPlayground = () => {
         }
       }
     };
+
+    if (blocks) {
+      const xml = Blockly.utils.xml.textToDom(blocks);
+      Blockly.Xml.domToWorkspace(xml, workspaceInstance.current);
+    }
 
     workspaceInstance.current.addChangeListener(onWorkspaceChange);
 

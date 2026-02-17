@@ -1,5 +1,5 @@
 import {createFileRoute, Outlet} from '@tanstack/react-router'
-import TaskProviderWrapper from "../../../../providers/wrappers/TaskProviderWrapper.tsx";
+import TaskProviders from "../../../../providers/wrappers/TaskProviders.tsx";
 import {queryOptions, useSuspenseQuery} from "@tanstack/react-query";
 import {getTaskById} from "../../../../api/tasksApi.ts";
 
@@ -21,8 +21,8 @@ function RouteComponent() {
   const { data: task } = useSuspenseQuery(taskQueryOptions(taskId))
 
   return (
-    <TaskProviderWrapper task={task}>
+    <TaskProviders task={task}>
       <Outlet />
-    </TaskProviderWrapper>
+    </TaskProviders>
   )
 }

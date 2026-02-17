@@ -145,12 +145,8 @@ export const Stickers: Record<Sticker, StickerData> = {
   },
 };
 
-
-
 // context interfaces
-export interface SettingsContextType {
-  selectedTab: string;
-  setSelectedTab: (tab: string) => void;
+export interface TaskConfigType {
   selectedType: TileType;
   setSelectedType: (selectedType: TileType) => void;
   selectedSticker: Sticker | null;
@@ -173,8 +169,6 @@ export interface SettingsContextType {
   loadBarrierTextures: () => void;
   robotUrl: string | null;
   setRobotUrl: (robotUrl: string | null) => void;
-  groupName: string;
-  setGroupName: (groupName: string) => void;
   awaitingReview: boolean;
   setAwaitingReview: (awaitingReview: boolean) => void;
 }

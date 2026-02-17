@@ -2,14 +2,12 @@ import Editor, { OnMount } from "@monaco-editor/react";
 import {useEffect, useRef} from "react";
 import * as monaco from "monaco-editor";
 import {useCode} from "../../hooks/useCode.ts";
-import {useSettings} from "../../hooks/useSettings.ts";
 import {codeTheme} from "./CodeTheme.ts";
 
 const CodePlayground = () => {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const debounceTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const { codeRef, setCode } = useCode();
-  const { selectedTab } = useSettings();
 
   const handleEditorDidMount: OnMount = (editor, monaco) => {
     editorRef.current = editor;
@@ -53,7 +51,7 @@ const CodePlayground = () => {
       value={codeRef.current ?? ''}
       onChange={handleCodeChange}
       keepCurrentModel={false}
-      path={`python/${selectedTab}`}
+      // path={`python/${selectedTab}`}
       options={{
         fontSize: 20,
         lineNumbers: "on",

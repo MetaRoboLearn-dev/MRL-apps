@@ -1,6 +1,6 @@
 import { DoubleSide } from 'three';
 import {Sticker, Stickers} from "../../../types.ts";
-import {useSettings} from "../../../hooks/useSettings.ts";
+import {useTaskConfig} from "../../../hooks/useTaskConfig.ts";
 
 interface Props{
   sticker: {
@@ -12,7 +12,7 @@ interface Props{
 }
 
 const SimSticker = ({ sticker, hover }: Props) => {
-  const { textures } = useSettings();
+  const { textures } = useTaskConfig();
 
   if (!sticker.sticker) return null;
 

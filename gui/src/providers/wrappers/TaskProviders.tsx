@@ -2,25 +2,25 @@ import {VehicleProvider} from "../VehicleProvider.tsx";
 import GridProvider from "../GridProvider.tsx";
 import {CodeProvider} from "../CodeProvider.tsx";
 import {PropsWithChildren} from "react";
-import {SettingsProvider} from "../SettingsProvider.tsx";
+import {TaskConfigProvider} from "../TaskConfigProvider.tsx";
 import {Task} from "../../types/tasksTypes.ts";
 
 interface Props {
   task: Task
 }
 
-const TaskProviderWrapper = ({task, children}: PropsWithChildren<Props>) => {
+const TaskProviders = ({task, children}: PropsWithChildren<Props>) => {
   return (
-    <SettingsProvider>
+    <TaskConfigProvider>
       <GridProvider task={task}>
-        <CodeProvider>
+        <CodeProvider task={task}>
           <VehicleProvider>
             {children}
           </VehicleProvider>
         </CodeProvider>
       </GridProvider>
-    </SettingsProvider>
+    </TaskConfigProvider>
   );
 };
 
-export default TaskProviderWrapper;
+export default TaskProviders;

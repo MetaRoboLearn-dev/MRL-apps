@@ -2,7 +2,7 @@ import {PropsWithChildren} from 'react';
 import UIProvider from "../UIProvider.tsx";
 import ToastProvider from "../ToastProvider.tsx";
 
-const ProviderWrapper = ({children}: PropsWithChildren) => {
+const AppProviders = ({children}: PropsWithChildren) => {
   return (
     <ToastProvider>
       <UIProvider>
@@ -12,4 +12,4 @@ const ProviderWrapper = ({children}: PropsWithChildren) => {
   );
 };
 
-export default ProviderWrapper;
+export default AppProviders;

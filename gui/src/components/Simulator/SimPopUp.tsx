@@ -1,18 +1,17 @@
-import {Action, log_action} from "../../api/logApi.ts";
-import {useCode} from "../../hooks/useCode.ts";
-import {useSettings} from "../../hooks/useSettings.ts";
+// import {useCode} from "../../hooks/useCode.ts";
+import {useTaskConfig} from "../../hooks/useTaskConfig.ts";
 
 const SimPopUp = () => {
-  const { modeRef, getCurrentValue } = useCode();
-  const { groupName, awaitingReview, setAwaitingReview } = useSettings();
+  // const { modeRef, getCurrentValue } = useCode();
+  const { awaitingReview, setAwaitingReview } = useTaskConfig();
 
   const onYes = () => {
-    log_action(groupName, modeRef.current, Action.ROBOT_END_SUCC, getCurrentValue())
+    // log_action(groupName, modeRef.current, Action.ROBOT_END_SUCC, getCurrentValue())
     setAwaitingReview(false);
   }
 
   const onNo = () => {
-    log_action(groupName, modeRef.current, Action.ROBOT_END_FAIL, getCurrentValue())
+    // log_action(groupName, modeRef.current, Action.ROBOT_END_FAIL, getCurrentValue())
     setAwaitingReview(false);
   }
 

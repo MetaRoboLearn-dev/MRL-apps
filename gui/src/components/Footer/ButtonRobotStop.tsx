@@ -1,10 +1,10 @@
 import {abort_robot} from "../../api/robotApi.ts";
 import {FaStop} from "react-icons/fa";
-import {useSettings} from "../../hooks/useSettings.ts";
+import {useTaskConfig} from "../../hooks/useTaskConfig.ts";
 import {useToast} from "../../hooks/useToast.ts";
 
 const ButtonRobotStop = ({disabled}: {disabled: boolean}) => {
-  const { robotUrl } = useSettings();
+  const { robotUrl } = useTaskConfig();
   const { showToast } = useToast();
 
   const abort = async () => {

@@ -1,5 +1,5 @@
 import {FaRobot} from "react-icons/fa";
-import {useSettings} from "../../hooks/useSettings.ts";
+import {useTaskConfig} from "../../hooks/useTaskConfig.ts";
 
 interface Props {
   disabled: boolean;
@@ -9,7 +9,7 @@ interface Props {
 }
 
 const ButtonConnect = ({disabled, setEditingUrl, urlInput, setUrlInput} : Props) => {
-  const { setRobotUrl } = useSettings();
+  const { setRobotUrl } = useTaskConfig();
 
   const changeRobotUrl = () => {
     setRobotUrl(urlInput)

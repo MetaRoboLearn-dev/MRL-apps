@@ -1,8 +1,7 @@
-import {VehicleContextType} from "../types.ts";
 import {useContext} from "react";
 import {VehicleContext} from "../providers/Context.tsx";
 
-export const useVehicle = (): VehicleContextType => {
+export const useVehicle = () => {
   const context = useContext(VehicleContext);
 
   if (!context) {

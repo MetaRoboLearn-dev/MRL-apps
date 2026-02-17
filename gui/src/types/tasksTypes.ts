@@ -14,6 +14,21 @@ export type TaskPreview = {
 };
 
 export type Task = {
+  id: number | null;
+  title: string;
+  description: string | null;
+  size_x: number;
+  size_z: number;
+  start: number | null;
+  rotation: number;
+  finish: number | null;
+  barriers: [number, keyof typeof Barrier][] | null;
+  stickers: { index: number; sticker: keyof typeof Sticker; rotation: number }[] | null;
+  code: string | null;
+  blocks: string | null;
+}
+
+export type TaskFull = {
   id: number;
   title: string;
   description: string | null;

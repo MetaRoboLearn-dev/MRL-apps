@@ -1,8 +1,7 @@
-import {TaskConfigType} from "../types.ts";
 import {useContext} from "react";
 import {TaskConfigContext} from "../providers/Context.tsx";
 
-export const useTaskConfig = (): TaskConfigType => {
+export const useTaskConfig = () => {
   const context = useContext(TaskConfigContext);
 
   if (!context) {

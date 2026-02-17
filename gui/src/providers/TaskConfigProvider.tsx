@@ -3,10 +3,14 @@ import {TaskConfigContext} from "./Context.tsx";
 import {Barrier, Barriers, Sticker, Stickers, TileType} from "../types.ts";
 import {Texture, TextureLoader} from "three";
 
-export const TaskConfigProvider = ({ children }: PropsWithChildren) => {
+interface Props {
+  edit?: boolean
+}
+
+export const TaskConfigProvider = ({ edit, children }: PropsWithChildren<Props>) => {
 
   // Grid editing options
-  const [isEditable, setIsEditable] = useState<boolean>(false) // this is going to be true only while editing/creaing task
+  const [isEdit, setIsEdit] = useState<boolean>(edit || false) // this is going to be true only while editing/creaing task
   const [selectedType, setSelectedType] = useState<TileType>(TileType.GROUND);
   const [selectedSticker, setSelectedSticker] = useState<Sticker | null>(null);
   const [selectedBarrier, setSelectedBarrier] = useState<Barrier>(Barrier.TREES);
@@ -14,6 +18,7 @@ export const TaskConfigProvider = ({ children }: PropsWithChildren) => {
 
   // Generic options
   const [camMode, setCamMode] = useState<boolean>(false);
+  const [editMode, setEditMode] = useState<boolean>(false);
   const [barriers3D, setBarriers3D] = useState<boolean>(false);
   const [simFocused, setSimFocused] = useState<boolean>(false);
   const [animationSpeed, setSpeed] = useState<number>(0.07);
@@ -93,11 +98,13 @@ export const TaskConfigProvider = ({ children }: PropsWithChildren) => {
 
   return (
     <TaskConfigContext.Provider value={{
+      isEdit, setIsEdit,
       selectedType, setSelectedType,
       selectedSticker, setSelectedSticker,
       selectedBarrier, setSelectedBarrier,
       selectedRotation, rotateBy90,
       camMode, setCamMode,
+      editMode, setEditMode,
       barriers3D, setBarriers3D,
       simFocused, setSimFocused,
       animationSpeed, setAnimationSpeed,

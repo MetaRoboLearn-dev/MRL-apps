@@ -1,8 +1,7 @@
-import {UIContextType} from "../types.ts";
 import {useContext} from "react";
 import {UIContext} from "../providers/Context.tsx";
 
-export const useUI = (): UIContextType => {
+export const useUI = () => {
   const context = useContext(UIContext);
 
   if (!context) {

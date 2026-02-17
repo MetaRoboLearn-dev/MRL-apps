@@ -6,12 +6,13 @@ import {TaskConfigProvider} from "../TaskConfigProvider.tsx";
 import {Task} from "../../types/tasksTypes.ts";
 
 interface Props {
-  task: Task
+  task: Task,
+  edit?: boolean
 }
 
-const TaskProviders = ({task, children}: PropsWithChildren<Props>) => {
+const TaskProviders = ({task, edit, children}: PropsWithChildren<Props>) => {
   return (
-    <TaskConfigProvider>
+    <TaskConfigProvider edit={edit}>
       <GridProvider task={task}>
         <CodeProvider task={task}>
           <VehicleProvider>

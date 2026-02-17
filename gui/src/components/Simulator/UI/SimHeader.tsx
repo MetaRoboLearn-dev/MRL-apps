@@ -1,14 +1,19 @@
 import CamTab from "../Camera/CamTab.tsx";
 import SimTab from "./SimTab.tsx";
+import SimOptionsTab from "./SimOptionsTab.tsx";
+import {useTaskConfig} from "../../../hooks/useTaskConfig.ts";
 
 const SimHeader = () => {
-  return (
-    <div className={'header flex-between font-display'}>
-      <CamTab />
-      <SimTab />
+  const {isEdit} = useTaskConfig()
 
-      {/*<SimCreate />*/}
-    </div>
+  return (
+    <ul className={'header flex-between font-display'}>
+      <div className={'flex'}>
+        <CamTab />
+        {isEdit && <SimOptionsTab />}
+      </div>
+      <SimTab />
+    </ul>
   );
 };
 

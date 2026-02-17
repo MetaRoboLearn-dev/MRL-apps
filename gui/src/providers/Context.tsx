@@ -4,8 +4,9 @@ import {
   TaskConfigType,
   GridContextType,
   CodeContextType,
-  UIContextType, ToastContextType,
-} from "../types.ts";
+  UIContextType,
+  ToastContextType,
+} from "../types/contextTypes.ts";
 
 export const TaskConfigContext = createContext<TaskConfigType | null>(null);
 export const GridContext = createContext<GridContextType | null>(null)

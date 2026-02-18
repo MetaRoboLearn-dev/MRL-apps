@@ -2,19 +2,29 @@ import {PropsWithChildren, useEffect, useState} from "react";
 import {TaskConfigContext} from "./Context.tsx";
 import {Barrier, Barriers, Sticker, Stickers, TileType} from "../types.ts";
 import {Texture, TextureLoader} from "three";
+import {Task, TaskMode} from "../types/tasksTypes.ts";
 
 interface Props {
-  edit?: boolean
+  task: Task
+  mode?: TaskMode
 }
 
-export const TaskConfigProvider = ({ edit, children }: PropsWithChildren<Props>) => {
+export const TaskConfigProvider = ({ task, mode, children }: PropsWithChildren<Props>) => {
 
   // Grid editing options
-  const [isEdit, setIsEdit] = useState<boolean>(edit || false) // this is going to be true only while editing/creaing task
+  const [taskMode, setTaskMode] = useState<TaskMode>(mode || 'solve') // this is going to be true only while editing/creaing task
   const [selectedType, setSelectedType] = useState<TileType>(TileType.GROUND);
   const [selectedSticker, setSelectedSticker] = useState<Sticker | null>(null);
   const [selectedBarrier, setSelectedBarrier] = useState<Barrier>(Barrier.TREES);
   const [selectedRotation, setSelectedRotation] = useState<number>(0);
+
+  // Task specific options
+  const [title, setTitle] = useState<string>(task.title)
+  const [description, setDescription] = useState<string | null>(task.description)
+  // TODO - add to task model
+  const [isActive, setIsActive] = useState<boolean>(true);
+  const [isLogged, setIsLogged] = useState<boolean>(true); // by default true, but make sure its false while in editing/creating
+  const [hasRobotAccess, setHasRobotAccess] = useState<boolean>(true)
 
   // Generic options
   const [camMode, setCamMode] = useState<boolean>(false);
@@ -22,8 +32,6 @@ export const TaskConfigProvider = ({ edit, children }: PropsWithChildren<Props>)
   const [barriers3D, setBarriers3D] = useState<boolean>(false);
   const [simFocused, setSimFocused] = useState<boolean>(false);
   const [animationSpeed, setSpeed] = useState<number>(0.07);
-  // TODO - add to task model
-  const [isLogged, setIsLogged] = useState<boolean>(true) // by default true, but make sure its false while in editing/creating
 
   // TODO - check this out maybe it isnt needed
   const [textures, setTextures] = useState<Record<Sticker, Texture>>({} as Record<Sticker, Texture>);
@@ -33,8 +41,6 @@ export const TaskConfigProvider = ({ edit, children }: PropsWithChildren<Props>)
   // TODO - replace robot url with call from broker api and dropdown
   const [robotUrl, setRobotUrl] = useState<string | null>(null);
   const [awaitingReview, setAwaitingReview] = useState<boolean>(false);
-  // TODO - add to task model
-  const [hasRobotAccess, setHasRobotAccess] = useState<boolean>(true)
 
   const setAnimationSpeed = (speed: number) => {
     // max 0.1, min 0.02, default 0.4
@@ -98,7 +104,7 @@ export const TaskConfigProvider = ({ edit, children }: PropsWithChildren<Props>)
 
   return (
     <TaskConfigContext.Provider value={{
-      isEdit, setIsEdit,
+      mode: taskMode, setMode: setTaskMode,
       selectedType, setSelectedType,
       selectedSticker, setSelectedSticker,
       selectedBarrier, setSelectedBarrier,
@@ -111,7 +117,12 @@ export const TaskConfigProvider = ({ edit, children }: PropsWithChildren<Props>)
       textures, loadTextures,
       barrierTextures, loadBarrierTextures,
       robotUrl, setRobotUrl,
-      awaitingReview, setAwaitingReview
+      awaitingReview, setAwaitingReview,
+      isLogged, setIsLogged,
+      hasRobotAccess, setHasRobotAccess,
+      isActive, setIsActive,
+      title, setTitle,
+      description, setDescription
     }}>
       {children}
     </TaskConfigContext.Provider>

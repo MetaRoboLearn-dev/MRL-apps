@@ -2,10 +2,11 @@ import {Texture} from "three";
 import {ReactNode, RefObject} from "react";
 import * as THREE from "three";
 import {Barrier, MoveCommand, Position, Rotation, Sticker, TileType} from "../types.ts";
+import {TaskMode} from "./tasksTypes.ts";
 
 export interface TaskConfigType {
-  isEdit: boolean
-  setIsEdit: (isEdit: boolean) => void;
+  mode: TaskMode
+  setMode: (taskMode: TaskMode) => void;
   selectedType: TileType;
   setSelectedType: (selectedType: TileType) => void;
   selectedSticker: Sticker | null;
@@ -32,6 +33,16 @@ export interface TaskConfigType {
   setRobotUrl: (robotUrl: string | null) => void;
   awaitingReview: boolean;
   setAwaitingReview: (awaitingReview: boolean) => void;
+  isLogged: boolean;
+  setIsLogged: (isLogged: boolean) => void;
+  hasRobotAccess: boolean;
+  setHasRobotAccess: (hasRobotAccess: boolean) => void;
+  isActive: boolean;
+  setIsActive: (isActive: boolean) => void;
+  title: string;
+  setTitle: (title: string) => void;
+  description: string | null;
+  setDescription: (description: string | null) => void;
 }
 
 export interface VehicleContextType {

@@ -4,13 +4,14 @@ import SimOptionsTab from "./SimOptionsTab.tsx";
 import {useTaskConfig} from "../../../hooks/useTaskConfig.ts";
 
 const SimHeader = () => {
-  const {isEdit} = useTaskConfig()
+  const { mode } = useTaskConfig()
+  const showOptions = mode === 'edit' || mode === 'create'
 
   return (
     <ul className={'header flex-between font-display'}>
       <div className={'flex'}>
         <CamTab />
-        {isEdit && <SimOptionsTab />}
+        {showOptions && <SimOptionsTab />}
       </div>
       <SimTab />
     </ul>

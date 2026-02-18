@@ -1,6 +1,8 @@
 import {UserBasic} from "./userTypes.ts";
 import {Barrier, Sticker} from "../types.ts";
 
+export type TaskMode = 'solve' | 'create' | 'edit';
+
 export type TaskPreview = {
   id: number;
   title: string;
@@ -46,4 +48,18 @@ export type TaskFull = {
   created_by: number | null;
   updated_by: number | null;
   active: boolean;
+}
+
+export type CreateTaskRequest = {
+  title: string,
+  description: string | null,
+  size_x: number,
+  size_z: number,
+  start: number | null,
+  rotation: number,
+  finish: number | null,
+  barriers: (string | number)[][] | null,
+  stickers: { index: number; sticker: string; rotation: number }[] | null,
+  code: string | null,
+  blocks: string | null,
 }

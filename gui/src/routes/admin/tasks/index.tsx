@@ -239,7 +239,7 @@ function RouteComponent() {
             {table.getRowModel().rows.map(row => (
               <tr
                 key={row.id}
-                onClick={() => navigate({ to: '/admin/tasks/$taskId', params: { taskId: row.original.id.toString() } })}
+                onClick={() => navigate({ to: '/admin/tasks/$taskId/edit', params: { taskId: row.original.id.toString() } })}
                 className="hover:bg-gray-50 cursor-pointer transition-colors"
               >
                 {row.getVisibleCells().map(cell => (

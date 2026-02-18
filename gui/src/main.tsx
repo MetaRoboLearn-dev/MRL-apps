@@ -26,6 +26,9 @@ declare module '@tanstack/react-router' {
   interface RouteContext {
     queryClient: QueryClient
   }
+  interface StaticDataRouteOption {
+    mode?: 'solve' | 'edit' | 'create'
+  }
 }
 
 // Render the app

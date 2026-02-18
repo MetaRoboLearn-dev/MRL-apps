@@ -1,3 +1,5 @@
+import {CreateTaskRequest} from "../types/tasksTypes.ts";
+
 export const getTasksPreview = async (params: {
   skip?: number;
   limit?: number;
@@ -29,3 +31,35 @@ export const getTaskById = async (taskId: string)=>{
 
   return response.json()
 }
+
+export const createTask = async (data: CreateTaskRequest) => {
+  const response = await fetch('/api/tasks', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.error || 'Failed to create task')
+  }
+
+  return response.json()
+}
+
+export const updateTask = async ({ id, ...data }: CreateTaskRequest & { id: string }) => {
+  const response = await fetch(`/api/tasks/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to update task');
+  }
+
+  return response.json();
+};

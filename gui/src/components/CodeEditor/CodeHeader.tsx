@@ -7,7 +7,8 @@ interface Props {
 }
 
 const CodeHeader = ({active, setActive, setEditor}: Props) => {
-  const {isEdit} = useTaskConfig()
+  const {mode} = useTaskConfig()
+  const editingMode = mode === 'edit' || mode === 'create'
   const style = active
     ? 'bg-tomato-600' : 'bg-tomato-300 pt-2 pb-3.5 translate-y-1.5 hover:bg-tomato-600 hover:translate-y-0.5';
 
@@ -19,7 +20,7 @@ const CodeHeader = ({active, setActive, setEditor}: Props) => {
     <div className="header flex-between font-display">
       <div className="flex">
 
-        {isEdit ? (
+        {editingMode ? (
           <>
             <div className="bg-sunglow-400 text-dark-neutrals-400 tab hover:bg-sunglow-600 hover:cursor-pointer"
                  onClick={() => {setEditor('python')}}>

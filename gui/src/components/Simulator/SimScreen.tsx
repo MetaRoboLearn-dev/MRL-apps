@@ -6,11 +6,12 @@ import SimPopUp from "./SimPopUp.tsx";
 import SimOptions from "./UI/SimOptions.tsx";
 
 const SimScreen = () => {
-  const { camMode, editMode, isEdit, awaitingReview } = useTaskConfig();
+  const { camMode, editMode, mode, awaitingReview } = useTaskConfig();
+  const showOptions = mode === 'edit' || mode === 'create'
 
   const show = () => {
     if (camMode) return <CamScreen />
-    if (editMode && !camMode && isEdit) return <SimOptions />
+    if (editMode && !camMode && showOptions) return <SimOptions />
     return <SimPlayground />
   }
 

@@ -9,12 +9,13 @@ import ButtonRobotRun from "../Footer/ButtonRobotRun.tsx";
 import ButtonRobotStop from "../Footer/ButtonRobotStop.tsx";
 import ButtonSettings from "../Footer/ButtonSettings.tsx";
 import ButtonConnect from "../Footer/ButtonConnect.tsx";
+import TaskSaveButton from "../Task/TaskSaveButton.tsx";
 
 // TODO - change the buttons, make it more neat
 const Footer = () => {
   const { moveQueue, isMoving } = useVehicle();
   const { modalVisible } = useUI();
-  const { camMode, robotUrl, awaitingReview } = useTaskConfig();
+  const { camMode, robotUrl, awaitingReview, mode } = useTaskConfig();
   const { start, finish } = useGrid();
 
   const [urlInput, setUrlInput] = useState('');
@@ -24,6 +25,7 @@ const Footer = () => {
 
   return (
     <div className={'bg-white-smoke-500 px-15 w-full h-20 z-10 flex items-center justify-end select-none'}>
+      {mode !== "solve" && <TaskSaveButton />}
       {robotUrl && !editingUrl ? (
         <>
           <ButtonSettings disabled={disabled}

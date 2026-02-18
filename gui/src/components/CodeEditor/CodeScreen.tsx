@@ -6,7 +6,7 @@ import BlockPlayground from "../BlockEditor/BlockPlayground.tsx";
 
 const CodeScreen = () => {
   const [active, setActive] = useState<boolean>(false);
-  const [editor, setEditor] = useState<string>('blockly')
+  const [editor, setEditor] = useState<string>('python')
 
   return (
     <div className={'w-3/5 flex-center flex-col box-border'}>

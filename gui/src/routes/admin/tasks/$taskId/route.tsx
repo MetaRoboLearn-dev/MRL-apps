@@ -1,4 +1,4 @@
-import {createFileRoute, Outlet} from '@tanstack/react-router'
+import {createFileRoute, Outlet, useMatches} from '@tanstack/react-router'
 import TaskProviders from "../../../../providers/wrappers/TaskProviders.tsx";
 import {queryOptions, useSuspenseQuery} from "@tanstack/react-query";
 import {getTaskById} from "../../../../api/tasksApi.ts";
@@ -17,12 +17,15 @@ export const Route = createFileRoute('/admin/tasks/$taskId')({
 })
 
 function RouteComponent() {
-  const { taskId } = Route.useParams()
-  const { data: task } = useSuspenseQuery(taskQueryOptions(taskId))
+  const { taskId } = Route.useParams();
+  const { data: task } = useSuspenseQuery(taskQueryOptions(taskId));
+  const matches = useMatches();
+  const leafMatch = matches[matches.length - 1];
+  const mode = leafMatch.staticData.mode ?? 'solve';
 
   return (
-    <TaskProviders task={task}>
+    <TaskProviders task={task} mode={mode}>
       <Outlet />
     </TaskProviders>
-  )
+  );
 }

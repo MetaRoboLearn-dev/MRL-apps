@@ -7,24 +7,24 @@ export const Route = createFileRoute('/admin/tasks/new')({
   component: RouteComponent,
 })
 
-function RouteComponent() {
-  const newTask: Task = {
-    id: null,
-    title: 'Novi zadatak',
-    description: null,
-    size_x: 5,
-    size_z: 5,
-    start: null,
-    rotation: 0.0,
-    finish: null,
-    barriers: null,
-    stickers: null,
-    code: null,
-    blocks: null
-  }
+const DEFAULT_TASK: Task = {
+  id: null,
+  title: 'Novi zadatak',
+  description: null,
+  size_x: 5,
+  size_z: 5,
+  start: null,
+  rotation: 0.0,
+  finish: null,
+  barriers: null,
+  stickers: null,
+  code: null,
+  blocks: null
+}
 
+function RouteComponent() {
   return (
-    <TaskProviders task={newTask} edit={true}>
+    <TaskProviders task={DEFAULT_TASK} mode={'create'}>
       <TaskScreen />
     </TaskProviders>
   )

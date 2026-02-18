@@ -19,6 +19,8 @@ app.register_blueprint(activity_task_routes.bp)
 app.register_blueprint(user_started_task_routes.bp)
 app.register_blueprint(user_task_log_routes.bp)
 
+# TODO - do this when it becomes crucial, sending to broker can only be done IF you are an admin, or if there is an active activity with tasks that are robot related
+
 CORS(app, 
      origins=["http://localhost:3000"],
      methods=["GET", "POST", "OPTIONS"],

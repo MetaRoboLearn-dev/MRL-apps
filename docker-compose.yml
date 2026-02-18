@@ -10,6 +10,6 @@ services:
   backend:
     build:
       context: ./server
-    command: python server.py
+    command: python app.py
     ports:
       - "8000:8000"

@@ -3,6 +3,9 @@ from sqlalchemy.orm import sessionmaker, scoped_session, Session
 from contextlib import contextmanager
 from seed import seed_roles, seed_types
 from models.base import Base
+from flask_migrate import Migrate
+
+migrate = Migrate()
 
 engine = None
 SessionLocal = None
@@ -31,6 +34,8 @@ def init_db(app=None):
     with Session(engine) as session:
         seed_roles(session)
         seed_types(session)
+
+    migrate.init_app(app, db=engine)
 
 def get_db():
     """Get database session (use with context manager)"""

@@ -4,3 +4,5 @@ psycopg[binary]
 psycopg_pool
 sqlalchemy
 psycopg2
+Flask-Migrate
+python-dotenv

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, UniqueConstraint
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, UniqueConstraint, Boolean
 from sqlalchemy.orm import relationship
 from .base import Base
 from utils import utc_now
@@ -27,6 +27,9 @@ class ActivityTask(Base):
     updated_at = Column(DateTime, default=utc_now)
     created_by = Column(Integer, ForeignKey("users.id"), nullable=True)
     updated_by = Column(Integer, ForeignKey("users.id"), nullable=True)
+
+    is_logged = Column(Boolean, nullable=False, default=True)
+    allows_robot = Column(Boolean, nullable=False, default=True)
 
     activity = relationship('Activity', back_populates='activity_tasks')
     task = relationship('Task')

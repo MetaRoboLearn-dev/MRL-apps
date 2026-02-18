@@ -95,6 +95,7 @@ def create_task():
             stickers=data.get("stickers"),
             code=data.get("code"),
             blocks=data.get("blocks"),
+            active=data.get("active"),
             actor_user_id=_actor_user_id(),
         )
         return jsonify(_task_to_dict(task)), 201

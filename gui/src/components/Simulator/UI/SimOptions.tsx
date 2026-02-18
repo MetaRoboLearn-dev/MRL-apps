@@ -11,8 +11,6 @@ const SimOptions = () => {
     title, setTitle,
     description, setDescription,
     isActive, setIsActive,
-    isLogged, setIsLogged,
-    hasRobotAccess, setHasRobotAccess
   } = useTaskConfig()
 
   const [tempSizeX, setTempSizeX] = useState<string>(String(sizeX))
@@ -96,23 +94,7 @@ const SimOptions = () => {
             checked={isActive}
             onChange={(e) => setIsActive(e.target.checked)}
           />
-          <span className="text-sm font-semibold text-gray-800">Active</span>
-        </label>
-        <label className="flex items-center gap-2 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={hasRobotAccess}
-            onChange={(e) => setHasRobotAccess(e.target.checked)}
-          />
-          <span className="text-sm font-semibold text-gray-800">Can send to robot</span>
-        </label>
-        <label className="flex items-center gap-2 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={isLogged}
-            onChange={(e) => setIsLogged(e.target.checked)}
-          />
-          <span className="text-sm font-semibold text-gray-800">Is logged</span>
+          <span className="font-semibold text-gray-800">Active</span>
         </label>
       </div>
 

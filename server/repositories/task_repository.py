@@ -94,6 +94,7 @@ class TaskRepository(BaseRepository[Task]):
         stickers: Optional[dict] = None,
         code: Optional[str] = None,
         blocks: Optional[str] = None,
+        active: bool,
         actor_user_id: Optional[int] = None,
     ) -> Task:
         now = utc_now()
@@ -113,7 +114,7 @@ class TaskRepository(BaseRepository[Task]):
             updated_at=now,
             created_by=actor_user_id,
             updated_by=actor_user_id,
-            active=True,
+            active=active,
         )
 
         self.session.add(task)

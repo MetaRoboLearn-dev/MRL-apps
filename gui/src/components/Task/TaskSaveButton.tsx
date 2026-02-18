@@ -11,7 +11,7 @@ const TaskSaveButton = () => {
   const { taskId } = useParams({ strict: false });
   const { sizeX, sizeZ, barriers, stickers, start, finish, startRotationOffset } = useGrid();
   const { code, blocks } = useCode();
-  const { mode, title, description } = useTaskConfig();
+  const { mode, title, description, isActive } = useTaskConfig();
   const navigate = useNavigate();
 
   const createMutation = useMutation({
@@ -43,6 +43,7 @@ const TaskSaveButton = () => {
       ]),
       code,
       blocks,
+      active: isActive
     };
 
     if (mode === "create") {

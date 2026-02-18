@@ -63,3 +63,16 @@ export const updateTask = async ({ id, ...data }: CreateTaskRequest & { id: stri
 
   return response.json();
 };
+
+export const deleteTask = async (taskId: string) => {
+  const response = await fetch(`/api/tasks/${taskId}`, {
+    method: 'DELETE',
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to delete task');
+  }
+
+  return response.json();
+};

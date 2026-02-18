@@ -19,7 +19,8 @@ const DEFAULT_TASK: Task = {
   barriers: null,
   stickers: null,
   code: null,
-  blocks: null
+  blocks: null,
+  active: true,
 }
 
 function RouteComponent() {

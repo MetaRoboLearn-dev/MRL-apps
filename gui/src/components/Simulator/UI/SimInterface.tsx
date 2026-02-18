@@ -20,7 +20,7 @@ const SimInterface = ({isHovered}: Props) => {
   const { simFocused, setSimFocused,
     selectedType, setSelectedType,
     animationSpeed, rotateBy90,
-    selectedRotation} = useTaskConfig();
+    selectedRotation, mode} = useTaskConfig();
   const { start, sizeX, sizeZ, startRotationOffset } = useGrid();
   const { modalVisible } = useUI();
   const { position, rotation, isMoving, moveQueue } = useVehicle();
@@ -32,6 +32,7 @@ const SimInterface = ({isHovered}: Props) => {
 
   const tileValues = Object.values(TileType);
   const dev = false;
+  const allowEdit = mode != 'solve';
 
   const selectNextType = () => {
     const nextIndex = (tileIndex + 1) % tileValues.length;
@@ -89,8 +90,10 @@ const SimInterface = ({isHovered}: Props) => {
       </div>
 
       <div className={`absolute bottom-5 text-lg text-center font-semibold text-dark-neutrals-500 bg-white/80 px-4 py-2 rounded shadow transition-opacity duration-200 select-none
-                      ${!simFocused && isHovered && !modalVisible && !isMoving ? 'opacity-100 cursor-pointer' : 'opacity-0 pointer-events-none'}`}
-           onClick={() => setSimFocused(true)}>
+                      ${!simFocused && isHovered && !modalVisible && !isMoving && allowEdit ? 'opacity-100 cursor-pointer' : 'opacity-0 pointer-events-none'}`}
+           onClick={() => {
+             setSimFocused(true)
+           }}>
         ✏️ Pritisni za uređivanje simulacije
       </div>
 

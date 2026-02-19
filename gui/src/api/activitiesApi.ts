@@ -1,4 +1,4 @@
-import {CreateActivityRequest} from "../types/activityTypes.ts";
+import {AvailableActivity, CreateActivityRequest} from "../types/activityTypes.ts";
 
 export const getActivityById = async (activityId: string) => {
   const response = await fetch(`/api/activities/${activityId}`);
@@ -174,6 +174,16 @@ export const deleteActivityTask = async (activityTaskId: number) => {
   if (!response.ok) {
     const error = await response.json();
     throw new Error(error.error || 'Failed to delete activity task');
+  }
+
+  return response.json();
+};
+
+export const getAvailableActivities = async (): Promise<AvailableActivity[]> => {
+  const response = await fetch("/api/activities/available");
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch activities: ${response.status}`);
   }
 
   return response.json();

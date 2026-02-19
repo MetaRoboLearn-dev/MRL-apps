@@ -2,7 +2,7 @@ import datetime
 from typing import Optional
 
 from sqlalchemy.orm import Session, joinedload, aliased
-from sqlalchemy import or_
+from sqlalchemy import or_, exists
 
 from models import ActivityTask, User
 from models.activity import Activity
@@ -26,15 +26,7 @@ class ActivityRepository(BaseRepository[Activity]):
         )
 
     # ---------- LIST ----------
-    def list(
-        self,
-        *,
-        skip: int = 0,
-        limit: int = 50,
-        active_only: Optional[bool] = None,
-        search: Optional[str] = None,
-        order_by_time_from: bool = True,
-    ) -> list[Activity]:
+    def list(self, *, skip: int = 0, limit: int = 50, active_only: Optional[bool] = None, search: Optional[str] = None, order_by_time_from: bool = True) -> list[Activity]:
         q = self.session.query(Activity)
 
         if active_only:
@@ -80,6 +72,24 @@ class ActivityRepository(BaseRepository[Activity]):
             q = q.order_by(Activity.time_from.asc().nullslast(), Activity.id.asc())
 
         return q.offset(skip).limit(limit).all()
+
+    # ---------- READ ALL ACTIVITIES AVAILABLE TO STUDENTS ----------
+    def list_student_available_activities(self):
+        q = (
+            self.session.query(Activity)
+            .options(
+                joinedload(Activity.activity_tasks).joinedload(ActivityTask.task),
+                joinedload(Activity.activity_tasks).joinedload(ActivityTask.type),
+            )
+            .filter(Activity.active.is_(True))
+            .filter(
+                exists().where(ActivityTask.activity_id == Activity.id)
+            )
+        )
+
+        # q = q.filter(TODO - ovdje filtrirat po vremenu)
+
+        return q.all()
 
     # ---------- CREATE ----------
     def create(

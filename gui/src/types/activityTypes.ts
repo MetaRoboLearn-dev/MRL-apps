@@ -45,3 +45,27 @@ export type CreateActivityRequest = {
   time_from: string;
   time_to: string;
 };
+
+// landing page
+type TaskType = "blockly" | "python";
+
+type AvailableActivityTask = {
+  activity_task_description: string | null;
+  activity_task_id: number;
+  allows_robot: boolean;
+  is_logged: boolean;
+  order: number;
+  task_description: string;
+  task_id: number;
+  task_title: string;
+  task_type: TaskType;
+}
+
+export type AvailableActivity = {
+  activity_tasks: AvailableActivityTask[];
+  description: string;
+  id: number;
+  time_from: string;
+  time_to: string;
+  title: string;
+}

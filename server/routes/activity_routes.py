@@ -139,6 +139,37 @@ def list_activities_with_tasks():
             for a in activities
         ]), 200
 
+# ---------- READ ALL ACTIVITIES AVAILABLE TO STUDENTS ----------
+@bp.route("/available", methods=["GET"])
+def list_student_available_activities():
+    with db_session() as session:
+        repo = ActivityRepository(session)
+        activities = repo.list_student_available_activities()
+        return jsonify([
+            {
+                "id": a.id,
+                "title": a.title,
+                "description": a.description,
+                "time_from": a.time_from.isoformat() if a.time_from else None,
+                "time_to": a.time_to.isoformat() if a.time_to else None,
+                "activity_tasks": [
+                    {
+                        "activity_task_id": at.id,
+                        "task_id": at.task_id,
+                        "task_title": at.task.title if at.task else None,
+                        "task_description": at.task.description if at.task else None,
+                        "activity_task_description": at.description,
+                        "order": at.order,
+                        "task_type": at.type.name if at.type else None,
+                        "is_logged": at.is_logged,
+                        "allows_robot": at.allows_robot,
+                    }
+                    for at in a.activity_tasks
+                ],
+            }
+            for a in activities
+        ]), 200
+
 # ---------- CREATE ----------
 @bp.route("/", methods=["POST"])
 def create_activity():

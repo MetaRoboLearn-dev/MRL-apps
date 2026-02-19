@@ -1,4 +1,15 @@
-import {CreateUserRequest, UpdateUserRequest, User} from "../types/userTypes.ts";
+import {CreateUserRequest, UpdateUserRequest, User, Role} from "../types/userTypes.ts";
+
+export const getRoles = async (): Promise<Role[]> => {
+  const response = await fetch('/api/users/roles');
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to fetch roles');
+  }
+
+  return response.json();
+};
 
 export const getUsers = async (params: {
   skip?: number;

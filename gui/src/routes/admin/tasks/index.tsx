@@ -72,7 +72,7 @@ const columns = [
       if (!creator) return '—';
       return (
         <div>
-          <div>{creator.name} {creator.last_name}</div>
+          <div>{creator.first_name} {creator.last_name}</div>
           <div className="text-sm text-gray-500">@{creator.username}</div>
         </div>
       );

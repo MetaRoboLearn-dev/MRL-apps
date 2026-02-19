@@ -1,5 +1,5 @@
 from typing import Optional
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from models.activity_task import ActivityTask
 from utils import utc_now
 
@@ -9,40 +9,31 @@ class ActivityTaskRepository:
         self.session = session
 
     # ---------- READ ONE ----------
-    def get_by_id(self, activity_task_id: int) -> Optional[ActivityTask]:
+    def get_by_id(self, activity_task_id: int):
         return (
             self.session.query(ActivityTask)
+            .options(
+                joinedload(ActivityTask.task),
+                joinedload(ActivityTask.type),
+            )
             .filter(ActivityTask.id == activity_task_id)
             .first()
         )
 
-    # ---------- LIST ----------
-    def list(
-        self,
-        *,
-        skip: int = 0,
-        limit: int = 50,
-        activity_id: Optional[int] = None,
-        task_id: Optional[int] = None,
-        type_id: Optional[int] = None,
-        order_by_order: bool = True,
-    ) -> list[ActivityTask]:
-        q = self.session.query(ActivityTask)
-
-        if activity_id is not None:
-            q = q.filter(ActivityTask.activity_id == activity_id)
-        if task_id is not None:
-            q = q.filter(ActivityTask.task_id == task_id)
-        if type_id is not None:
-            q = q.filter(ActivityTask.type_id == type_id)
-
-        if order_by_order:
-            q = q.order_by(
-                ActivityTask.order.asc().nullslast(),
-                ActivityTask.id.asc(),
+    # ---------- LIST TASKS OF ACTIVITY ----------
+    def list_by_activity_id(self, *, activity_id: int):
+        return (
+            self.session.query(ActivityTask)
+            .options(
+                joinedload(ActivityTask.task),
+                joinedload(ActivityTask.type),
+                joinedload(ActivityTask.creator),
+                joinedload(ActivityTask.updater),
             )
-
-        return q.offset(skip).limit(limit).all()
+            .filter(ActivityTask.activity_id == activity_id)
+            .order_by(ActivityTask.order.asc())
+            .all()
+        )
 
     # ---------- CREATE ----------
     def create(
@@ -52,6 +43,8 @@ class ActivityTaskRepository:
         task_id: int,
         type_id: int,
         order: int,
+        is_logged: bool,
+        allows_robot: bool,
         description: Optional[str] = None,
         actor_user_id: Optional[int] = None,
     ) -> ActivityTask:
@@ -61,6 +54,8 @@ class ActivityTaskRepository:
             task_id=task_id,
             type_id=type_id,
             order=order,
+            is_logged=is_logged,
+            allows_robot=allows_robot,
             description=description,
             created_at=now,
             updated_at=now,
@@ -83,6 +78,8 @@ class ActivityTaskRepository:
         task_id: Optional[int] = None,
         type_id: Optional[int] = None,
         order: Optional[int] = None,
+        is_logged: Optional[bool] = None,
+        allows_robot: Optional[bool] = None,
         actor_user_id: Optional[int] = None,
     ) -> Optional[ActivityTask]:
         activity_task = self.get_by_id(activity_task_id)
@@ -99,6 +96,10 @@ class ActivityTaskRepository:
             activity_task.type_id = type_id
         if order is not None:
             activity_task.order = order
+        if is_logged is not None:
+            activity_task.is_logged = is_logged
+        if allows_robot is not None:
+            activity_task.allows_robot = allows_robot
 
         activity_task.updated_at = utc_now()
         activity_task.updated_by = actor_user_id
@@ -116,3 +117,54 @@ class ActivityTaskRepository:
         self.session.delete(activity_task)
         self.session.commit()
         return True
+
+    # ---------- SWAP TASK ORDER ----------
+    def swap_order(self, activity_id: int, activity_task_id: int, direction: str):
+        """Swap order with adjacent task. direction is 'up' or 'down'."""
+        task = self.session.query(ActivityTask).filter(
+            ActivityTask.id == activity_task_id,
+            ActivityTask.activity_id == activity_id,
+        ).first()
+
+        if not task:
+            return None
+
+        if direction == 'up':
+            neighbor = (
+                self.session.query(ActivityTask)
+                .filter(
+                    ActivityTask.activity_id == activity_id,
+                    ActivityTask.order < task.order,
+                )
+                .order_by(ActivityTask.order.desc())
+                .first()
+            )
+        else:
+            neighbor = (
+                self.session.query(ActivityTask)
+                .filter(
+                    ActivityTask.activity_id == activity_id,
+                    ActivityTask.order > task.order,
+                )
+                .order_by(ActivityTask.order.asc())
+                .first()
+            )
+
+        if not neighbor:
+            return None
+
+        task.order, neighbor.order = neighbor.order, task.order
+        self.session.flush()
+        return task
+
+    # ---------- REORDER TASKSA AFTER DELETE ----------
+    def reorder_after_delete(self, activity_id: int):
+        tasks = (
+            self.session.query(ActivityTask)
+            .filter(ActivityTask.activity_id == activity_id)
+            .order_by(ActivityTask.order.asc())
+            .all()
+        )
+        for i, task in enumerate(tasks, start=1):
+            task.order = i
+        self.session.flush()

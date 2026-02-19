@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { UserForm } from "../../../../components/User/UserForm.tsx";
 import {getUserById, updateUser} from "../../../../api/usersApi.ts";
 import {UpdateUserRequest} from "../../../../types/userTypes.ts";
-
+import {getRoles} from "../../../../api/usersApi.ts";
 
 const userQueryOptions = (userId: string) =>
   queryOptions({
@@ -12,9 +12,17 @@ const userQueryOptions = (userId: string) =>
     queryFn: () => getUserById(userId),
   })
 
+const rolesQueryOptions = queryOptions({
+  queryKey: ['roles'],
+  queryFn: getRoles,
+})
+
 export const Route = createFileRoute('/admin/users/$userId/edit')({
   loader: ({ context, params }) => {
-    return context.queryClient.ensureQueryData(userQueryOptions(params.userId))
+    return Promise.all([
+      context.queryClient.ensureQueryData(userQueryOptions(params.userId)),
+      context.queryClient.ensureQueryData(rolesQueryOptions),
+    ])
   },
   component: RouteComponent,
 })
@@ -24,12 +32,12 @@ function RouteComponent() {
   const { userId } = Route.useParams()
   const queryClient = useQueryClient()
   const { data: user } = useSuspenseQuery(userQueryOptions(userId))
+  const { data: roles } = useSuspenseQuery(rolesQueryOptions)
   const [error, setError] = useState<string>()
 
   const mutation = useMutation({
     mutationFn: (data: UpdateUserRequest) => updateUser(userId, data),
     onSuccess: () => {
-      // Invalidate and refetch user data
       queryClient.invalidateQueries({ queryKey: ['user', userId] })
       queryClient.invalidateQueries({ queryKey: ['users'] })
       navigate({ to: '/admin/users/$userId', params: { userId } })
@@ -56,6 +64,7 @@ function RouteComponent() {
       <h1 className="text-2xl font-bold mb-6">Edit User</h1>
       <UserForm
         user={user}
+        roles={roles}
         onSubmit={handleSubmit}
         isLoading={mutation.isPending}
         error={error}

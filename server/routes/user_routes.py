@@ -28,6 +28,16 @@ def _user_to_dict(user):
         "updated_by": user.updated_by,
     }
 
+# ---------- LIST ALL ROLES ----------
+@bp.route("/roles", methods=["GET"])
+def list_roles():
+    with db_session() as session:
+        repo = UserRepository(session)
+        roles = repo.list_all_roles()
+        return jsonify([
+            {"id": r.id, "name": r.name}
+            for r in roles
+        ]), 200
 
 # ---------- READ ONE ----------
 @bp.route("/<int:user_id>", methods=["GET"])

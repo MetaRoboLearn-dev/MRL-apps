@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from database import init_db
 from sb import sb_run_python
-from routes import user_routes, task_routes, activity_routes, activity_task_routes, user_started_task_routes, user_task_log_routes
+from routes import user_routes, task_routes, activity_routes, activity_task_routes, user_started_task_routes, user_task_log_routes, type_routes
 import models
 
 app = Flask(__name__)
@@ -18,6 +18,7 @@ app.register_blueprint(activity_routes.bp)
 app.register_blueprint(activity_task_routes.bp)
 app.register_blueprint(user_started_task_routes.bp)
 app.register_blueprint(user_task_log_routes.bp)
+app.register_blueprint(type_routes.bp)
 
 # TODO - do this when it becomes crucial, sending to broker can only be done IF you are an admin, or if there is an active activity with tasks that are robot related
 

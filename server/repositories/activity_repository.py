@@ -1,10 +1,10 @@
 import datetime
 from typing import Optional
 
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload, aliased
 from sqlalchemy import or_
 
-from models import ActivityTask
+from models import ActivityTask, User
 from models.activity import Activity
 from repositories.base_repository import BaseRepository
 from utils import utc_now
@@ -12,6 +12,18 @@ from utils import utc_now
 class ActivityRepository(BaseRepository[Activity]):
     def __init__(self, session: Session):
         super().__init__(session, Activity)
+
+    # ---------- GET ACTIVITY DETAILS ----------
+    def get_with_details(self, activity_id: int):
+        return (
+            self.session.query(Activity)
+            .options(
+                joinedload(Activity.creator),
+                joinedload(Activity.updater),
+            )
+            .filter(Activity.id == activity_id)
+            .first()
+        )
 
     # ---------- LIST ----------
     def list(
@@ -45,6 +57,29 @@ class ActivityRepository(BaseRepository[Activity]):
     # ---------- READ ALL ACTIVITY TASKS ----------
     def get_activity_tasks(self, entity_id: int) -> Optional[ActivityTask]:
         return self.session.query(Activity.activity_tasks).filter(Activity.id == entity_id).first()
+
+    # ---------- READ ALL ACTIVITIES WITH TASK INFO ----------
+    def list_activities_with_tasks(self, *, skip=0, limit=50, active_only=None, search=None, order_by_time_from=True):
+        q = (
+            self.session.query(Activity)
+            .options(
+                joinedload(Activity.activity_tasks).joinedload(ActivityTask.task),
+                joinedload(Activity.activity_tasks).joinedload(ActivityTask.type),
+                joinedload(Activity.creator),
+            )
+        )
+
+        if active_only:
+            q = q.filter(Activity.active.is_(True))
+
+        if search:
+            like = f"%{search}%"
+            q = q.filter(or_(Activity.title.ilike(like), Activity.description.ilike(like)))
+
+        if order_by_time_from:
+            q = q.order_by(Activity.time_from.asc().nullslast(), Activity.id.asc())
+
+        return q.offset(skip).limit(limit).all()
 
     # ---------- CREATE ----------
     def create(

@@ -2,7 +2,7 @@ from typing import Optional, Iterable, Any
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import or_
 
-from models.user import User
+from models.user import User, Role
 from repositories.base_repository import BaseRepository
 from utils import utc_now
 
@@ -14,6 +14,9 @@ class UserRepository(BaseRepository[User]):
     # ---------- READ ONE ----------
     # def get_by_id(self, user_id: int) -> Optional[User]:
     #     return self.session.query(User).filter(User.id == user_id).first()
+
+    def list_all_roles(self):
+        return self.session.query(Role).all()
 
     def get_by_username(self, username: str) -> Optional[User]:
         return self.session.query(User).filter(User.username == username).first()

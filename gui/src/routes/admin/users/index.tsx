@@ -10,6 +10,7 @@ import {
 import { z } from 'zod';
 import { useState } from 'react';
 import {User} from "../../../types/userTypes.ts";
+import {capitalizeFirstLetter} from "../../../utils.ts";
 
 const usersSearchSchema = z.object({
   skip: z.number().optional().default(0),
@@ -58,7 +59,7 @@ const columns = [
   }),
   columnHelper.accessor('role_name', {
     header: 'Role',
-    cell: info => info.getValue(),
+    cell: info => capitalizeFirstLetter(info.getValue()),
   }),
   columnHelper.accessor('last_login', {
     header: 'Last Login',

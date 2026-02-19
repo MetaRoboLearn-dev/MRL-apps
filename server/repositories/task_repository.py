@@ -69,7 +69,7 @@ class TaskRepository(BaseRepository[Task]):
                 "active": row.active,
                 "creator": {
                     "username": row.username,
-                    "name": row.first_name,
+                    "first_name": row.first_name,
                     "last_name": row.last_name
                 } if row.username else None
             }

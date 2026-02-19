@@ -1,0 +1,47 @@
+import {UserBasic} from "./userTypes.ts";
+
+export interface ActivityTask {
+  activity_task_id: number;
+  task_id: number;
+  task_title: string | null;
+  activity_task_description: string | null;
+  order: number;
+  task_type: string | null;
+  is_logged: boolean;
+  allows_robot: boolean;
+  creator: UserBasic | null;
+  updater: UserBasic | null;
+}
+
+export type ActivityTaskBasic = {
+  activity_task_id: number;
+  task_id: number;
+  task_title: string | null;
+  activity_task_description: string | null;
+  order: number;
+  task_type: string | null;
+  is_logged: boolean;
+  allows_robot: boolean;
+}
+
+export type Activity = {
+  id: number;
+  title: string;
+  description: string | null;
+  time_from: string | null;
+  time_to: string | null;
+  active: boolean;
+  activity_tasks: ActivityTaskBasic[];
+  created_at: string;
+  updated_at: string | null;
+  created_by: number | null;
+  updated_by: number | null;
+  creator: UserBasic;
+}
+
+export type CreateActivityRequest = {
+  title: string;
+  description?: string;
+  time_from: string;
+  time_to: string;
+};

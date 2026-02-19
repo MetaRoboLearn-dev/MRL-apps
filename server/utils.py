@@ -3,9 +3,12 @@ from datetime import datetime, timezone
 def utc_now():
     return datetime.now(timezone.utc)
 
-def parse_boolean_param(value: str | None) -> bool | None:
+def parse_boolean_param(value: str | bool | None) -> bool | None:
     if value is None:
         return None
+
+    if isinstance(value, bool):
+        return value
 
     v = value.lower()
 

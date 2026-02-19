@@ -1,6 +1,7 @@
 import {useState, useEffect, FormEvent, ChangeEvent} from 'react'
 import { useNavigate } from '@tanstack/react-router'
-import {CreateUserRequest, UpdateUserRequest, User} from "../../types/userTypes.ts";
+import {CreateUserRequest, Role, UpdateUserRequest, User} from "../../types/userTypes.ts";
+import {capitalizeFirstLetter} from "../../utils.ts";
 
 type UserFormData = {
   username: string
@@ -12,6 +13,7 @@ type UserFormData = {
 
 type UserFormPropsCreate = {
   user?: never
+  roles: Role[]
   onSubmit: (data: CreateUserRequest) => Promise<void>
   isLoading: boolean
   error?: string
@@ -19,6 +21,7 @@ type UserFormPropsCreate = {
 
 type UserFormPropsEdit = {
   user: User
+  roles: Role[]
   onSubmit: (data: UpdateUserRequest) => Promise<void>
   isLoading: boolean
   error?: string
@@ -26,7 +29,7 @@ type UserFormPropsEdit = {
 
 type UserFormProps = UserFormPropsCreate | UserFormPropsEdit
 
-export function UserForm({ user, onSubmit, isLoading, error }: UserFormProps) {
+export function UserForm({ user, roles, onSubmit, isLoading, error }: UserFormProps) {
   const navigate = useNavigate()
   const isEditing = !!user
 
@@ -35,7 +38,7 @@ export function UserForm({ user, onSubmit, isLoading, error }: UserFormProps) {
     password: '',
     first_name: user?.first_name || '',
     last_name: user?.last_name || '',
-    role_id: user?.role_id || 1,
+    role_id: user?.role_id || roles[roles.length - 1]?.id || 1,
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
 
@@ -234,9 +237,9 @@ export function UserForm({ user, onSubmit, isLoading, error }: UserFormProps) {
             onChange={handleChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
           >
-            <option value="1">Role 1</option>
-            <option value="2">Role 2</option>
-            <option value="3">Role 3</option>
+            {roles.map((r) => (
+              <option key={r.id} value={r.id}>{capitalizeFirstLetter(r.name)}</option>
+            ))}
           </select>
         </div>
       </div>

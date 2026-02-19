@@ -1,3 +1,8 @@
+export type Role = {
+  id: number;
+  name: string;
+}
+
 export type User = {
   id: number
   username: string
@@ -15,7 +20,7 @@ export type User = {
 
 export type UserBasic = {
   username: string;
-  name: string;
+  first_name: string;
   last_name: string;
 };
 

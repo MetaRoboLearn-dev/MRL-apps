@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { queryOptions, useSuspenseQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { getUserById, deleteUser } from "../../../../api/usersApi.ts";
+import {formatLocalDateTime} from "../../../../utils.ts";
 
 const userQueryOptions = (userId: string) =>
   queryOptions({
@@ -37,11 +38,6 @@ function RouteComponent() {
     if (confirm(`Are you sure you want to delete ${user.first_name} ${user.last_name}?`)) {
       deleteMutation.mutate()
     }
-  }
-
-  const formatDate = (date: Date | null) => {
-    if (!date) return 'Never'
-    return new Date(date).toLocaleString()
   }
 
   return (
@@ -128,7 +124,7 @@ function RouteComponent() {
               <label className="block text-sm font-medium text-gray-500 mb-1">
                 Last Login
               </label>
-              <p className="text-base">{formatDate(user.last_login)}</p>
+              <p className="text-base">{user.last_login ? formatLocalDateTime(user.last_login) : 'Never'}</p>
             </div>
 
             {/* Created At */}
@@ -136,7 +132,7 @@ function RouteComponent() {
               <label className="block text-sm font-medium text-gray-500 mb-1">
                 Created At
               </label>
-              <p className="text-base">{formatDate(user.created_at)}</p>
+              <p className="text-base">{formatLocalDateTime(user.created_at)}</p>
             </div>
 
             {/* Updated At */}
@@ -144,7 +140,7 @@ function RouteComponent() {
               <label className="block text-sm font-medium text-gray-500 mb-1">
                 Updated At
               </label>
-              <p className="text-base">{formatDate(user.updated_at)}</p>
+              <p className="text-base">{formatLocalDateTime(user.updated_at)}</p>
             </div>
 
             {/* Created By */}

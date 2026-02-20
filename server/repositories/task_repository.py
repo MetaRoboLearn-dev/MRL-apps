@@ -56,30 +56,9 @@ class TaskRepository(BaseRepository[Task]):
         if order_by_title:
             q = q.order_by(Task.title.asc())
 
-        results = q.offset(skip).limit(limit).all()
-        return [
-            {
-                "id": row.id,
-                "title": row.title,
-                "description": row.description,
-                "size_x": row.size_x,
-                "size_z": row.size_z,
-                "created_at": row.created_at,
-                "created_by": row.created_by,
-                "active": row.active,
-                "creator": {
-                    "username": row.username,
-                    "first_name": row.first_name,
-                    "last_name": row.last_name
-                } if row.username else None
-            }
-            for row in results
-        ]
-
+        return q.offset(skip).limit(limit).all()
 
     # ---------- CREATE ----------
-    from typing import Optional
-
     def create(
         self,
         *,

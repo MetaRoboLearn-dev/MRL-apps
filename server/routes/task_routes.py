@@ -68,7 +68,24 @@ def list_tasks():
             search=search,
             order_by_title=order_by_title,
         )
-        return tasks, 200
+        return [
+            {
+                "id": row.id,
+                "title": row.title,
+                "description": row.description,
+                "size_x": row.size_x,
+                "size_z": row.size_z,
+                "created_at": row.created_at.isoformat(),
+                "created_by": row.created_by,
+                "active": row.active,
+                "creator": {
+                    "username": row.username,
+                    "first_name": row.first_name,
+                    "last_name": row.last_name
+                } if row.username else None
+            }
+            for row in tasks
+        ], 200
 
 
 # ---------- CREATE ----------

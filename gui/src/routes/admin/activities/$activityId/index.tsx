@@ -15,6 +15,7 @@ import {
   createColumnHelper,
 } from '@tanstack/react-table'
 import { ActivityTask } from '../../../../types/activityTypes.ts'
+import {formatLocalDateTime} from "../../../../utils.ts";
 
 
 
@@ -271,14 +272,6 @@ function RouteComponent() {
             </p>
           </div>
           <div>
-            <span className="font-medium text-gray-600">Start Time</span>
-            <p className="mt-1">{activity.time_from ? new Date(activity.time_from).toLocaleString() : '—'}</p>
-          </div>
-          <div>
-            <span className="font-medium text-gray-600">End Time</span>
-            <p className="mt-1">{activity.time_to ? new Date(activity.time_to).toLocaleString() : '—'}</p>
-          </div>
-          <div>
             <span className="font-medium text-gray-600">Created By</span>
             <p className="mt-1">
               {activity.creator
@@ -287,8 +280,16 @@ function RouteComponent() {
             </p>
           </div>
           <div>
+            <span className="font-medium text-gray-600">Start Time</span>
+            <p className="mt-1">{activity.time_from ? formatLocalDateTime(activity.time_from) : '—'}</p>
+          </div>
+          <div>
             <span className="font-medium text-gray-600">Created At</span>
-            <p className="mt-1">{new Date(activity.created_at).toLocaleString()}</p>
+            <p className="mt-1">{formatLocalDateTime(activity.created_at)}</p>
+          </div>
+          <div>
+            <span className="font-medium text-gray-600">End Time</span>
+            <p className="mt-1">{activity.time_to ? formatLocalDateTime(activity.time_to) : '—'}</p>
           </div>
         </div>
       </div>
@@ -297,7 +298,7 @@ function RouteComponent() {
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold">Tasks</h2>
         <button
-          onClick={() => navigate({ to: '/admin/activities/$activityId/tasks/add', params: { activityId } })}
+          onClick={() => navigate({to: '/admin/activities/$activityId/tasks/add', params: {activityId}})}
           className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-md font-medium flex items-center gap-2"
         >
           <span>+</span>

@@ -11,11 +11,11 @@ export type User = {
   role_id: number
   role_name: string
   active: boolean
-  created_at: Date
-  updated_at: Date
+  created_at: string
+  updated_at: string
   created_by: number | null
   updated_by: number | null
-  last_login: Date | null
+  last_login: string | null
 }
 
 export type UserBasic = {

@@ -3,6 +3,7 @@ export function capitalizeFirstLetter(val: string) {
 }
 
 export const formatLocalDateTime = (utcString: string): string => {
+  console.log(utcString)
   const date = new Date(utcString + 'Z')
   const day = date.getDate().toString().padStart(2, '0')
   const month = (date.getMonth() + 1).toString().padStart(2, '0')

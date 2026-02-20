@@ -10,6 +10,7 @@ import {
 } from '@tanstack/react-table';
 import { useState, KeyboardEvent } from 'react';
 import {TaskPreview} from "../../../types/tasksTypes.ts";
+import {formatLocalDateTime} from "../../../utils.ts";
 
 
 const taskSearchSchema = z.object({
@@ -80,7 +81,7 @@ const columns = [
   }),
   columnHelper.accessor('created_at', {
     header: 'Created At',
-    cell: info => new Date(info.getValue()).toLocaleString(),
+    cell: (info) => formatLocalDateTime(info.getValue()),
   }),
 ]
 

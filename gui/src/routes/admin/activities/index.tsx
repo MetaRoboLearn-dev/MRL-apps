@@ -11,6 +11,7 @@ import {
 } from '@tanstack/react-table'
 import { useState, KeyboardEvent } from 'react'
 import {Activity, ActivityTaskBasic} from '../../../types/activityTypes.ts'
+import {formatLocalDateTime} from "../../../utils.ts";
 
 function ActionCell({ activityId }: { activityId: number }) {
   const navigate = useNavigate()
@@ -72,14 +73,14 @@ export const Route = createFileRoute('/admin/activities/')({
       header: 'Time From',
       cell: (info) => {
         const val = info.getValue()
-        return val ? new Date(val).toLocaleString() : '—'
+        return val ? formatLocalDateTime(val) : '—'
       },
     }),
     activityColumnHelper.accessor('time_to', {
       header: 'Time To',
       cell: (info) => {
         const val = info.getValue()
-        return val ? new Date(val).toLocaleString() : '—'
+        return val ? formatLocalDateTime(val) : '—'
       },
     }),
     activityColumnHelper.accessor('active', {
@@ -107,7 +108,7 @@ export const Route = createFileRoute('/admin/activities/')({
     }),
     activityColumnHelper.accessor('created_at', {
       header: 'Created At',
-      cell: (info) => new Date(info.getValue()).toLocaleString(),
+      cell: (info) => formatLocalDateTime(info.getValue()),
     }),
     activityColumnHelper.display({
       id: 'actions',

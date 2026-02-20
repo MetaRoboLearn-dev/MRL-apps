@@ -27,4 +27,6 @@ dist-ssr
 venv
 .env
 
+.tanstack
+
 __pycache__

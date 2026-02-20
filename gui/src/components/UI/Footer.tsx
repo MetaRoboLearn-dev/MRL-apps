@@ -11,6 +11,7 @@ import ButtonSettings from "../Footer/ButtonSettings.tsx";
 import ButtonConnect from "../Footer/ButtonConnect.tsx";
 import TaskSaveButton from "../Task/TaskSaveButton.tsx";
 import TaskDeleteButton from "../Task/TaskDeleteButton.tsx";
+import TaskSubmitButton from "../Task/TaskSubmitButton.tsx";
 
 // TODO - change the buttons, make it more neat
 const Footer = () => {
@@ -25,13 +26,16 @@ const Footer = () => {
   const disabled = isMoving || modalVisible || start === null || finish === null;
 
   return (
-    <div className={'bg-white-smoke-500 px-15 w-full h-20 z-10 flex items-center justify-between select-none'}>
-      <div className={'flex'}>
+    <div className={'bg-white-smoke-500 pr-15 w-full h-20 z-10 flex items-center justify-between select-none'}>
+      <div>
         {mode !== "solve" && (
-          <>
+          <span className={'flex ml-5'}>
             <TaskSaveButton />
             <TaskDeleteButton />
-          </>
+          </span>
+        )}
+        {mode === 'solve' && (
+          <TaskSubmitButton />
         )}
       </div>
       <div className={'flex'}>

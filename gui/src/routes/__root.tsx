@@ -1,5 +1,5 @@
 import { createRootRouteWithContext, Outlet } from '@tanstack/react-router'
-import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
+// import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import { QueryClient } from '@tanstack/react-query'
 import Navbar from "../components/UI/Navbar.tsx";
 import AppProviders from "../providers/wrappers/AppProviders.tsx";
@@ -22,9 +22,10 @@ const RootLayout = () => {
         </div>
       </AppProviders>
 
-      <TanStackRouterDevtools/>
+      {/*<TanStackRouterDevtools/>*/}
     </>
-  )}
+  )
+}
 
 export const Route = createRootRouteWithContext<RouterContext>()({
   component: RootLayout

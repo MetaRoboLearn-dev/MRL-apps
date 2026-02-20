@@ -8,10 +8,24 @@ export const Route = createFileRoute('/')({
 
 function Index() {
   return (
-    <div className="relative w-4/5 min-w-200 mx-auto font-display p-10 min-h-screen">
-      <Suspense fallback={<div>Loading...</div>}>
-        <ActivityContainer />
-      </Suspense>
+    <div>
+      <div
+        className="absolute inset-0 -z-10 opacity-3"
+        style={{
+          backgroundImage: "url('/jigsaw.svg')",
+          backgroundRepeat: 'repeat',
+          backgroundSize: '150px 150px',
+        }}
+      />
+      <div className="relative w-4/5 min-w-200 mx-auto font-display p-10 min-h-screen">
+        <div className="text-center mb-14">
+          <h1 className="text-5xl font-bold text-dark-neutrals-500 tracking-wide">Tvoje aktivnosti</h1>
+          <div className="mt-3 mx-auto w-24 h-1 bg-sunglow-400 rounded-full"/>
+        </div>
+        <Suspense fallback={<div>Loading...</div>}>
+          <ActivityContainer/>
+        </Suspense>
+      </div>
     </div>
   )
 }

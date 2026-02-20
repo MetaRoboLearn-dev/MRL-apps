@@ -12,7 +12,7 @@ const ActivityContainer = () => {
   const { data: activities } = useSuspenseQuery(availableActivitiesQueryOptions)
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-10 bg-white p-6 border-3 border-white-smoke-500 rounded-md">
       {activities.map((a) => (
         <div className={'space-y-2'}>
           <div key={a.id} className="bg-sunglow-300 border-3 border-sunglow-600 px-10 py-6 rounded-md text-dark-neutrals-500 flex items-center justify-between">

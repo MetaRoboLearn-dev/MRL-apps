@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AboutRouteImport } from './routes/about'
-import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminUsersIndexRouteImport } from './routes/admin/users/index'
 import { Route as AdminTasksIndexRouteImport } from './routes/admin/tasks/index'
@@ -33,55 +32,50 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminRouteRoute = AdminRouteRouteImport.update({
-  id: '/admin',
-  path: '/admin',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminUsersIndexRoute = AdminUsersIndexRouteImport.update({
-  id: '/users/',
-  path: '/users/',
-  getParentRoute: () => AdminRouteRoute,
+  id: '/admin/users/',
+  path: '/admin/users/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AdminTasksIndexRoute = AdminTasksIndexRouteImport.update({
-  id: '/tasks/',
-  path: '/tasks/',
-  getParentRoute: () => AdminRouteRoute,
+  id: '/admin/tasks/',
+  path: '/admin/tasks/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AdminActivitiesIndexRoute = AdminActivitiesIndexRouteImport.update({
-  id: '/activities/',
-  path: '/activities/',
-  getParentRoute: () => AdminRouteRoute,
+  id: '/admin/activities/',
+  path: '/admin/activities/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AdminUsersNewRoute = AdminUsersNewRouteImport.update({
-  id: '/users/new',
-  path: '/users/new',
-  getParentRoute: () => AdminRouteRoute,
+  id: '/admin/users/new',
+  path: '/admin/users/new',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AdminTasksNewRoute = AdminTasksNewRouteImport.update({
-  id: '/tasks/new',
-  path: '/tasks/new',
-  getParentRoute: () => AdminRouteRoute,
+  id: '/admin/tasks/new',
+  path: '/admin/tasks/new',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AdminActivitiesNewRoute = AdminActivitiesNewRouteImport.update({
-  id: '/activities/new',
-  path: '/activities/new',
-  getParentRoute: () => AdminRouteRoute,
+  id: '/admin/activities/new',
+  path: '/admin/activities/new',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AdminTasksTaskIdRouteRoute = AdminTasksTaskIdRouteRouteImport.update({
-  id: '/tasks/$taskId',
-  path: '/tasks/$taskId',
-  getParentRoute: () => AdminRouteRoute,
+  id: '/admin/tasks/$taskId',
+  path: '/admin/tasks/$taskId',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AdminUsersUserIdIndexRoute = AdminUsersUserIdIndexRouteImport.update({
-  id: '/users/$userId/',
-  path: '/users/$userId/',
-  getParentRoute: () => AdminRouteRoute,
+  id: '/admin/users/$userId/',
+  path: '/admin/users/$userId/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AdminTasksTaskIdIndexRoute = AdminTasksTaskIdIndexRouteImport.update({
   id: '/',
@@ -90,14 +84,14 @@ const AdminTasksTaskIdIndexRoute = AdminTasksTaskIdIndexRouteImport.update({
 } as any)
 const AdminActivitiesActivityIdIndexRoute =
   AdminActivitiesActivityIdIndexRouteImport.update({
-    id: '/activities/$activityId/',
-    path: '/activities/$activityId/',
-    getParentRoute: () => AdminRouteRoute,
+    id: '/admin/activities/$activityId/',
+    path: '/admin/activities/$activityId/',
+    getParentRoute: () => rootRouteImport,
   } as any)
 const AdminUsersUserIdEditRoute = AdminUsersUserIdEditRouteImport.update({
-  id: '/users/$userId/edit',
-  path: '/users/$userId/edit',
-  getParentRoute: () => AdminRouteRoute,
+  id: '/admin/users/$userId/edit',
+  path: '/admin/users/$userId/edit',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AdminTasksTaskIdEditRoute = AdminTasksTaskIdEditRouteImport.update({
   id: '/edit',
@@ -106,26 +100,25 @@ const AdminTasksTaskIdEditRoute = AdminTasksTaskIdEditRouteImport.update({
 } as any)
 const AdminActivitiesActivityIdEditRoute =
   AdminActivitiesActivityIdEditRouteImport.update({
-    id: '/activities/$activityId/edit',
-    path: '/activities/$activityId/edit',
-    getParentRoute: () => AdminRouteRoute,
+    id: '/admin/activities/$activityId/edit',
+    path: '/admin/activities/$activityId/edit',
+    getParentRoute: () => rootRouteImport,
   } as any)
 const AdminActivitiesActivityIdTasksAddRoute =
   AdminActivitiesActivityIdTasksAddRouteImport.update({
-    id: '/activities/$activityId/tasks/add',
-    path: '/activities/$activityId/tasks/add',
-    getParentRoute: () => AdminRouteRoute,
+    id: '/admin/activities/$activityId/tasks/add',
+    path: '/admin/activities/$activityId/tasks/add',
+    getParentRoute: () => rootRouteImport,
   } as any)
 const AdminActivitiesActivityIdTasksActivityTaskIdEditRoute =
   AdminActivitiesActivityIdTasksActivityTaskIdEditRouteImport.update({
-    id: '/activities/$activityId/tasks/$activityTaskId/edit',
-    path: '/activities/$activityId/tasks/$activityTaskId/edit',
-    getParentRoute: () => AdminRouteRoute,
+    id: '/admin/activities/$activityId/tasks/$activityTaskId/edit',
+    path: '/admin/activities/$activityId/tasks/$activityTaskId/edit',
+    getParentRoute: () => rootRouteImport,
   } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/admin/tasks/$taskId': typeof AdminTasksTaskIdRouteRouteWithChildren
   '/admin/activities/new': typeof AdminActivitiesNewRoute
@@ -145,7 +138,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/admin/activities/new': typeof AdminActivitiesNewRoute
   '/admin/tasks/new': typeof AdminTasksNewRoute
@@ -165,7 +157,6 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/admin': typeof AdminRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/admin/tasks/$taskId': typeof AdminTasksTaskIdRouteRouteWithChildren
   '/admin/activities/new': typeof AdminActivitiesNewRoute
@@ -187,7 +178,6 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/admin'
     | '/about'
     | '/admin/tasks/$taskId'
     | '/admin/activities/new'
@@ -207,7 +197,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/admin'
     | '/about'
     | '/admin/activities/new'
     | '/admin/tasks/new'
@@ -226,7 +215,6 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/admin'
     | '/about'
     | '/admin/tasks/$taskId'
     | '/admin/activities/new'
@@ -247,8 +235,20 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AdminRouteRoute: typeof AdminRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
+  AdminTasksTaskIdRouteRoute: typeof AdminTasksTaskIdRouteRouteWithChildren
+  AdminActivitiesNewRoute: typeof AdminActivitiesNewRoute
+  AdminTasksNewRoute: typeof AdminTasksNewRoute
+  AdminUsersNewRoute: typeof AdminUsersNewRoute
+  AdminActivitiesIndexRoute: typeof AdminActivitiesIndexRoute
+  AdminTasksIndexRoute: typeof AdminTasksIndexRoute
+  AdminUsersIndexRoute: typeof AdminUsersIndexRoute
+  AdminActivitiesActivityIdEditRoute: typeof AdminActivitiesActivityIdEditRoute
+  AdminUsersUserIdEditRoute: typeof AdminUsersUserIdEditRoute
+  AdminActivitiesActivityIdIndexRoute: typeof AdminActivitiesActivityIdIndexRoute
+  AdminUsersUserIdIndexRoute: typeof AdminUsersUserIdIndexRoute
+  AdminActivitiesActivityIdTasksAddRoute: typeof AdminActivitiesActivityIdTasksAddRoute
+  AdminActivitiesActivityIdTasksActivityTaskIdEditRoute: typeof AdminActivitiesActivityIdTasksActivityTaskIdEditRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -260,13 +260,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin': {
-      id: '/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -276,59 +269,59 @@ declare module '@tanstack/react-router' {
     }
     '/admin/users/': {
       id: '/admin/users/'
-      path: '/users'
+      path: '/admin/users'
       fullPath: '/admin/users/'
       preLoaderRoute: typeof AdminUsersIndexRouteImport
-      parentRoute: typeof AdminRouteRoute
+      parentRoute: typeof rootRouteImport
     }
     '/admin/tasks/': {
       id: '/admin/tasks/'
-      path: '/tasks'
+      path: '/admin/tasks'
       fullPath: '/admin/tasks/'
       preLoaderRoute: typeof AdminTasksIndexRouteImport
-      parentRoute: typeof AdminRouteRoute
+      parentRoute: typeof rootRouteImport
     }
     '/admin/activities/': {
       id: '/admin/activities/'
-      path: '/activities'
+      path: '/admin/activities'
       fullPath: '/admin/activities/'
       preLoaderRoute: typeof AdminActivitiesIndexRouteImport
-      parentRoute: typeof AdminRouteRoute
+      parentRoute: typeof rootRouteImport
     }
     '/admin/users/new': {
       id: '/admin/users/new'
-      path: '/users/new'
+      path: '/admin/users/new'
       fullPath: '/admin/users/new'
       preLoaderRoute: typeof AdminUsersNewRouteImport
-      parentRoute: typeof AdminRouteRoute
+      parentRoute: typeof rootRouteImport
     }
     '/admin/tasks/new': {
       id: '/admin/tasks/new'
-      path: '/tasks/new'
+      path: '/admin/tasks/new'
       fullPath: '/admin/tasks/new'
       preLoaderRoute: typeof AdminTasksNewRouteImport
-      parentRoute: typeof AdminRouteRoute
+      parentRoute: typeof rootRouteImport
     }
     '/admin/activities/new': {
       id: '/admin/activities/new'
-      path: '/activities/new'
+      path: '/admin/activities/new'
       fullPath: '/admin/activities/new'
       preLoaderRoute: typeof AdminActivitiesNewRouteImport
-      parentRoute: typeof AdminRouteRoute
+      parentRoute: typeof rootRouteImport
     }
     '/admin/tasks/$taskId': {
       id: '/admin/tasks/$taskId'
-      path: '/tasks/$taskId'
+      path: '/admin/tasks/$taskId'
       fullPath: '/admin/tasks/$taskId'
       preLoaderRoute: typeof AdminTasksTaskIdRouteRouteImport
-      parentRoute: typeof AdminRouteRoute
+      parentRoute: typeof rootRouteImport
     }
     '/admin/users/$userId/': {
       id: '/admin/users/$userId/'
-      path: '/users/$userId'
+      path: '/admin/users/$userId'
       fullPath: '/admin/users/$userId/'
       preLoaderRoute: typeof AdminUsersUserIdIndexRouteImport
-      parentRoute: typeof AdminRouteRoute
+      parentRoute: typeof rootRouteImport
     }
     '/admin/tasks/$taskId/': {
       id: '/admin/tasks/$taskId/'
@@ -339,17 +332,17 @@ declare module '@tanstack/react-router' {
     }
     '/admin/activities/$activityId/': {
       id: '/admin/activities/$activityId/'
-      path: '/activities/$activityId'
+      path: '/admin/activities/$activityId'
       fullPath: '/admin/activities/$activityId/'
       preLoaderRoute: typeof AdminActivitiesActivityIdIndexRouteImport
-      parentRoute: typeof AdminRouteRoute
+      parentRoute: typeof rootRouteImport
     }
     '/admin/users/$userId/edit': {
       id: '/admin/users/$userId/edit'
-      path: '/users/$userId/edit'
+      path: '/admin/users/$userId/edit'
       fullPath: '/admin/users/$userId/edit'
       preLoaderRoute: typeof AdminUsersUserIdEditRouteImport
-      parentRoute: typeof AdminRouteRoute
+      parentRoute: typeof rootRouteImport
     }
     '/admin/tasks/$taskId/edit': {
       id: '/admin/tasks/$taskId/edit'
@@ -360,24 +353,24 @@ declare module '@tanstack/react-router' {
     }
     '/admin/activities/$activityId/edit': {
       id: '/admin/activities/$activityId/edit'
-      path: '/activities/$activityId/edit'
+      path: '/admin/activities/$activityId/edit'
       fullPath: '/admin/activities/$activityId/edit'
       preLoaderRoute: typeof AdminActivitiesActivityIdEditRouteImport
-      parentRoute: typeof AdminRouteRoute
+      parentRoute: typeof rootRouteImport
     }
     '/admin/activities/$activityId/tasks/add': {
       id: '/admin/activities/$activityId/tasks/add'
-      path: '/activities/$activityId/tasks/add'
+      path: '/admin/activities/$activityId/tasks/add'
       fullPath: '/admin/activities/$activityId/tasks/add'
       preLoaderRoute: typeof AdminActivitiesActivityIdTasksAddRouteImport
-      parentRoute: typeof AdminRouteRoute
+      parentRoute: typeof rootRouteImport
     }
     '/admin/activities/$activityId/tasks/$activityTaskId/edit': {
       id: '/admin/activities/$activityId/tasks/$activityTaskId/edit'
-      path: '/activities/$activityId/tasks/$activityTaskId/edit'
+      path: '/admin/activities/$activityId/tasks/$activityTaskId/edit'
       fullPath: '/admin/activities/$activityId/tasks/$activityTaskId/edit'
       preLoaderRoute: typeof AdminActivitiesActivityIdTasksActivityTaskIdEditRouteImport
-      parentRoute: typeof AdminRouteRoute
+      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -397,23 +390,9 @@ const AdminTasksTaskIdRouteRouteWithChildren =
     AdminTasksTaskIdRouteRouteChildren,
   )
 
-interface AdminRouteRouteChildren {
-  AdminTasksTaskIdRouteRoute: typeof AdminTasksTaskIdRouteRouteWithChildren
-  AdminActivitiesNewRoute: typeof AdminActivitiesNewRoute
-  AdminTasksNewRoute: typeof AdminTasksNewRoute
-  AdminUsersNewRoute: typeof AdminUsersNewRoute
-  AdminActivitiesIndexRoute: typeof AdminActivitiesIndexRoute
-  AdminTasksIndexRoute: typeof AdminTasksIndexRoute
-  AdminUsersIndexRoute: typeof AdminUsersIndexRoute
-  AdminActivitiesActivityIdEditRoute: typeof AdminActivitiesActivityIdEditRoute
-  AdminUsersUserIdEditRoute: typeof AdminUsersUserIdEditRoute
-  AdminActivitiesActivityIdIndexRoute: typeof AdminActivitiesActivityIdIndexRoute
-  AdminUsersUserIdIndexRoute: typeof AdminUsersUserIdIndexRoute
-  AdminActivitiesActivityIdTasksAddRoute: typeof AdminActivitiesActivityIdTasksAddRoute
-  AdminActivitiesActivityIdTasksActivityTaskIdEditRoute: typeof AdminActivitiesActivityIdTasksActivityTaskIdEditRoute
-}
-
-const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
   AdminTasksTaskIdRouteRoute: AdminTasksTaskIdRouteRouteWithChildren,
   AdminActivitiesNewRoute: AdminActivitiesNewRoute,
   AdminTasksNewRoute: AdminTasksNewRoute,
@@ -429,16 +408,6 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
     AdminActivitiesActivityIdTasksAddRoute,
   AdminActivitiesActivityIdTasksActivityTaskIdEditRoute:
     AdminActivitiesActivityIdTasksActivityTaskIdEditRoute,
-}
-
-const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
-  AdminRouteRouteChildren,
-)
-
-const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  AdminRouteRoute: AdminRouteRouteWithChildren,
-  AboutRoute: AboutRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

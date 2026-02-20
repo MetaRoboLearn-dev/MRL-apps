@@ -60,7 +60,7 @@ function RouteComponent() {
   }
 
   return (
-    <div className="p-4 max-w-2xl mx-auto">
+    <div className="p-4 max-w-2xl w-2xl mx-auto">
       <h1 className="text-2xl font-bold mb-6">Edit User</h1>
       <UserForm
         user={user}

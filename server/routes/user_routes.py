@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from database import db_session
 from repositories.user_repository import UserRepository
-from utils import parse_boolean_param
+from utils import parse_boolean_param, _to_utc_iso
 
 bp = Blueprint("users", __name__, url_prefix="/api/users")
 
@@ -21,9 +21,9 @@ def _user_to_dict(user):
         "role_id": user.role_id,
         "role_name": user.role.name if user.role else None,
         "active": getattr(user, "active", None),
-        "last_login": user.last_login.isoformat() if user.last_login else None,
-        "created_at": user.created_at.isoformat() if user.created_at else None,
-        "updated_at": user.updated_at.isoformat() if user.updated_at else None,
+        "last_login": _to_utc_iso(user.last_login) if user.last_login else None,
+        "created_at": _to_utc_iso(user.created_at),
+        "updated_at": _to_utc_iso(user.updated_at),
         "created_by": user.created_by,
         "updated_by": user.updated_by,
     }

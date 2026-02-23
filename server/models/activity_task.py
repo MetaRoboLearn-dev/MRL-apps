@@ -23,8 +23,8 @@ class ActivityTask(Base):
     type_id = Column(Integer, ForeignKey('types.id'))
     order = Column(Integer)
 
-    created_at = Column(DateTime, nullable=False, default=utc_now)
-    updated_at = Column(DateTime, default=utc_now)
+    created_at = Column(DateTime(timezone=True), nullable=False, default=utc_now)
+    updated_at = Column(DateTime(timezone=True), default=utc_now)
     created_by = Column(Integer, ForeignKey("users.id"), nullable=True)
     updated_by = Column(Integer, ForeignKey("users.id"), nullable=True)
 

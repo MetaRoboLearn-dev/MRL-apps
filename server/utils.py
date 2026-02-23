@@ -39,3 +39,6 @@ def parse_datetime(value: str) -> datetime:
 
     # normalize everything to UTC
     return dt.astimezone(timezone.utc)
+
+def _to_utc_iso(dt):
+    return dt.astimezone(timezone.utc).strftime('%Y-%m-%dT%H:%M:%S.%fZ')

@@ -1,10 +1,10 @@
-import datetime
 from flask import Blueprint, jsonify, request
 
 from database import db_session
 from repositories.activity_repository import ActivityRepository
 from repositories.activity_task_repository import ActivityTaskRepository
-from utils import parse_boolean_param, parse_datetime
+from utils import parse_boolean_param, parse_datetime, _to_utc_iso
+from datetime import timezone
 
 bp = Blueprint("activities", __name__, url_prefix="/api/activities")
 
@@ -19,11 +19,11 @@ def _activity_to_dict(a):
         "id": a.id,
         "title": a.title,
         "description": a.description,
-        "time_from": a.time_from.isoformat() if a.time_from else None,
-        "time_to": a.time_to.isoformat() if a.time_to else None,
+        "time_from": _to_utc_iso(a.time_from),
+        "time_to": _to_utc_iso(a.time_to),
         "active": getattr(a, "active", None),
-        "created_at": a.created_at.isoformat() if a.created_at else None,
-        "updated_at": a.updated_at.isoformat() if a.updated_at else None,
+        "created_at": _to_utc_iso(a.created_at),
+        "updated_at": _to_utc_iso(a.updated_at),
         "created_by": a.created_by,
         "updated_by": a.updated_by,
     }
@@ -150,8 +150,8 @@ def list_student_available_activities():
                 "id": a.id,
                 "title": a.title,
                 "description": a.description,
-                "time_from": a.time_from.isoformat() if a.time_from else None,
-                "time_to": a.time_to.isoformat() if a.time_to else None,
+                "time_from": _to_utc_iso(a.time_from),
+                "time_to": _to_utc_iso(a.time_to),
                 "activity_tasks": [
                     {
                         "activity_task_id": at.id,

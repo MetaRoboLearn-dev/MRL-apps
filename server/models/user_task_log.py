@@ -21,7 +21,7 @@ class UserTaskLog(Base):
 
     event_type_id = Column(Integer, ForeignKey("event_types.id"))
 
-    created_at = Column(DateTime, nullable=False)
+    created_at = Column(DateTime(timezone=True), nullable=False)
     code_snapshot = Column(Text) # cijeli kod u tom trenutku
 
     user_started_task = relationship('UserStartedTask', back_populates='logs')

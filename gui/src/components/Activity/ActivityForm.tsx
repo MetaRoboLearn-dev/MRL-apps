@@ -1,5 +1,7 @@
 import { useState, FormEvent } from 'react';
 import { useNavigate } from '@tanstack/react-router';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import { Activity, CreateActivityRequest } from '../../types/activityTypes.ts';
 
 type ActivityFormProps = {
@@ -10,31 +12,35 @@ type ActivityFormProps = {
   cancelTo?: string;
 };
 
+function parseToDate(isoString?: string | null): Date | null {
+  if (!isoString) return null;
+  const d = new Date(isoString);
+  return isNaN(d.getTime()) ? null : d;
+}
+
 export function ActivityForm({ activity, onSubmit, isLoading, error, cancelTo }: ActivityFormProps) {
   const navigate = useNavigate();
   const isEditing = !!activity;
 
-  const [formData, setFormData] = useState<CreateActivityRequest>({
-    title: activity?.title || '',
-    description: activity?.description || '',
-    time_from: activity?.time_from?.slice(0, 16) || '',
-    time_to: activity?.time_to?.slice(0, 16) || '',
-  });
+  const [timeFrom, setTimeFrom] = useState<Date | null>(parseToDate(activity?.time_from));
+  const [timeTo, setTimeTo] = useState<Date | null>(parseToDate(activity?.time_to));
+  const [title, setTitle] = useState(activity?.title || '');
+  const [description, setDescription] = useState(activity?.description || '');
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.title.trim()) {
+    if (!title.trim()) {
       newErrors.title = 'Title is required';
     }
-    if (!formData.time_from) {
+    if (!timeFrom) {
       newErrors.time_from = 'Start time is required';
     }
-    if (!formData.time_to) {
+    if (!timeTo) {
       newErrors.time_to = 'End time is required';
     }
-    if (formData.time_from && formData.time_to && formData.time_from >= formData.time_to) {
+    if (timeFrom && timeTo && timeFrom >= timeTo) {
       newErrors.time_to = 'End time must be after start time';
     }
 
@@ -45,11 +51,15 @@ export function ActivityForm({ activity, onSubmit, isLoading, error, cancelTo }:
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
-    await onSubmit(formData);
+    await onSubmit({
+      title,
+      description,
+      time_from: timeFrom?.toISOString() || '',
+      time_to: timeTo?.toISOString() || '',
+    });
   };
 
-  const handleChange = (field: keyof CreateActivityRequest, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+  const clearError = (field: string) => {
     if (errors[field]) {
       setErrors((prev) => {
         const next = { ...prev };
@@ -73,8 +83,8 @@ export function ActivityForm({ activity, onSubmit, isLoading, error, cancelTo }:
           <input
             type="text"
             id="title"
-            value={formData.title}
-            onChange={(e) => handleChange('title', e.target.value)}
+            value={title}
+            onChange={(e) => { setTitle(e.target.value); clearError('title'); }}
             className={`w-full px-3 py-2 border rounded-md ${errors.title ? 'border-red-500' : 'border-gray-300'}`}
             placeholder="Activity title"
           />
@@ -86,8 +96,8 @@ export function ActivityForm({ activity, onSubmit, isLoading, error, cancelTo }:
           <input
             type="text"
             id="description"
-            value={formData.description || ''}
-            onChange={(e) => handleChange('description', e.target.value)}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
             placeholder="Optional description"
           />
@@ -95,24 +105,30 @@ export function ActivityForm({ activity, onSubmit, isLoading, error, cancelTo }:
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label htmlFor="time_from" className="block text-sm font-medium mb-1">Start Time *</label>
-            <input
-              type="datetime-local"
-              id="time_from"
-              value={formData.time_from}
-              onChange={(e) => handleChange('time_from', e.target.value)}
+            <label className="block text-sm font-medium mb-1">Start Time *</label>
+            <DatePicker
+              selected={timeFrom}
+              onChange={(date: Date | null) => { setTimeFrom(date); clearError('time_from'); }}
+              showTimeSelect
+              timeFormat="HH:mm"
+              timeIntervals={1}
+              dateFormat="dd/MM/yyyy HH:mm"
+              placeholderText="DD/MM/YYYY HH:mm"
               className={`w-full px-3 py-2 border rounded-md ${errors.time_from ? 'border-red-500' : 'border-gray-300'}`}
             />
             {errors.time_from && <p className="mt-1 text-sm text-red-600">{errors.time_from}</p>}
           </div>
 
           <div>
-            <label htmlFor="time_to" className="block text-sm font-medium mb-1">End Time *</label>
-            <input
-              type="datetime-local"
-              id="time_to"
-              value={formData.time_to}
-              onChange={(e) => handleChange('time_to', e.target.value)}
+            <label className="block text-sm font-medium mb-1">End Time *</label>
+            <DatePicker
+              selected={timeTo}
+              onChange={(date: Date | null) => { setTimeTo(date); clearError('time_to'); }}
+              showTimeSelect
+              timeFormat="HH:mm"
+              timeIntervals={1}
+              dateFormat="dd/MM/yyyy HH:mm"
+              placeholderText="DD/MM/YYYY HH:mm"
               className={`w-full px-3 py-2 border rounded-md ${errors.time_to ? 'border-red-500' : 'border-gray-300'}`}
             />
             {errors.time_to && <p className="mt-1 text-sm text-red-600">{errors.time_to}</p>}

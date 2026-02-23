@@ -12,6 +12,8 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as Test_brokerRouteImport } from './routes/test_broker'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SolveIndexRouteImport } from './routes/solve/index'
+import { Route as SolveActivityTaskIdIndexRouteImport } from './routes/solve/$activityTaskId/index'
 import { Route as AdminUsersIndexRouteImport } from './routes/admin/users/index'
 import { Route as AdminTasksIndexRouteImport } from './routes/admin/tasks/index'
 import { Route as AdminActivitiesIndexRouteImport } from './routes/admin/activities/index'
@@ -43,6 +45,17 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SolveIndexRoute = SolveIndexRouteImport.update({
+  id: '/solve/',
+  path: '/solve/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SolveActivityTaskIdIndexRoute =
+  SolveActivityTaskIdIndexRouteImport.update({
+    id: '/solve/$activityTaskId/',
+    path: '/solve/$activityTaskId/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AdminUsersIndexRoute = AdminUsersIndexRouteImport.update({
   id: '/admin/users/',
   path: '/admin/users/',
@@ -127,6 +140,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/test_broker': typeof Test_brokerRoute
+  '/solve/': typeof SolveIndexRoute
   '/admin/tasks/$taskId': typeof AdminTasksTaskIdRouteRouteWithChildren
   '/admin/activities/new': typeof AdminActivitiesNewRoute
   '/admin/tasks/new': typeof AdminTasksNewRoute
@@ -134,6 +148,7 @@ export interface FileRoutesByFullPath {
   '/admin/activities/': typeof AdminActivitiesIndexRoute
   '/admin/tasks/': typeof AdminTasksIndexRoute
   '/admin/users/': typeof AdminUsersIndexRoute
+  '/solve/$activityTaskId/': typeof SolveActivityTaskIdIndexRoute
   '/admin/activities/$activityId/edit': typeof AdminActivitiesActivityIdEditRoute
   '/admin/tasks/$taskId/edit': typeof AdminTasksTaskIdEditRoute
   '/admin/users/$userId/edit': typeof AdminUsersUserIdEditRoute
@@ -147,12 +162,14 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/test_broker': typeof Test_brokerRoute
+  '/solve': typeof SolveIndexRoute
   '/admin/activities/new': typeof AdminActivitiesNewRoute
   '/admin/tasks/new': typeof AdminTasksNewRoute
   '/admin/users/new': typeof AdminUsersNewRoute
   '/admin/activities': typeof AdminActivitiesIndexRoute
   '/admin/tasks': typeof AdminTasksIndexRoute
   '/admin/users': typeof AdminUsersIndexRoute
+  '/solve/$activityTaskId': typeof SolveActivityTaskIdIndexRoute
   '/admin/activities/$activityId/edit': typeof AdminActivitiesActivityIdEditRoute
   '/admin/tasks/$taskId/edit': typeof AdminTasksTaskIdEditRoute
   '/admin/users/$userId/edit': typeof AdminUsersUserIdEditRoute
@@ -167,6 +184,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/test_broker': typeof Test_brokerRoute
+  '/solve/': typeof SolveIndexRoute
   '/admin/tasks/$taskId': typeof AdminTasksTaskIdRouteRouteWithChildren
   '/admin/activities/new': typeof AdminActivitiesNewRoute
   '/admin/tasks/new': typeof AdminTasksNewRoute
@@ -174,6 +192,7 @@ export interface FileRoutesById {
   '/admin/activities/': typeof AdminActivitiesIndexRoute
   '/admin/tasks/': typeof AdminTasksIndexRoute
   '/admin/users/': typeof AdminUsersIndexRoute
+  '/solve/$activityTaskId/': typeof SolveActivityTaskIdIndexRoute
   '/admin/activities/$activityId/edit': typeof AdminActivitiesActivityIdEditRoute
   '/admin/tasks/$taskId/edit': typeof AdminTasksTaskIdEditRoute
   '/admin/users/$userId/edit': typeof AdminUsersUserIdEditRoute
@@ -189,6 +208,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/test_broker'
+    | '/solve/'
     | '/admin/tasks/$taskId'
     | '/admin/activities/new'
     | '/admin/tasks/new'
@@ -196,6 +216,7 @@ export interface FileRouteTypes {
     | '/admin/activities/'
     | '/admin/tasks/'
     | '/admin/users/'
+    | '/solve/$activityTaskId/'
     | '/admin/activities/$activityId/edit'
     | '/admin/tasks/$taskId/edit'
     | '/admin/users/$userId/edit'
@@ -209,12 +230,14 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/test_broker'
+    | '/solve'
     | '/admin/activities/new'
     | '/admin/tasks/new'
     | '/admin/users/new'
     | '/admin/activities'
     | '/admin/tasks'
     | '/admin/users'
+    | '/solve/$activityTaskId'
     | '/admin/activities/$activityId/edit'
     | '/admin/tasks/$taskId/edit'
     | '/admin/users/$userId/edit'
@@ -228,6 +251,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/test_broker'
+    | '/solve/'
     | '/admin/tasks/$taskId'
     | '/admin/activities/new'
     | '/admin/tasks/new'
@@ -235,6 +259,7 @@ export interface FileRouteTypes {
     | '/admin/activities/'
     | '/admin/tasks/'
     | '/admin/users/'
+    | '/solve/$activityTaskId/'
     | '/admin/activities/$activityId/edit'
     | '/admin/tasks/$taskId/edit'
     | '/admin/users/$userId/edit'
@@ -249,6 +274,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   Test_brokerRoute: typeof Test_brokerRoute
+  SolveIndexRoute: typeof SolveIndexRoute
   AdminTasksTaskIdRouteRoute: typeof AdminTasksTaskIdRouteRouteWithChildren
   AdminActivitiesNewRoute: typeof AdminActivitiesNewRoute
   AdminTasksNewRoute: typeof AdminTasksNewRoute
@@ -256,6 +282,7 @@ export interface RootRouteChildren {
   AdminActivitiesIndexRoute: typeof AdminActivitiesIndexRoute
   AdminTasksIndexRoute: typeof AdminTasksIndexRoute
   AdminUsersIndexRoute: typeof AdminUsersIndexRoute
+  SolveActivityTaskIdIndexRoute: typeof SolveActivityTaskIdIndexRoute
   AdminActivitiesActivityIdEditRoute: typeof AdminActivitiesActivityIdEditRoute
   AdminUsersUserIdEditRoute: typeof AdminUsersUserIdEditRoute
   AdminActivitiesActivityIdIndexRoute: typeof AdminActivitiesActivityIdIndexRoute
@@ -285,6 +312,20 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/solve/': {
+      id: '/solve/'
+      path: '/solve'
+      fullPath: '/solve/'
+      preLoaderRoute: typeof SolveIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/solve/$activityTaskId/': {
+      id: '/solve/$activityTaskId/'
+      path: '/solve/$activityTaskId'
+      fullPath: '/solve/$activityTaskId/'
+      preLoaderRoute: typeof SolveActivityTaskIdIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/users/': {
@@ -414,6 +455,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   Test_brokerRoute: Test_brokerRoute,
+  SolveIndexRoute: SolveIndexRoute,
   AdminTasksTaskIdRouteRoute: AdminTasksTaskIdRouteRouteWithChildren,
   AdminActivitiesNewRoute: AdminActivitiesNewRoute,
   AdminTasksNewRoute: AdminTasksNewRoute,
@@ -421,6 +463,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminActivitiesIndexRoute: AdminActivitiesIndexRoute,
   AdminTasksIndexRoute: AdminTasksIndexRoute,
   AdminUsersIndexRoute: AdminUsersIndexRoute,
+  SolveActivityTaskIdIndexRoute: SolveActivityTaskIdIndexRoute,
   AdminActivitiesActivityIdEditRoute: AdminActivitiesActivityIdEditRoute,
   AdminUsersUserIdEditRoute: AdminUsersUserIdEditRoute,
   AdminActivitiesActivityIdIndexRoute: AdminActivitiesActivityIdIndexRoute,

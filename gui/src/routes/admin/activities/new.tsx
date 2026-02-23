@@ -25,6 +25,7 @@ function RouteComponent() {
 
   const handleSubmit = async (data: CreateActivityRequest) => {
     setError(undefined);
+    console.log('Submitting:', data);
     await mutation.mutateAsync(data);
   };
 

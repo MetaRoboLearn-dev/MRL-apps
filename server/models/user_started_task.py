@@ -11,9 +11,9 @@ class UserStartedTask(Base):
 
     id = Column(Integer, primary_key=True)
 
-    started_at = Column(DateTime, nullable=False, default=utc_now)
-    created_at = Column(DateTime, nullable=False, default=utc_now)
-    updated_at = Column(DateTime, default=utc_now)
+    started_at = Column(DateTime(timezone=True), nullable=False, default=utc_now)
+    created_at = Column(DateTime(timezone=True), nullable=False, default=utc_now)
+    updated_at = Column(DateTime(timezone=True), default=utc_now)
     started_by = Column(Integer, ForeignKey('users.id'))
     created_by = Column(Integer, ForeignKey("users.id"))
     updated_by = Column(Integer, ForeignKey("users.id"))

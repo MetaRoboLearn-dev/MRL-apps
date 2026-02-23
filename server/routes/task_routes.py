@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from database import db_session
 from repositories.task_repository import TaskRepository
-from utils import parse_boolean_param
+from utils import parse_boolean_param, _to_utc_iso
 
 bp = Blueprint("tasks", __name__, url_prefix="/api/tasks")
 
@@ -26,8 +26,8 @@ def _task_to_dict(task):
         "code": task.code,
         "blocks": task.blocks,
         "active": getattr(task, "active", None),
-        "created_at": task.created_at.isoformat() if task.created_at else None,
-        "updated_at": task.updated_at.isoformat() if task.updated_at else None,
+        "created_at": _to_utc_iso(task.created_at),
+        "updated_at": _to_utc_iso(task.updated_at),
         "created_by": task.created_by,
         "updated_by": task.updated_by,
     }
@@ -75,7 +75,7 @@ def list_tasks():
                 "description": row.description,
                 "size_x": row.size_x,
                 "size_z": row.size_z,
-                "created_at": row.created_at.isoformat(),
+                "created_at": _to_utc_iso(row.created_at),
                 "created_by": row.created_by,
                 "active": row.active,
                 "creator": {

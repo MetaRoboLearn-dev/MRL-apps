@@ -8,11 +8,11 @@ class Activity(Base):
     title = Column(String, nullable=False)
     description = Column(String)
 
-    time_from = Column(DateTime)
-    time_to = Column(DateTime)
+    time_from = Column(DateTime(timezone=True))
+    time_to = Column(DateTime(timezone=True))
 
-    created_at = Column(DateTime, nullable=False)
-    updated_at = Column(DateTime)
+    created_at = Column(DateTime(timezone=True), nullable=False)
+    updated_at = Column(DateTime(timezone=True))
 
     created_by = Column(Integer, ForeignKey('users.id'))
     updated_by = Column(Integer, ForeignKey('users.id'))

@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as Test_brokerRouteImport } from './routes/test_broker'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminUsersIndexRouteImport } from './routes/admin/users/index'
@@ -27,6 +28,11 @@ import { Route as AdminActivitiesActivityIdEditRouteImport } from './routes/admi
 import { Route as AdminActivitiesActivityIdTasksAddRouteImport } from './routes/admin/activities/$activityId/tasks/add'
 import { Route as AdminActivitiesActivityIdTasksActivityTaskIdEditRouteImport } from './routes/admin/activities/$activityId/tasks/$activityTaskId/edit'
 
+const Test_brokerRoute = Test_brokerRouteImport.update({
+  id: '/test_broker',
+  path: '/test_broker',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
@@ -120,6 +126,7 @@ const AdminActivitiesActivityIdTasksActivityTaskIdEditRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/test_broker': typeof Test_brokerRoute
   '/admin/tasks/$taskId': typeof AdminTasksTaskIdRouteRouteWithChildren
   '/admin/activities/new': typeof AdminActivitiesNewRoute
   '/admin/tasks/new': typeof AdminTasksNewRoute
@@ -139,6 +146,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/test_broker': typeof Test_brokerRoute
   '/admin/activities/new': typeof AdminActivitiesNewRoute
   '/admin/tasks/new': typeof AdminTasksNewRoute
   '/admin/users/new': typeof AdminUsersNewRoute
@@ -158,6 +166,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/test_broker': typeof Test_brokerRoute
   '/admin/tasks/$taskId': typeof AdminTasksTaskIdRouteRouteWithChildren
   '/admin/activities/new': typeof AdminActivitiesNewRoute
   '/admin/tasks/new': typeof AdminTasksNewRoute
@@ -179,6 +188,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/test_broker'
     | '/admin/tasks/$taskId'
     | '/admin/activities/new'
     | '/admin/tasks/new'
@@ -198,6 +208,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/test_broker'
     | '/admin/activities/new'
     | '/admin/tasks/new'
     | '/admin/users/new'
@@ -216,6 +227,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/about'
+    | '/test_broker'
     | '/admin/tasks/$taskId'
     | '/admin/activities/new'
     | '/admin/tasks/new'
@@ -236,6 +248,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  Test_brokerRoute: typeof Test_brokerRoute
   AdminTasksTaskIdRouteRoute: typeof AdminTasksTaskIdRouteRouteWithChildren
   AdminActivitiesNewRoute: typeof AdminActivitiesNewRoute
   AdminTasksNewRoute: typeof AdminTasksNewRoute
@@ -253,6 +266,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/test_broker': {
+      id: '/test_broker'
+      path: '/test_broker'
+      fullPath: '/test_broker'
+      preLoaderRoute: typeof Test_brokerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -393,6 +413,7 @@ const AdminTasksTaskIdRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  Test_brokerRoute: Test_brokerRoute,
   AdminTasksTaskIdRouteRoute: AdminTasksTaskIdRouteRouteWithChildren,
   AdminActivitiesNewRoute: AdminActivitiesNewRoute,
   AdminTasksNewRoute: AdminTasksNewRoute,

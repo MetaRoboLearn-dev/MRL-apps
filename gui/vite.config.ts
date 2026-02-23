@@ -21,6 +21,22 @@ export default defineConfig({
         target: 'http://localhost:8000',
         changeOrigin: true,
       },
+      '/broker': {
+        target: 'http://161.53.18.44:8000',
+        changeOrigin: true,
+        ws: true,
+        rewrite: (path) => path.replace(/^\/broker/, ''),
+        configure: (proxy) => {
+          proxy.on('proxyReqWs', (proxyReq, req) => {
+            proxyReq.setHeader('origin', 'http://161.53.18.44:8000');
+            const url = new URL(req.url ?? '', 'http://localhost');
+            const clientId = url.searchParams.get('client_id');
+            const token = url.searchParams.get('token');
+            if (clientId) proxyReq.setHeader('client-id', clientId);
+            if (token) proxyReq.setHeader('token', token);
+          });
+        },
+      },
     }
   },
   preview: {

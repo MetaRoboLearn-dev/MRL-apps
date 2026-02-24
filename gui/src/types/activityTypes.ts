@@ -59,6 +59,8 @@ type AvailableActivityTask = {
   task_id: number;
   task_title: string;
   task_type: TaskType;
+  started: boolean;
+  user_started_task_id: number | null;
 }
 
 export type AvailableActivity = {

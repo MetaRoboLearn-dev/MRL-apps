@@ -1,4 +1,4 @@
-import {PropsWithChildren, useCallback, useRef, useState} from "react";
+import {PropsWithChildren, useCallback, useEffect, useRef, useState} from "react";
 import {CodeContext} from "./Context.tsx";
 import {useTaskConfig} from "../hooks/useTaskConfig.ts";
 import * as Blockly from "blockly";
@@ -6,21 +6,23 @@ import {pythonGenerator} from "blockly/python";
 import {MoveCommand} from "../types.ts";
 import {run_code, run_robot} from "../api/robotApi.ts";
 import {useToast} from "../hooks/useToast.ts";
-import {Task} from "../types/tasksTypes.ts";
 
 interface Props {
-  task: Task
+  init_code: string
+  init_blocks: string
+  editorMode?: string
+  onSave?: (currentValue: string) => void;
 }
 
-export const CodeProvider = ({ task: t, children }: PropsWithChildren<Props>) => {
+export const CodeProvider = ({ init_code, init_blocks, editorMode, onSave, children }: PropsWithChildren<Props>) => {
   const { showToast } = useToast()
   const { setSimFocused, robotUrl, setAwaitingReview } = useTaskConfig();
-  const [code, setCodeState] = useState<string>(t.code || '');
-  const [blocks, setBlocksState] = useState<string>(t.blocks || '')
+  const [code, setCodeState] = useState<string>(init_code || '');
+  const [blocks, setBlocksState] = useState<string>(init_blocks || '')
 
-  const codeRef = useRef(t.code || '');
-  const blocksRef = useRef(t.blocks || '');
-  const modeRef = useRef('');
+  const codeRef = useRef(init_code || '');
+  const blocksRef = useRef(init_blocks || '');
+  const modeRef = useRef(editorMode || '');
 
   const setCode = useCallback((code: string) => {
     setCodeState(code);
@@ -74,12 +76,9 @@ export const CodeProvider = ({ task: t, children }: PropsWithChildren<Props>) =>
   const runCode = async () => {
     setSimFocused(false);
     const code = getCurrentCode();
-    // const val = getCurrentValue();
-    // log_action(groupName, modeRef.current, Action.SIM_RUN, val)
     const compiled = await run_code(code);
 
     if (compiled.error){
-      // log_action(groupName, modeRef.current, Action.CODE_ERR, val)
       return null;
     }
     return processSteps(compiled.output.split('\n'));
@@ -87,117 +86,24 @@ export const CodeProvider = ({ task: t, children }: PropsWithChildren<Props>) =>
 
   const runRobot = async () => {
     const code = getCurrentCode();
-    // const val = getCurrentValue();
-    // log_action(groupName, modeRef.current, Action.ROBOT_RUN, val)
     const res = await run_robot(code, robotUrl);
     if (res.error) {
       showToast(res.status + " " + res.statusText);
-      // log_action(groupName, modeRef.current, Action.ROBOT_RUN_FAIL, val)
     }
     else {
       setAwaitingReview(true);
     }
   }
 
-  // TODO - implementirat ovaj check u tipku za simuliranje
-  // i pliz razmisli jel stvarno zelis da ovo bude tu
-  // const [isValidWorkspace, setIsValidWorkspace] = useState<boolean>(false);
-  //
-  // const checkValidWorkspace = () => {
-  //   const workspace = Blockly.getMainWorkspace();
-  //   if (!workspace) return false;
-  //
-  //   const topBlocks = workspace.getTopBlocks();
-  //   // const allBlocks = workspace.getAllBlocks();
-  //
-  //   // TODO - ovaj dio treba regulirat jer postoje funkcije
-  //   if (topBlocks.length !== 1) return false;
-  //
-  //   if (topBlocks[0].type != 'motion_start') return false;
-  //
-  //   // TODO - pogledat kak da ovo napravim pravilo, jer ima svakakvih vrsti blockova
-  //   // const endingBlocks = allBlocks.filter(block => block.getNextBlock() === null);
-  //   // const allEndWithStop = endingBlocks.every(block => block.type === 'motion_stop');
-  //   //
-  //   // if (!allEndWithStop) return false;
-  //
-  //   return true;
-  // }
+  useEffect(() => {
+    if (!onSave) return;
 
-  // TODO - check this and potentially rewrite it, what currently happens is that on tab change
-  //  it fires action_log() several times with the same data. Think there is a lot of redundancy in the code
-  //  look into a better way of doing this, maybe using one useEffect for saving instead of two, use getCurrentCode()
-  // Loading code and blocks from localStorage
-  // useEffect(() => {
-  //   const blockly_workspace = Blockly.getMainWorkspace();
-  //   if (!blockly_workspace) return
-  //   blockly_workspace.clear();
-  //
-  //   setLoaded(false);
-  //
-  //   const raw = localStorage.getItem(selectedTab || '');
-  //   if (!raw) {
-  //     setCode('');
-  //     setBlocks('')
-  //     setLoaded(true);
-  //     return
-  //   }
-  //
-  //   const data = JSON.parse(raw);
-  //
-  //   setCode(data.code || '');
-  //   setBlocks(data.blocks || '');
-  //   modeRef.current = data.mode;
-  //
-  //   if (data.blocks) {
-  //     const xml = Blockly.utils.xml.textToDom(data.blocks);
-  //     Blockly.Xml.domToWorkspace(xml, blockly_workspace);
-  //   }
-  //
-  //   setLoaded(true)
-  // }, [selectedTab]);
+    const timeout = setTimeout(() => {
+      onSave(getCurrentValue());
+    }, 1500);
 
-  // Saving code changes to localStorage
-  // useEffect(() => {
-  //   if (!selectedTab || !loaded) return;
-  //
-  //   try {
-  //     const current = localStorage.getItem(selectedTab);
-  //     const parsed = current ? JSON.parse(current) : {};
-  //
-  //     const updated = {
-  //       ...parsed,
-  //       code: codeRef.current,
-  //       blocks: blocksRef.current,
-  //     };
-  //
-  //     console.log("spemanje koda");
-  //     log_action(groupName, modeRef.current, Action.CODE_EDIT, getCurrentValue())
-  //
-  //     localStorage.setItem(selectedTab, JSON.stringify(updated));
-  //   } catch (err) {
-  //     console.error("Failed to update localStorage entry:", err);
-  //   }
-  // }, [code]);
-
-  // Saving block changes to localStorage
-  // useEffect(() => {
-  //   if (!selectedTab || !loaded) return;
-  //
-  //   try {
-  //     const current = localStorage.getItem(selectedTab);
-  //     const parsed = current ? JSON.parse(current) : {};
-  //
-  //     const updated = {
-  //       ...parsed,
-  //       blocks: blocksRef.current,
-  //     };
-  //
-  //     localStorage.setItem(selectedTab, JSON.stringify(updated));
-  //   } catch (err) {
-  //     console.error("Failed to update localStorage entry:", err);
-  //   }
-  // }, [blocks]);
+    return () => clearTimeout(timeout);
+  }, [code, blocks, onSave]);
 
   return (
     <CodeContext.Provider value={{

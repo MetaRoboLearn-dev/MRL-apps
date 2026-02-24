@@ -4,7 +4,7 @@ from flask import Blueprint, jsonify, request
 
 from database import db_session
 from repositories.user_started_task_repository import UserStartedTaskRepository
-from utils import parse_boolean_param
+from utils import parse_boolean_param, _to_utc_iso
 
 bp = Blueprint("user_started_tasks", __name__, url_prefix="/api/user-started-tasks")
 
@@ -12,23 +12,48 @@ bp = Blueprint("user_started_tasks", __name__, url_prefix="/api/user-started-tas
 def _actor_user_id() -> int | None:
     # Optional: take from header until you wire auth.
     v = request.headers.get("X-Actor-User-Id")
-    return int(v) if v and v.isdigit() else None
+    return int(v) if v and v.isdigit() else 1
 
 
 def _user_started_task_to_dict(ust):
     return {
         "id": ust.id,
-        "started_at": ust.started_at.isoformat() if ust.started_at else None,
-        "created_at": ust.created_at.isoformat() if ust.created_at else None,
-        "updated_at": ust.updated_at.isoformat() if ust.updated_at else None,
+        "started_at": _to_utc_iso(ust.started_at),
         "started_by": ust.started_by,
-        "created_by": ust.created_by,
-        "updated_by": ust.updated_by,
         "current_value": ust.current_value,
-        "activity_id": ust.activity_id,
-        "task_id": ust.task_id,
+        "activity_task": {
+            "act_task_id": ust.activity_task_id,
+            "task_type": ust.activity_task.type.name if ust.activity_task.type else None,
+            "description": ust.activity_task.description,
+            "is_logged": ust.activity_task.is_logged,
+            "allows_robot": ust.activity_task.allows_robot,
+        },
+        "task": {
+            "id": ust.activity_task.task.id,
+            "title": ust.activity_task.task.title,
+            "description": ust.activity_task.task.description,
+            "size_x": ust.activity_task.task.size_x,
+            "size_z": ust.activity_task.task.size_z,
+            "start": ust.activity_task.task.start,
+            "rotation": ust.activity_task.task.rotation,
+            "finish": ust.activity_task.task.finish,
+            "barriers": ust.activity_task.task.barriers,
+            "stickers": ust.activity_task.task.stickers,
+            "code": ust.activity_task.task.code,
+            "blocks": ust.activity_task.task.blocks,
+            "active": getattr(ust.activity_task.task, "active", None),
+        },
     }
 
+# ---------- READ INFO FOR USER AND ACTIVITY TASK ----------
+@bp.route("/activity-task/<int:activity_task_id>", methods=["GET"])
+def get_user_started_task_activity_task(activity_task_id: int):
+    with db_session() as session:
+        repo = UserStartedTaskRepository(session)
+        ust = repo.get_by_user_activity_task(activity_task_id, _actor_user_id())
+        if not ust:
+            return jsonify({"error": "UserStartedTask not found for that activity task"}), 404
+        return jsonify(_user_started_task_to_dict(ust)), 200
 
 # ---------- READ ONE ----------
 @bp.route("/<int:user_started_task_id>", methods=["GET"])
@@ -45,32 +70,12 @@ def get_user_started_task(user_started_task_id: int):
 @bp.route("/", methods=["GET"])
 def list_user_started_tasks():
     # query params: ?skip=0&limit=50&started_by=1&activity_id=2&task_id=3&order_by_started_at=true
-    skip = int(request.args.get("skip", 0))
-    limit = int(request.args.get("limit", 50))
-
     started_by_raw = request.args.get("started_by")
-    activity_id_raw = request.args.get("activity_id")
-    task_id_raw = request.args.get("task_id")
-
     started_by = int(started_by_raw) if started_by_raw is not None else None
-    activity_id = int(activity_id_raw) if activity_id_raw is not None else None
-    task_id = int(task_id_raw) if task_id_raw is not None else None
-
-    try:
-        order_by_started_at = parse_boolean_param(request.args.get("order_by_started_at", "true"))
-    except ValueError as e:
-        return jsonify({"error": str(e)}), 400
 
     with db_session() as session:
         repo = UserStartedTaskRepository(session)
-        items = repo.list(
-            skip=skip,
-            limit=limit,
-            started_by=started_by,
-            activity_id=activity_id,
-            task_id=task_id,
-            order_by_started_at=order_by_started_at,
-        )
+        items = repo.list(started_by=started_by)
         return jsonify([_user_started_task_to_dict(x) for x in items]), 200
 
 
@@ -78,7 +83,7 @@ def list_user_started_tasks():
 @bp.route("/", methods=["POST"])
 def create_user_started_task():
     data = request.get_json(silent=True) or {}
-    required = ("started_by", "activity_id", "task_id")
+    required = ("activity_task_id", )
     missing = [k for k in required if k not in data]
     if missing:
         return jsonify({"error": "Missing fields", "missing": missing}), 400
@@ -86,21 +91,18 @@ def create_user_started_task():
     with db_session() as session:
         repo = UserStartedTaskRepository(session)
         ust = repo.create(
-            started_by=int(data["started_by"]),
-            activity_id=int(data["activity_id"]),
-            task_id=int(data["task_id"]),
-            current_value=data.get("current_value"),
+            activity_task_id=int(data["activity_task_id"]),
             actor_user_id=_actor_user_id(),
         )
         return jsonify(_user_started_task_to_dict(ust)), 201
 
 
 # ---------- UPDATE (PATCH) ----------
-@bp.route("/<int:user_started_task_id>", methods=["PATCH"])
-def update_user_started_task(user_started_task_id: int):
+@bp.route("/<int:ust_id>", methods=["PATCH"])
+def update_user_started_task(ust_id: int):
     data = request.get_json(silent=True) or {}
 
-    allowed = {"current_value", "activity_id", "task_id"}
+    allowed = {"current_value"}
     unknown = [k for k in data.keys() if k not in allowed]
     if unknown:
         return jsonify({"error": "Unknown fields", "unknown": unknown}), 400
@@ -108,15 +110,12 @@ def update_user_started_task(user_started_task_id: int):
     with db_session() as session:
         repo = UserStartedTaskRepository(session)
         ust = repo.update(
-            user_started_task_id,
+            ust_id,
             current_value=data.get("current_value"),
-            activity_id=int(data["activity_id"]) if "activity_id" in data else None,
-            task_id=int(data["task_id"]) if "task_id" in data else None,
             actor_user_id=_actor_user_id(),
         )
         if not ust:
             return jsonify({"error": "UserStartedTask not found"}), 404
-
         return jsonify(_user_started_task_to_dict(ust)), 200
 
 

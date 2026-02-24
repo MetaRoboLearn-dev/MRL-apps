@@ -7,21 +7,19 @@ import ButtonSim from "../Footer/ButtonSim.tsx";
 import ButtonSimStop from "../Footer/ButtonSimStop.tsx";
 import ButtonRobotRun from "../Footer/ButtonRobotRun.tsx";
 import ButtonRobotStop from "../Footer/ButtonRobotStop.tsx";
-import ButtonSettings from "../Footer/ButtonSettings.tsx";
-import ButtonConnect from "../Footer/ButtonConnect.tsx";
 import TaskSaveButton from "../Task/TaskSaveButton.tsx";
 import TaskDeleteButton from "../Task/TaskDeleteButton.tsx";
 import TaskSubmitButton from "../Task/TaskSubmitButton.tsx";
+import ButtonRobotSelect from "../Footer/ButtonRobotSelect.tsx";
 
 // TODO - change the buttons, make it more neat
 const Footer = () => {
   const { moveQueue, isMoving } = useVehicle();
   const { modalVisible } = useUI();
-  const { camMode, robotUrl, awaitingReview, mode } = useTaskConfig();
+  const { camMode, awaitingReview, mode } = useTaskConfig();
   const { start, finish } = useGrid();
 
-  const [urlInput, setUrlInput] = useState('');
-  const [editingUrl, setEditingUrl] = useState(false);
+  const [selectedRobotId, setSelectedRobotId] = useState<string | null>(null);
 
   const disabled = isMoving || modalVisible || start === null || finish === null;
 
@@ -39,20 +37,13 @@ const Footer = () => {
         )}
       </div>
       <div className={'flex'}>
-        {robotUrl && !editingUrl ? (
-          <>
-            <ButtonSettings disabled={disabled}
-                            setEditingUrl={setEditingUrl}
-                            setUrlInput={setUrlInput}/>
-            <ButtonRobotStop disabled={disabled} />
-            <ButtonRobotRun disabled={disabled || awaitingReview} />
-          </>
-        ) : (
-          <ButtonConnect disabled={disabled}
-                         urlInput={urlInput}
-                         setUrlInput={setUrlInput}
-                         setEditingUrl={setEditingUrl} />
-        )}
+        <ButtonRobotSelect
+          disabled={disabled}
+          selectedRobotId={selectedRobotId}
+          onSelectRobot={setSelectedRobotId}
+        />
+        <ButtonRobotStop disabled={disabled} />
+        <ButtonRobotRun disabled={disabled || awaitingReview} robot={selectedRobotId} />
 
         {!isMoving && moveQueue.length === 0 ? (
           <ButtonSim disabled={disabled || camMode} />

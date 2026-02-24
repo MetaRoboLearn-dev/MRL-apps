@@ -1,7 +1,8 @@
 import { queryOptions, useSuspenseQuery } from '@tanstack/react-query'
 import {getAvailableActivities} from "../../api/activitiesApi.ts";
 import {capitalizeFirstLetter, formatLocalDateTime} from "../../utils.ts";
-import {FaPlay} from "react-icons/fa";
+import ButtonSolveStart from "../Solve/ButtonSolveStart.tsx";
+import ButtonSolveContinue from "../Solve/ButtonSolveContinue.tsx";
 
 const availableActivitiesQueryOptions = queryOptions({
   queryKey: ['activities', 'available'],
@@ -55,10 +56,11 @@ const ActivityContainer = () => {
                     <span className="mr-2">Tip zadatka:</span>
                     <span className="font-bold text-dark-neutrals-400">{capitalizeFirstLetter(at.task_type)}</span>
                   </span>
-                  <button className="bg-emerald-500 text-light-cyan-50 font-display font-bold text-lg px-6 py-2 rounded flex items-center gap-3 hover:cursor-pointer hover:bg-emerald-600 transition">
-                    <FaPlay size={14} />
-                    Započni
-                  </button>
+                  {at.started ? (
+                    <ButtonSolveContinue activityTaskId={at.activity_task_id} />
+                  ) : (
+                    <ButtonSolveStart activityTaskId={at.activity_task_id} />
+                  )}
                 </div>
               </div>
             ))}

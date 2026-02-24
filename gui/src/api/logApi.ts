@@ -8,7 +8,10 @@ export const enum Action {
   ROBOT_RUN = "robot_run",
   ROBOT_RUN_FAIL = "robot_run_fail",
   ROBOT_END_SUCC = "robot_end_succ",
-  ROBOT_END_FAIL = "robot_end_fail"
+  ROBOT_END_FAIL = "robot_end_fail",
+  TASK_START = "tast_start",
+  TASK_CONTINUE = "task_continue",
+  TASK_FINISH = "task_finish"
 }
 
 export const log_action = (group:string, mode:string, action:Action, value:string) => {
@@ -23,12 +26,3 @@ export const log_action = (group:string, mode:string, action:Action, value:strin
     console.error("log_action failed:", err);
   });
 }
-
-// CREATE TABLE action_logs (
-//   id SERIAL PRIMARY KEY,
-//   group_name TEXT NOT NULL,
-//   app_mode TEXT NOT NULL,
-//   action_time TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-//   action_type TEXT NOT NULL,
-//   value TEXT NOT NULL
-// );

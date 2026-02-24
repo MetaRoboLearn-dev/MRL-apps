@@ -25,7 +25,7 @@ const DEFAULT_TASK: Task = {
 
 function RouteComponent() {
   return (
-    <TaskProviders task={DEFAULT_TASK} mode={'create'}>
+    <TaskProviders task={DEFAULT_TASK} code={''} blocks={''} mode={'create'}>
       <TaskScreen />
     </TaskProviders>
   )

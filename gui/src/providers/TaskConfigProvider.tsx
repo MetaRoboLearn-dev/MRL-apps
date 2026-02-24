@@ -21,7 +21,6 @@ export const TaskConfigProvider = ({ task, mode, children }: PropsWithChildren<P
   // Task specific options
   const [title, setTitle] = useState<string>(task.title)
   const [description, setDescription] = useState<string | null>(task.description)
-  // TODO - add to task model
   const [isActive, setIsActive] = useState<boolean>(task.active);
   const [isLogged, setIsLogged] = useState<boolean>(true); // by default true, but make sure its false while in editing/creating
   const [hasRobotAccess, setHasRobotAccess] = useState<boolean>(true)

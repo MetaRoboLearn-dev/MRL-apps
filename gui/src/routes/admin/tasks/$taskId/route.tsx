@@ -24,7 +24,7 @@ function RouteComponent() {
   const mode = leafMatch.staticData.mode ?? 'solve';
 
   return (
-    <TaskProviders task={task} mode={mode}>
+    <TaskProviders task={task} code={task.code} blocks={task.blocks} mode={mode}>
       <Outlet />
     </TaskProviders>
   );

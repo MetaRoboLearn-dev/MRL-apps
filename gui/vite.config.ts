@@ -20,6 +20,7 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:8000',
         changeOrigin: true,
+        ws: true
       },
       '/broker': {
         target: 'http://161.53.18.44:8000',

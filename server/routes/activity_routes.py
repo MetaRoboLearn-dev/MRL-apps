@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 
 from database import db_session
+from models import UserStartedTask
 from repositories.activity_repository import ActivityRepository
 from repositories.activity_task_repository import ActivityTaskRepository
 from utils import parse_boolean_param, parse_datetime, _to_utc_iso
@@ -142,9 +143,20 @@ def list_activities_with_tasks():
 # ---------- READ ALL ACTIVITIES AVAILABLE TO STUDENTS ----------
 @bp.route("/available", methods=["GET"])
 def list_student_available_activities():
+    user_id = _actor_user_id()
+
     with db_session() as session:
         repo = ActivityRepository(session)
         activities = repo.list_student_available_activities()
+
+        # Get all user started tasks for this user in one query
+        started = {
+            ust.activity_task_id: ust.id
+            for ust in session.query(UserStartedTask)
+            .filter(UserStartedTask.started_by == user_id)
+            .all()
+        }
+
         return jsonify([
             {
                 "id": a.id,
@@ -163,6 +175,8 @@ def list_student_available_activities():
                         "task_type": at.type.name if at.type else None,
                         "is_logged": at.is_logged,
                         "allows_robot": at.allows_robot,
+                        "started": at.id in started,
+                        "user_started_task_id": started.get(at.id),
                     }
                     for at in a.activity_tasks
                 ],

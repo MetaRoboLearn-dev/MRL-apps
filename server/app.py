@@ -22,7 +22,7 @@ app.register_blueprint(user_task_log_routes.bp)
 app.register_blueprint(type_routes.bp)
 
 app.register_blueprint(broker_routes.bp)
-# broker_routes.init_broker_websocket(app)
+broker_routes.init_broker_websocket(app)
 
 # TODO - do this when it becomes crucial, sending to broker can only be done IF you are an admin, or if there is an active activity with tasks that are robot related
 

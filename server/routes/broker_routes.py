@@ -110,6 +110,7 @@ def init_broker_websocket(app):
 
     @sock.route("/api/broker/robots/<robot_id>/logs")
     def robot_logs_proxy(ws, robot_id):
+        print(f"[WS] Connection attempt for robot {robot_id}")  # ← add this
         try:
             _ensure_logged_in()
         except Exception as e:
@@ -145,7 +146,11 @@ def init_broker_websocket(app):
             closed.set()
 
         broker_ws = websocket.WebSocketApp(
-            broker_url,
+            f"{BROKER_WS_URL}/client/robot-log/{robot_id}",
+            header={
+                "client-id": str(_broker_state["client_id"]),
+                "token": str(_broker_state["token"]),
+            },
             on_message=on_broker_message,
             on_error=on_broker_error,
             on_close=on_broker_close,
@@ -157,9 +162,7 @@ def init_broker_websocket(app):
         try:
             while not closed.is_set():
                 try:
-                    data = ws.receive(timeout=1)
-                    if data is None:
-                        break
+                    ws.receive(timeout=1)
                 except Exception:
                     break
         finally:

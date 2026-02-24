@@ -21,8 +21,8 @@ _broker_state = {
 }
 
 
-def _ensure_logged_in():
-    if _broker_state["token"]:
+def _ensure_logged_in(force=False):
+    if _broker_state["token"] and not force:
         return
 
     res = requests.post(f"{BROKER_URL}/client/login", headers={
@@ -39,11 +39,20 @@ def _ensure_logged_in():
 def broker_auth(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        try:
-            _ensure_logged_in()
-        except Exception as e:
-            return jsonify({"error": f"Broker login failed: {str(e)}"}), 502
-        return f(*args, **kwargs)
+        for attempt in range(2):
+            try:
+                _ensure_logged_in(force=(attempt > 0))
+            except Exception as e:
+                return jsonify({"error": f"Broker login failed: {str(e)}"}), 502
+            try:
+                return f(*args, **kwargs)
+            except requests.HTTPError as e:
+                if e.response is not None and e.response.status_code in (401, 403) and attempt == 0:
+                    _broker_state["token"] = None
+                    continue
+                return jsonify({"error": f"Broker request failed: {str(e)}"}), 502
+            except Exception as e:
+                return jsonify({"error": f"Broker request failed: {str(e)}"}), 502
     return decorated
 
 
@@ -59,7 +68,7 @@ def _broker_headers():
 @bp.route("/test", methods=["GET"])
 def test_connection():
     try:
-        _ensure_logged_in()
+        _ensure_logged_in(force=True)
         return jsonify({
             "status": "ok",
             "client_id": _broker_state["client_id"],
@@ -72,12 +81,9 @@ def test_connection():
 @bp.route("/robots", methods=["GET"])
 @broker_auth
 def list_robots():
-    try:
-        res = requests.get(f"{BROKER_URL}/client/robot/info", headers=_broker_headers())
-        res.raise_for_status()
-        return jsonify(res.json()), 200
-    except Exception as e:
-        return jsonify({"error": f"Failed to fetch robots: {str(e)}"}), 502
+    res = requests.get(f"{BROKER_URL}/client/robot/info", headers=_broker_headers())
+    res.raise_for_status()
+    return jsonify(res.json()), 200
 
 
 # ---------- SEND COMMAND ----------
@@ -89,19 +95,16 @@ def send_command(robot_id: str):
     if not code:
         return jsonify({"error": "code is required"}), 400
 
-    try:
-        res = requests.post(
-            f"{BROKER_URL}/robot/{robot_id}/command",
-            headers=_broker_headers(),
-            json={
-                "CommandType": "CODE",
-                "CodeText": code,
-            },
-        )
-        res.raise_for_status()
-        return jsonify(res.json()), 200
-    except Exception as e:
-        return jsonify({"error": f"Failed to send command: {str(e)}"}), 502
+    res = requests.post(
+        f"{BROKER_URL}/robot/{robot_id}/command",
+        headers=_broker_headers(),
+        json={
+            "CommandType": "CODE",
+            "CodeText": code,
+        },
+    )
+    res.raise_for_status()
+    return jsonify(res.json()), 200
 
 
 # ---------- WEBSOCKET PROXY ----------
@@ -110,19 +113,13 @@ def init_broker_websocket(app):
 
     @sock.route("/api/broker/robots/<robot_id>/logs")
     def robot_logs_proxy(ws, robot_id):
-        print(f"[WS] Connection attempt for robot {robot_id}")  # ← add this
+        print(f"[WS] Connection attempt for robot {robot_id}")
         try:
             _ensure_logged_in()
         except Exception as e:
             ws.send(json.dumps({"LogLevel": "ERROR", "Message": f"Broker login failed: {str(e)}"}))
             ws.close()
             return
-
-        broker_url = (
-            f"{BROKER_WS_URL}/client/robot-log/{robot_id}"
-            f"?client_id={_broker_state['client_id']}"
-            f"&token={_broker_state['token']}"
-        )
 
         broker_ws = None
         closed = threading.Event()

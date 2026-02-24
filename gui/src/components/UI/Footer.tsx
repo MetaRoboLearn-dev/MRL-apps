@@ -16,7 +16,7 @@ import ButtonRobotSelect from "../Footer/ButtonRobotSelect.tsx";
 const Footer = () => {
   const { moveQueue, isMoving } = useVehicle();
   const { modalVisible } = useUI();
-  const { camMode, awaitingReview, mode } = useTaskConfig();
+  const { camMode, awaitingReview, mode, hasRobotAccess } = useTaskConfig();
   const { start, finish } = useGrid();
 
   const [selectedRobotId, setSelectedRobotId] = useState<string | null>(null);
@@ -37,13 +37,15 @@ const Footer = () => {
         )}
       </div>
       <div className={'flex'}>
-        <ButtonRobotSelect
-          disabled={disabled}
-          selectedRobotId={selectedRobotId}
-          onSelectRobot={setSelectedRobotId}
-        />
-        <ButtonRobotStop disabled={disabled} />
-        <ButtonRobotRun disabled={disabled || awaitingReview} robot={selectedRobotId} />
+        {hasRobotAccess && <>
+          <ButtonRobotSelect
+            disabled={disabled}
+            selectedRobotId={selectedRobotId}
+            onSelectRobot={setSelectedRobotId}
+          />
+          <ButtonRobotStop disabled={disabled} />
+          <ButtonRobotRun disabled={disabled || awaitingReview} robot={selectedRobotId} />
+        </>}
 
         {!isMoving && moveQueue.length === 0 ? (
           <ButtonSim disabled={disabled || camMode} />

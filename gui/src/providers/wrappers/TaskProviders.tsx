@@ -17,7 +17,7 @@ interface Props {
 
 const TaskProviders = ({ ust, task, code, blocks, mode, onCodeSave, children }: PropsWithChildren<Props>) => {
   return (
-    <TaskConfigProvider task={task} mode={mode}>
+    <TaskConfigProvider ust={ust} task={task} mode={mode}>
       <GridProvider task={task}>
         <CodeProvider
           init_code={code}

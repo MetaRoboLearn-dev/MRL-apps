@@ -70,18 +70,3 @@ export const abort_robot = async (robotUrl: string | null) => {
     }
   }
 }
-
-export const sendCommandToRobot = async (robotId: string, code: string) => {
-  const response = await fetch(`/api/broker/robots/${robotId}/command`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ code }),
-  });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to send command');
-  }
-
-  return response.json();
-};

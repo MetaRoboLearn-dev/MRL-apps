@@ -100,10 +100,16 @@ export const CodeProvider = ({ init_code, init_blocks, editorMode, onSave, child
 
     const timeout = setTimeout(() => {
       onSave(getCurrentValue());
-    }, 1500);
+    }, 500);
 
     return () => clearTimeout(timeout);
-  }, [code, blocks, onSave]);
+  }, [code, onSave]);
+
+  useEffect(() => {
+    if (!onSave) return;
+    onSave(getCurrentValue());
+    return;
+  }, [blocks, onSave]);
 
   return (
     <CodeContext.Provider value={{

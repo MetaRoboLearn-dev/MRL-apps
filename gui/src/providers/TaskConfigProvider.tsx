@@ -3,13 +3,15 @@ import {TaskConfigContext} from "./Context.tsx";
 import {Barrier, Barriers, Sticker, Stickers, TileType} from "../types.ts";
 import {Texture, TextureLoader} from "three";
 import {Task, TaskMode} from "../types/tasksTypes.ts";
+import {UserStartedTask} from "../types/userStartedTasksTypes.ts";
 
 interface Props {
   task: Task
   mode?: TaskMode
+  ust?: UserStartedTask
 }
 
-export const TaskConfigProvider = ({ task, mode, children }: PropsWithChildren<Props>) => {
+export const TaskConfigProvider = ({ust, task, mode, children }: PropsWithChildren<Props>) => {
 
   // Grid editing options
   const [taskMode, setTaskMode] = useState<TaskMode>(mode || 'solve') // this is going to be true only while editing/creaing task
@@ -22,8 +24,8 @@ export const TaskConfigProvider = ({ task, mode, children }: PropsWithChildren<P
   const [title, setTitle] = useState<string>(task.title)
   const [description, setDescription] = useState<string | null>(task.description)
   const [isActive, setIsActive] = useState<boolean>(task.active);
-  const [isLogged, setIsLogged] = useState<boolean>(true); // by default true, but make sure its false while in editing/creating
-  const [hasRobotAccess, setHasRobotAccess] = useState<boolean>(true)
+  const [isLogged, setIsLogged] = useState<boolean>(ust?.activity_task.is_logged || false);
+  const [hasRobotAccess, setHasRobotAccess] = useState<boolean>(ust?.activity_task.allows_robot || true)
 
   // Generic options
   const [camMode, setCamMode] = useState<boolean>(false);

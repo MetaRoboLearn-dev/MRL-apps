@@ -12,7 +12,6 @@ interface Robot {
 const robotsQueryOptions = queryOptions<Robot[]>({
   queryKey: ["robots"],
   queryFn: fetchRobots,
-  staleTime: 30000,
   refetchOnWindowFocus: false,
 });
 

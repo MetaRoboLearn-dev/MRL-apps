@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as Test_brokerRouteImport } from './routes/test_broker'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SolveIndexRouteImport } from './routes/solve/index'
@@ -33,6 +34,11 @@ import { Route as AdminActivitiesActivityIdTasksActivityTaskIdEditRouteImport } 
 const Test_brokerRoute = Test_brokerRouteImport.update({
   id: '/test_broker',
   path: '/test_broker',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -139,6 +145,7 @@ const AdminActivitiesActivityIdTasksActivityTaskIdEditRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/login': typeof LoginRoute
   '/test_broker': typeof Test_brokerRoute
   '/solve/': typeof SolveIndexRoute
   '/admin/tasks/$taskId': typeof AdminTasksTaskIdRouteRouteWithChildren
@@ -161,6 +168,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/login': typeof LoginRoute
   '/test_broker': typeof Test_brokerRoute
   '/solve': typeof SolveIndexRoute
   '/admin/activities/new': typeof AdminActivitiesNewRoute
@@ -183,6 +191,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/login': typeof LoginRoute
   '/test_broker': typeof Test_brokerRoute
   '/solve/': typeof SolveIndexRoute
   '/admin/tasks/$taskId': typeof AdminTasksTaskIdRouteRouteWithChildren
@@ -207,6 +216,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/login'
     | '/test_broker'
     | '/solve/'
     | '/admin/tasks/$taskId'
@@ -229,6 +239,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/login'
     | '/test_broker'
     | '/solve'
     | '/admin/activities/new'
@@ -250,6 +261,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/about'
+    | '/login'
     | '/test_broker'
     | '/solve/'
     | '/admin/tasks/$taskId'
@@ -273,6 +285,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  LoginRoute: typeof LoginRoute
   Test_brokerRoute: typeof Test_brokerRoute
   SolveIndexRoute: typeof SolveIndexRoute
   AdminTasksTaskIdRouteRoute: typeof AdminTasksTaskIdRouteRouteWithChildren
@@ -298,6 +311,13 @@ declare module '@tanstack/react-router' {
       path: '/test_broker'
       fullPath: '/test_broker'
       preLoaderRoute: typeof Test_brokerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -454,6 +474,7 @@ const AdminTasksTaskIdRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  LoginRoute: LoginRoute,
   Test_brokerRoute: Test_brokerRoute,
   SolveIndexRoute: SolveIndexRoute,
   AdminTasksTaskIdRouteRoute: AdminTasksTaskIdRouteRouteWithChildren,

@@ -1,7 +1,3 @@
-import {RefObject, ReactNode} from "react";
-import * as THREE from 'three';
-import {Texture} from "three";
-
 // common use for 3d and movement
 export interface Position {
   x: number;

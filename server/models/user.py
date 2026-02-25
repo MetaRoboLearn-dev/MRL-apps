@@ -1,3 +1,4 @@
+from flask_login import UserMixin
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 from .base import Base
@@ -11,7 +12,7 @@ class Role(Base):
     users = relationship('User', back_populates='role')
     
 
-class User(Base):
+class User(UserMixin, Base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
     username = Column(String, nullable=False, unique=True)
@@ -40,3 +41,7 @@ class User(Base):
     created_activities = relationship('Activity', back_populates='creator', foreign_keys='Activity.created_by')
     created_tasks = relationship('Task', back_populates='creator', foreign_keys='Task.created_by')
     started_tasks = relationship('UserStartedTask', back_populates='starter', foreign_keys='UserStartedTask.started_by')
+
+    @property
+    def is_active(self):
+        return self.active

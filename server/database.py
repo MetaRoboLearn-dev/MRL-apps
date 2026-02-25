@@ -27,8 +27,8 @@ def init_db(app=None):
         )
     
     engine = create_engine(db_uri, echo=True)
-    SessionLocal = scoped_session(sessionmaker(bind=engine))
-    
+    SessionLocal = scoped_session(sessionmaker(bind=engine, expire_on_commit=False))
+
     Base.metadata.create_all(engine)
 
     with Session(engine) as session:

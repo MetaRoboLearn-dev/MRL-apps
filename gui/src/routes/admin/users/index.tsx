@@ -10,7 +10,7 @@ import {
 import { z } from 'zod';
 import { useState } from 'react';
 import {User} from "../../../types/userTypes.ts";
-import {capitalizeFirstLetter} from "../../../utils.ts";
+import {capitalizeFirstLetter, formatLocalDateTime} from "../../../utils.ts";
 
 const usersSearchSchema = z.object({
   skip: z.number().optional().default(0),
@@ -65,7 +65,7 @@ const columns = [
     header: 'Last Login',
     cell: info => {
       const value = info.getValue();
-      return value ? new Date(value).toLocaleString() : 'Never';
+      return value ? formatLocalDateTime(value) : 'Never';
     },
   }),
   columnHelper.accessor('active', {

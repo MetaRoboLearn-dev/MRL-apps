@@ -3,6 +3,14 @@ import {ReactNode, RefObject} from "react";
 import * as THREE from "three";
 import {Barrier, MoveCommand, Position, Rotation, Sticker, TileType} from "../types.ts";
 import {TaskMode} from "./tasksTypes.ts";
+import {CurrentUser} from "./userTypes.ts";
+
+export interface AuthContextType {
+  user: CurrentUser | null;
+  loading: boolean;
+  login: (username: string, password: string) => Promise<void>;
+  logout: () => Promise<void>;
+}
 
 export interface TaskConfigType {
   mode: TaskMode

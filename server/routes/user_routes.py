@@ -1,3 +1,4 @@
+import bcrypt
 from flask import Blueprint, jsonify, request
 from database import db_session
 from repositories.user_repository import UserRepository
@@ -5,6 +6,11 @@ from utils import parse_boolean_param, _to_utc_iso
 
 bp = Blueprint("users", __name__, url_prefix="/api/users")
 
+#  checking password
+# bcrypt.checkpw(
+#     submitted_password.encode("utf-8"),
+#     stored_hash.encode("utf-8")
+# )
 
 def _actor_user_id() -> int | None:
     # Optional: take from header until you wire auth.
@@ -98,7 +104,10 @@ def create_user():
 
         user = repo.create(
             username=data["username"],
-            password_hash=data["password_hash"],
+            password_hash=bcrypt.hashpw(
+                data["password_hash"].encode("utf-8"),
+                bcrypt.gensalt()
+            ).decode("utf-8"),
             first_name=data["first_name"],
             last_name=data["last_name"],
             role_id=int(data["role_id"]),
@@ -133,7 +142,10 @@ def update_user(user_id: int):
             first_name=data.get("first_name"),
             last_name=data.get("last_name"),
             role_id=int(data["role_id"]) if "role_id" in data else None,
-            password_hash=data.get("password_hash"),
+            password_hash=bcrypt.hashpw(
+                data["password_hash"].encode("utf-8"),
+                bcrypt.gensalt()
+            ).decode("utf-8") if "password_hash" in data else None,
             actor_user_id=_actor_user_id(),
         )
         if not user:

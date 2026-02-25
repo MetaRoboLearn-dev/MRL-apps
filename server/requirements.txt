@@ -9,3 +9,5 @@ python-dotenv
 flask-sock
 requests
 websocket-client
+bcrypt
+flask_login

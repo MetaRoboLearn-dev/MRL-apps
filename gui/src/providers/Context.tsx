@@ -5,9 +5,10 @@ import {
   GridContextType,
   CodeContextType,
   UIContextType,
-  ToastContextType,
+  ToastContextType, AuthContextType,
 } from "../types/contextTypes.ts";
 
+export const AuthContext = createContext<AuthContextType | null>(null);
 export const TaskConfigContext = createContext<TaskConfigType | null>(null);
 export const GridContext = createContext<GridContextType | null>(null)
 export const CodeContext = createContext<CodeContextType | null>(null)

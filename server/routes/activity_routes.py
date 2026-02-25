@@ -1,19 +1,19 @@
 from flask import Blueprint, jsonify, request
+from flask_login import current_user, login_required
 
+from auth import role_required
 from database import db_session
 from models import UserStartedTask
 from repositories.activity_repository import ActivityRepository
 from repositories.activity_task_repository import ActivityTaskRepository
 from utils import parse_boolean_param, parse_datetime, _to_utc_iso
-from datetime import timezone
 
 bp = Blueprint("activities", __name__, url_prefix="/api/activities")
 
-
-def _actor_user_id() -> int | None:
-    # Optional: take from header until you wire auth.
-    v = request.headers.get("X-Actor-User-Id")
-    return int(v) if v and v.isdigit() else 1
+@bp.before_request
+@login_required
+def require_login():
+    pass  # login_required handles the check, this just needs to exist
 
 def _activity_to_dict(a):
     return {
@@ -32,6 +32,7 @@ def _activity_to_dict(a):
 
 #---------- GET ACTIVITY DETAILS ----------
 @bp.route("/<int:activity_id>", methods=["GET"])
+@role_required('admin', 'teacher')
 def get_activity(activity_id: int):
     with db_session() as session:
         repo = ActivityRepository(session)
@@ -53,19 +54,9 @@ def get_activity(activity_id: int):
             } if activity.updater else None,
         }), 200
 
-# # ---------- READ ONE ----------
-# @bp.route("/<int:activity_id>", methods=["GET"])
-# def get_activity(activity_id: int):
-#     with db_session() as session:
-#         repo = ActivityRepository(session)
-#         activity = repo.get_by_id(activity_id)
-#         if not activity:
-#             return jsonify({"error": "Activity not found"}), 404
-#         return jsonify(_activity_to_dict(activity)), 200
-
-
 # ---------- LIST ----------
 @bp.route("/", methods=["GET"])
+@role_required('admin', 'teacher')
 def list_activities():
     # query params: ?skip=0&limit=50&active_only=true&search=yoga&order_by_time_from=true
     skip = int(request.args.get("skip", 0))
@@ -93,6 +84,7 @@ def list_activities():
 
 # ---------- READ ALL ACTIVITIES WITH TASK INFO ----------
 @bp.route("/overview", methods=["GET"])
+@role_required('admin', 'teacher')
 def list_activities_with_tasks():
     # query params: ?skip=0&limit=50&active_only=true&search=yoga&order_by_time_from=true
     skip = int(request.args.get("skip", 0))
@@ -143,7 +135,7 @@ def list_activities_with_tasks():
 # ---------- READ ALL ACTIVITIES AVAILABLE TO STUDENTS ----------
 @bp.route("/available", methods=["GET"])
 def list_student_available_activities():
-    user_id = _actor_user_id()
+    user_id = current_user.id
 
     with db_session() as session:
         repo = ActivityRepository(session)
@@ -186,6 +178,7 @@ def list_student_available_activities():
 
 # ---------- CREATE ----------
 @bp.route("/", methods=["POST"])
+@role_required('admin', 'teacher')
 def create_activity():
     data = request.get_json(silent=True) or {}
     required = ("title", "time_from", "time_to")
@@ -206,13 +199,14 @@ def create_activity():
             description=data.get("description"),
             time_from=time_from,
             time_to=time_to,
-            actor_user_id=_actor_user_id(),
+            actor_user_id=current_user.id,
         )
         return jsonify(_activity_to_dict(activity)), 201
 
 
 # ---------- UPDATE (PATCH) ----------
 @bp.route("/<int:activity_id>", methods=["PATCH"])
+@role_required('admin', 'teacher')
 def update_activity(activity_id: int):
     data = request.get_json(silent=True) or {}
 
@@ -238,7 +232,7 @@ def update_activity(activity_id: int):
             time_from=time_from,
             time_to=time_to,
             active=data.get("active"),
-            actor_user_id=_actor_user_id(),
+            actor_user_id=current_user.id,
         )
         if not activity:
             return jsonify({"error": "Activity not found"}), 404
@@ -248,10 +242,11 @@ def update_activity(activity_id: int):
 
 # ---------- DEACTIVATE ----------
 @bp.route("/<int:activity_id>/deactivate", methods=["POST"])
+@role_required('admin', 'teacher')
 def deactivate_activity(activity_id: int):
     with db_session() as session:
         repo = ActivityRepository(session)
-        activity = repo.deactivate(activity_id, actor_user_id=_actor_user_id())
+        activity = repo.deactivate(activity_id, actor_user_id=current_user.id)
         if not activity:
             return jsonify({"error": "Activity not found"}), 404
         return jsonify(_activity_to_dict(activity)), 200
@@ -259,10 +254,11 @@ def deactivate_activity(activity_id: int):
 
 # ---------- ACTIVATE ----------
 @bp.route("/<int:activity_id>/activate", methods=["POST"])
+@role_required('admin', 'teacher')
 def activate_activity(activity_id: int):
     with db_session() as session:
         repo = ActivityRepository(session)
-        activity = repo.activate(activity_id, actor_user_id=_actor_user_id())
+        activity = repo.activate(activity_id, actor_user_id=current_user.id)
         if not activity:
             return jsonify({"error": "Activity not found"}), 404
         return jsonify(_activity_to_dict(activity)), 200
@@ -270,6 +266,7 @@ def activate_activity(activity_id: int):
 
 # ---------- DELETE ----------
 @bp.route("/<int:activity_id>", methods=["DELETE"])
+@role_required('admin', 'teacher')
 def delete_activity(activity_id: int):
     with db_session() as session:
         at_repo = ActivityTaskRepository(session)

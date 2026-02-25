@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from database import init_db
@@ -11,7 +13,7 @@ app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:123@localhost:5432/mrl'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.secret_key = "change-me-to-a-real-secret"  # needed for flask_login sessions
+app.secret_key = os.environ.get("AUTH_KEY", "")  # needed for flask_login sessions
 
 app.config.update(
     SESSION_COOKIE_HTTPONLY=True,

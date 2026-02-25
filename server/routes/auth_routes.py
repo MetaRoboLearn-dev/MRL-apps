@@ -9,7 +9,6 @@ from utils import utc_now
 
 bp = Blueprint("auth", __name__, url_prefix="/api/auth")
 
-
 def _user_response(user):
     return {
         "id": user.id,
@@ -18,7 +17,6 @@ def _user_response(user):
         "last_name": user.last_name,
         "role": user.role.name,
     }
-
 
 @bp.route("/login", methods=["POST"])
 def login():

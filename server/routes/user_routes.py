@@ -1,22 +1,18 @@
 import bcrypt
 from flask import Blueprint, jsonify, request
+from flask_login import current_user, login_required
+
+from auth import role_required
 from database import db_session
 from repositories.user_repository import UserRepository
 from utils import parse_boolean_param, _to_utc_iso
 
 bp = Blueprint("users", __name__, url_prefix="/api/users")
 
-#  checking password
-# bcrypt.checkpw(
-#     submitted_password.encode("utf-8"),
-#     stored_hash.encode("utf-8")
-# )
-
-def _actor_user_id() -> int | None:
-    # Optional: take from header until you wire auth.
-    v = request.headers.get("X-Actor-User-Id")
-    return int(v) if v and v.isdigit() else None
-
+@bp.before_request
+@login_required
+def require_login():
+    pass  # login_required handles the check, this just needs to exist
 
 def _user_to_dict(user):
     return {
@@ -36,6 +32,7 @@ def _user_to_dict(user):
 
 # ---------- LIST ALL ROLES ----------
 @bp.route("/roles", methods=["GET"])
+@role_required('admin', 'teacher')
 def list_roles():
     with db_session() as session:
         repo = UserRepository(session)
@@ -47,6 +44,7 @@ def list_roles():
 
 # ---------- READ ONE ----------
 @bp.route("/<int:user_id>", methods=["GET"])
+@role_required('admin', 'teacher')
 def get_user(user_id: int):
     with db_session() as session:
         repo = UserRepository(session)
@@ -58,6 +56,7 @@ def get_user(user_id: int):
 
 # ---------- LIST ----------
 @bp.route("/", methods=["GET"])
+@role_required('admin', 'teacher')
 def list_users():
     # query params: ?skip=0&limit=50&role_id=2&active_only=true&search=marta&order_by_username=true
     skip = int(request.args.get("skip", 0))
@@ -89,6 +88,7 @@ def list_users():
 
 # ---------- CREATE ----------
 @bp.route("/", methods=["POST"])
+@role_required('admin', 'teacher')
 def create_user():
     data = request.get_json(silent=True) or {}
     required = ("username", "password_hash", "first_name", "last_name", "role_id")
@@ -111,13 +111,14 @@ def create_user():
             first_name=data["first_name"],
             last_name=data["last_name"],
             role_id=int(data["role_id"]),
-            actor_user_id=_actor_user_id(),
+            actor_user_id=current_user.id,
         )
         return jsonify(_user_to_dict(user)), 201
 
 
 # ---------- UPDATE (PATCH) ----------
 @bp.route("/<int:user_id>", methods=["PATCH"])
+@role_required('admin', 'teacher')
 def update_user(user_id: int):
     data = request.get_json(silent=True) or {}
 
@@ -146,7 +147,7 @@ def update_user(user_id: int):
                 data["password_hash"].encode("utf-8"),
                 bcrypt.gensalt()
             ).decode("utf-8") if "password_hash" in data else None,
-            actor_user_id=_actor_user_id(),
+            actor_user_id=current_user.id,
         )
         if not user:
             return jsonify({"error": "User not found"}), 404
@@ -156,10 +157,11 @@ def update_user(user_id: int):
 
 # ---------- DEACTIVATE ----------
 @bp.route("/<int:user_id>/deactivate", methods=["POST"])
+@role_required('admin', 'teacher')
 def deactivate_user(user_id: int):
     with db_session() as session:
         repo = UserRepository(session)
-        user = repo.deactivate(user_id, actor_user_id=_actor_user_id())
+        user = repo.deactivate(user_id, actor_user_id=current_user.id)
         if not user:
             return jsonify({"error": "User not found"}), 404
         return jsonify(_user_to_dict(user)), 200
@@ -167,10 +169,11 @@ def deactivate_user(user_id: int):
 
 # ---------- ACTIVATE ----------
 @bp.route("/<int:user_id>/activate", methods=["POST"])
+@role_required('admin', 'teacher')
 def activate_user(user_id: int):
     with db_session() as session:
         repo = UserRepository(session)
-        user = repo.activate(user_id, actor_user_id=_actor_user_id())
+        user = repo.activate(user_id, actor_user_id=current_user.id)
         if not user:
             return jsonify({"error": "User not found"}), 404
         return jsonify(_user_to_dict(user)), 200
@@ -178,6 +181,7 @@ def activate_user(user_id: int):
 
 # ---------- DELETE ----------
 @bp.route("/<int:user_id>", methods=["DELETE"])
+@role_required('admin', 'teacher')
 def delete_user(user_id: int):
     with db_session() as session:
         repo = UserRepository(session)
@@ -189,6 +193,7 @@ def delete_user(user_id: int):
 
 # ---------- EXISTS USERNAME ----------
 @bp.route("/exists/<string:username>", methods=["GET"])
+@role_required('admin', 'teacher')
 def username_exists(username: str):
     with db_session() as session:
         repo = UserRepository(session)

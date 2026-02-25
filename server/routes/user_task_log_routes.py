@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify, request
+from flask_login import login_required
 
 from database import db_session
 from repositories.user_task_log_repository import UserTaskLogRepository
@@ -6,6 +7,10 @@ from utils import parse_boolean_param
 
 bp = Blueprint("user_task_logs", __name__, url_prefix="/api/user-task-logs")
 
+@bp.before_request
+@login_required
+def require_login():
+    pass  # login_required handles the check, this just needs to exist
 
 def _user_task_log_to_dict(log):
     return {
@@ -15,7 +20,6 @@ def _user_task_log_to_dict(log):
         "created_at": log.created_at.isoformat() if log.created_at else None,
         "code_snapshot": log.code_snapshot,
     }
-
 
 # ---------- READ ONE ----------
 @bp.route("/<int:log_id>", methods=["GET"])

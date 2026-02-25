@@ -1,15 +1,17 @@
 from flask import Blueprint, jsonify, request
+from flask_login import current_user, login_required
+
+from auth import role_required
 from database import db_session
 from repositories.task_repository import TaskRepository
 from utils import parse_boolean_param, _to_utc_iso
 
 bp = Blueprint("tasks", __name__, url_prefix="/api/tasks")
 
-
-def _actor_user_id() -> int | None:
-    v = request.headers.get("X-Actor-User-Id")
-    return int(v) if v and v.isdigit() else 1
-
+@bp.before_request
+@login_required
+def require_login():
+    pass  # login_required handles the check, this just needs to exist
 
 def _task_to_dict(task):
     return {
@@ -35,6 +37,7 @@ def _task_to_dict(task):
 
 # ---------- READ ONE ----------
 @bp.route("/<int:task_id>", methods=["GET"])
+@role_required('admin', 'teacher')
 def get_task(task_id: int):
     with db_session() as session:
         repo = TaskRepository(session)
@@ -46,6 +49,7 @@ def get_task(task_id: int):
 
 # ---------- LIST ----------
 @bp.route("/", methods=["GET"])
+@role_required('admin', 'teacher')
 def list_tasks():
     # query params: ?skip=0&limit=50&active_only=true&search=loop&order_by_title=true
     skip = int(request.args.get("skip", 0))
@@ -90,6 +94,7 @@ def list_tasks():
 
 # ---------- CREATE ----------
 @bp.route("/", methods=["POST"])
+@role_required('admin', 'teacher')
 def create_task():
     data = request.get_json(silent=True) or {}
 
@@ -113,13 +118,14 @@ def create_task():
             code=data.get("code"),
             blocks=data.get("blocks"),
             active=data.get("active"),
-            actor_user_id=_actor_user_id(),
+            actor_user_id=current_user.id,
         )
         return jsonify(_task_to_dict(task)), 201
 
 
 # ---------- UPDATE (PATCH) ----------
 @bp.route("/<int:task_id>", methods=["PATCH"])
+@role_required('admin', 'teacher')
 def update_task(task_id: int):
     data = request.get_json(silent=True) or {}
 
@@ -173,7 +179,7 @@ def update_task(task_id: int):
             code=data.get("code"),
             blocks=data.get("blocks"),
             active=active_val,
-            actor_user_id=_actor_user_id(),
+            actor_user_id=current_user.id,
         )
         if not task:
             return jsonify({"error": "Task not found"}), 404
@@ -183,10 +189,11 @@ def update_task(task_id: int):
 
 # ---------- DEACTIVATE ----------
 @bp.route("/<int:task_id>/deactivate", methods=["POST"])
+@role_required('admin', 'teacher')
 def deactivate_task(task_id: int):
     with db_session() as session:
         repo = TaskRepository(session)
-        task = repo.deactivate(task_id, actor_user_id=_actor_user_id())
+        task = repo.deactivate(task_id, actor_user_id=current_user.id)
         if not task:
             return jsonify({"error": "Task not found"}), 404
         return jsonify(_task_to_dict(task)), 200
@@ -194,10 +201,11 @@ def deactivate_task(task_id: int):
 
 # ---------- ACTIVATE ----------
 @bp.route("/<int:task_id>/activate", methods=["POST"])
+@role_required('admin', 'teacher')
 def activate_task(task_id: int):
     with db_session() as session:
         repo = TaskRepository(session)
-        task = repo.activate(task_id, actor_user_id=_actor_user_id())
+        task = repo.activate(task_id, actor_user_id=current_user.id)
         if not task:
             return jsonify({"error": "Task not found"}), 404
         return jsonify(_task_to_dict(task)), 200
@@ -205,6 +213,7 @@ def activate_task(task_id: int):
 
 # ---------- DELETE ----------
 @bp.route("/<int:task_id>", methods=["DELETE"])
+@role_required('admin', 'teacher')
 def delete_task(task_id: int):
     with db_session() as session:
         repo = TaskRepository(session)

@@ -1,17 +1,17 @@
 from flask import Blueprint, jsonify, request
+from flask_login import current_user, login_required
 
+from auth import role_required
 from database import db_session
 from repositories.activity_task_repository import ActivityTaskRepository
 from utils import parse_boolean_param, _to_utc_iso
 
 bp = Blueprint("activity_tasks", __name__, url_prefix="/api/activity-tasks")
 
-
-def _actor_user_id() -> int | None:
-    # Optional: take from header until you wire auth.
-    v = request.headers.get("X-Actor-User-Id")
-    return int(v) if v and v.isdigit() else None
-
+@bp.before_request
+@login_required
+def require_login():
+    pass  # login_required handles the check, this just needs to exist
 
 def _activity_task_to_dict(at):
     return {
@@ -30,6 +30,7 @@ def _activity_task_to_dict(at):
 
 # ---------- READ ONE ----------
 @bp.route("/<int:activity_task_id>", methods=["GET"])
+@role_required('admin', 'teacher')
 def get_activity_task(activity_task_id: int):
     with db_session() as session:
         repo = ActivityTaskRepository(session)
@@ -52,6 +53,7 @@ def get_activity_task(activity_task_id: int):
 
 # ---------- LIST TASKS OF ACTIVITY ----------
 @bp.route("/", methods=["GET"])
+@role_required('admin', 'teacher')
 def list_activity_tasks():
     activity_id_raw = request.args.get("activity_id")
     if not activity_id_raw:
@@ -89,6 +91,7 @@ def list_activity_tasks():
 
 # ---------- CREATE ----------
 @bp.route("/", methods=["POST"])
+@role_required('admin', 'teacher')
 def create_activity_task():
     data = request.get_json(silent=True) or {}
     required = ("activity_id", "task_id", "type_id", "order")
@@ -106,13 +109,14 @@ def create_activity_task():
             is_logged=parse_boolean_param(data["is_logged"]),
             allows_robot=parse_boolean_param(data["allows_robot"]),
             description=data.get("description"),
-            actor_user_id=_actor_user_id(),
+            actor_user_id=current_user.id,
         )
         return jsonify(_activity_task_to_dict(at)), 201
 
 
 # ---------- UPDATE (PATCH) ----------
 @bp.route("/<int:activity_task_id>", methods=["PATCH"])
+@role_required('admin', 'teacher')
 def update_activity_task(activity_task_id: int):
     data = request.get_json(silent=True) or {}
 
@@ -133,7 +137,7 @@ def update_activity_task(activity_task_id: int):
             order=int(data["order"]) if "order" in data else None,
             is_logged=parse_boolean_param(data["is_logged"]) if "is_logged" in data else None,
             allows_robot=parse_boolean_param(data["allows_robot"]) if "allows_robot" in data else None,
-            actor_user_id=_actor_user_id(),
+            actor_user_id=current_user.id,
         )
         if not at:
             return jsonify({"error": "ActivityTask not found"}), 404
@@ -143,6 +147,7 @@ def update_activity_task(activity_task_id: int):
 
 # ---------- DELETE ----------
 @bp.route("/<int:activity_task_id>", methods=["DELETE"])
+@role_required('admin', 'teacher')
 def delete_activity_task(activity_task_id: int):
     with db_session() as session:
         repo = ActivityTaskRepository(session)
@@ -160,6 +165,7 @@ def delete_activity_task(activity_task_id: int):
 
 # ---------- SWAP TASK ORDER ----------
 @bp.route("/<int:activity_task_id>/move-up", methods=["PATCH"])
+@role_required('admin', 'teacher')
 def move_task_up(activity_task_id: int):
     activity_id_raw = request.args.get("activity_id")
     if not activity_id_raw:
@@ -174,6 +180,7 @@ def move_task_up(activity_task_id: int):
 
 
 @bp.route("/<int:activity_task_id>/move-down", methods=["PATCH"])
+@role_required('admin', 'teacher')
 def move_task_down(activity_task_id: int):
     activity_id_raw = request.args.get("activity_id")
     if not activity_id_raw:

@@ -3,11 +3,18 @@ import json
 import requests
 import websocket
 from flask import Blueprint, jsonify, request
+from flask_login import login_required
 from flask_sock import Sock
 from functools import wraps
 import threading
 
 bp = Blueprint("broker", __name__, url_prefix="/api/broker")
+
+@bp.before_request
+@login_required
+def require_login():
+    pass  # login_required handles the check, this just needs to exist
+
 sock = Sock()
 
 BROKER_URL = os.environ.get("BROKER_API_URL", "http://localhost:5000")

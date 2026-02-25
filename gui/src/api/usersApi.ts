@@ -1,7 +1,9 @@
 import {CreateUserRequest, UpdateUserRequest, User, Role} from "../types/userTypes.ts";
 
 export const getRoles = async (): Promise<Role[]> => {
-  const response = await fetch('/api/users/roles');
+  const response = await fetch('/api/users/roles', {
+    credentials: 'include'
+  });
 
   if (!response.ok) {
     const error = await response.json();
@@ -28,12 +30,16 @@ export const getUsers = async (params: {
   if (params.search) queryParams.set('search', params.search);
   if (params.order_by_username) queryParams.set('order_by_username', params.order_by_username.toString());
   
-  const response = await fetch(`/api/users?${queryParams}`);
+  const response = await fetch(`/api/users?${queryParams}`, {
+    credentials: 'include'
+  });
   return response.json();
 };
 
 export const getUserById = async (userId: string): Promise<User> => {
-  const response = await fetch(`/api/users/${userId}`)
+  const response = await fetch(`/api/users/${userId}`, {
+    credentials: 'include'
+  })
 
   if (!response.ok) {
     if (response.status === 404) {
@@ -47,6 +53,7 @@ export const getUserById = async (userId: string): Promise<User> => {
 
 export const createUser = async (data: CreateUserRequest) => {
   const response = await fetch('/api/users', {
+    credentials: 'include',
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -64,6 +71,7 @@ export const createUser = async (data: CreateUserRequest) => {
 
 export const updateUser = async (userId: string, data: UpdateUserRequest): Promise<User> => {
   const response = await fetch(`/api/users/${userId}`, {
+    credentials: 'include',
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
@@ -81,6 +89,7 @@ export const updateUser = async (userId: string, data: UpdateUserRequest): Promi
 
 export const deleteUser = async (userId: string)=> {
   const response = await fetch(`/api/users/${userId}`, {
+    credentials: 'include',
     method: 'DELETE'
   })
 

@@ -5,7 +5,9 @@ export interface TaskType {
 }
 
 export const getTypes = async (): Promise<TaskType[]> => {
-  const response = await fetch('/api/types/');
+  const response = await fetch('/api/types/', {
+    credentials: 'include',
+  });
 
   if (!response.ok) {
     const error = await response.json();

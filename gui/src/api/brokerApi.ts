@@ -1,5 +1,7 @@
 export const testBrokerConnection = async () => {
-  const response = await fetch('/api/broker/test');
+  const response = await fetch('/api/broker/test', {
+    credentials: 'include',
+  });
 
   if (!response.ok) {
     const error = await response.json();
@@ -10,7 +12,9 @@ export const testBrokerConnection = async () => {
 };
 
 export const fetchRobots = async () => {
-  const response = await fetch('/api/broker/robots');
+  const response = await fetch('/api/broker/robots', {
+    credentials: 'include',
+  });
 
   if (!response.ok) {
     const error = await response.json();
@@ -22,6 +26,7 @@ export const fetchRobots = async () => {
 
 export const sendCommand = async (robotId: string, code: string) => {
   const response = await fetch(`/api/broker/robots/${robotId}/command`, {
+    credentials: 'include',
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ code }),

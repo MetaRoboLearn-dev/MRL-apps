@@ -1,7 +1,9 @@
 import {AvailableActivity, CreateActivityRequest} from "../types/activityTypes.ts";
 
 export const getActivityById = async (activityId: string) => {
-  const response = await fetch(`/api/activities/${activityId}`);
+  const response = await fetch(`/api/activities/${activityId}`, {
+    credentials: 'include',
+  });
 
   if (!response.ok) {
     const error = await response.json();
@@ -26,12 +28,15 @@ export const getActivitiesOverview = async (params: {
   if (params.search) queryParams.set('search', params.search);
   if (params.order_by_time_from !== undefined) queryParams.set('order_by_time_from', params.order_by_time_from.toString());
 
-  const response = await fetch(`/api/activities/overview?${queryParams}`);
+  const response = await fetch(`/api/activities/overview?${queryParams}`, {
+    credentials: 'include',
+  });
   return response.json();
 };
 
 export const createActivity = async (data: CreateActivityRequest) => {
   const response = await fetch('/api/activities/', {
+    credentials: 'include',
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -47,6 +52,7 @@ export const createActivity = async (data: CreateActivityRequest) => {
 
 export const updateActivity = async ({ id, ...data }: CreateActivityRequest & { id: string }) => {
   const response = await fetch(`/api/activities/${id}`, {
+    credentials: 'include',
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -62,6 +68,7 @@ export const updateActivity = async ({ id, ...data }: CreateActivityRequest & { 
 
 export const deleteActivity = async (activityId: string) => {
   const response = await fetch(`/api/activities/${activityId}`, {
+    credentials: 'include',
     method: 'DELETE',
   });
 
@@ -74,7 +81,9 @@ export const deleteActivity = async (activityId: string) => {
 };
 
 export const getActivityTasks = async (activityId: string) => {
-  const response = await fetch(`/api/activity-tasks/?activity_id=${activityId}`);
+  const response = await fetch(`/api/activity-tasks/?activity_id=${activityId}`, {
+    credentials: 'include',
+  });
 
   if (!response.ok) {
     const error = await response.json();
@@ -85,7 +94,9 @@ export const getActivityTasks = async (activityId: string) => {
 };
 
 export const getActivityTaskById = async (activityTaskId: string) => {
-  const response = await fetch(`/api/activity-tasks/${activityTaskId}`);
+  const response = await fetch(`/api/activity-tasks/${activityTaskId}`, {
+    credentials: 'include',
+  });
 
   if (!response.ok) {
     const error = await response.json();
@@ -105,6 +116,7 @@ export const createActivityTask = async (data: {
   allows_robot: boolean;
 }) => {
   const response = await fetch('/api/activity-tasks/', {
+    credentials: 'include',
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -127,6 +139,7 @@ export const updateActivityTask = async ({ id, ...data }: {
   allows_robot?: boolean;
 }) => {
   const response = await fetch(`/api/activity-tasks/${id}`, {
+    credentials: 'include',
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -142,6 +155,7 @@ export const updateActivityTask = async ({ id, ...data }: {
 
 export const moveActivityTaskUp = async (activityTaskId: number, activityId: string) => {
   const response = await fetch(`/api/activity-tasks/${activityTaskId}/move-up?activity_id=${activityId}`, {
+    credentials: 'include',
     method: 'PATCH',
   });
 
@@ -155,6 +169,7 @@ export const moveActivityTaskUp = async (activityTaskId: number, activityId: str
 
 export const moveActivityTaskDown = async (activityTaskId: number, activityId: string) => {
   const response = await fetch(`/api/activity-tasks/${activityTaskId}/move-down?activity_id=${activityId}`, {
+    credentials: 'include',
     method: 'PATCH',
   });
 
@@ -168,6 +183,7 @@ export const moveActivityTaskDown = async (activityTaskId: number, activityId: s
 
 export const deleteActivityTask = async (activityTaskId: number) => {
   const response = await fetch(`/api/activity-tasks/${activityTaskId}`, {
+    credentials: 'include',
     method: 'DELETE',
   });
 
@@ -180,7 +196,9 @@ export const deleteActivityTask = async (activityTaskId: number) => {
 };
 
 export const getAvailableActivities = async (): Promise<AvailableActivity[]> => {
-  const response = await fetch("/api/activities/available");
+  const response = await fetch("/api/activities/available", {
+    credentials: 'include',
+  });
 
   if (!response.ok) {
     throw new Error(`Failed to fetch activities: ${response.status}`);

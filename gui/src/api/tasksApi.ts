@@ -15,12 +15,16 @@ export const getTasksPreview = async (params: {
   if (params.search) queryParams.set('search', params.search);
   if (params.order_by_title) queryParams.set('order_by_username', params.order_by_title.toString());
 
-  const response = await fetch(`/api/tasks/?${queryParams}`);
+  const response = await fetch(`/api/tasks/?${queryParams}`, {
+    credentials: 'include',
+  });
   return response.json();
 }
 
 export const getTaskById = async (taskId: string)=>{
-  const response = await fetch(`/api/tasks/${taskId}`)
+  const response = await fetch(`/api/tasks/${taskId}`, {
+    credentials: 'include',
+  })
 
   if (!response.ok) {
     if (response.status === 404) {
@@ -34,6 +38,7 @@ export const getTaskById = async (taskId: string)=>{
 
 export const createTask = async (data: CreateTaskRequest) => {
   const response = await fetch('/api/tasks', {
+    credentials: 'include',
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -51,6 +56,7 @@ export const createTask = async (data: CreateTaskRequest) => {
 
 export const updateTask = async ({ id, ...data }: CreateTaskRequest & { id: string }) => {
   const response = await fetch(`/api/tasks/${id}`, {
+    credentials: 'include',
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -66,6 +72,7 @@ export const updateTask = async ({ id, ...data }: CreateTaskRequest & { id: stri
 
 export const deleteTask = async (taskId: string) => {
   const response = await fetch(`/api/tasks/${taskId}`, {
+    credentials: 'include',
     method: 'DELETE',
   });
 

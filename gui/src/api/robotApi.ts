@@ -4,6 +4,7 @@ export const run_code = async (code: string) => {
   const url = "/api/run-python";
   try {
     const response = await fetch(url, {
+      credentials: 'include',
       method: "POST",
       body: JSON.stringify({ code: code }),
       headers: {
@@ -25,6 +26,7 @@ export const run_robot = async (code: string, robotUrl: string | null) => {
   const url = robotUrl + "/execute";
   try {
     const response = await fetch(url, {
+      credentials: 'include',
       method: "POST",
       body: JSON.stringify({ code: code }),
       headers: {
@@ -52,6 +54,7 @@ export const abort_robot = async (robotUrl: string | null) => {
   const url = robotUrl + "/abort";
   try {
     const response = await fetch(url, {
+      credentials: 'include',
       method: "POST",
     });
     if (response.ok) {

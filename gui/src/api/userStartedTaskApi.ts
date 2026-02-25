@@ -1,7 +1,9 @@
 import {UserStartedTask} from "../types/userStartedTasksTypes.ts";
 
 export const getUserStartedTask = async (activityTaskId: string): Promise<UserStartedTask> => {
-  const response = await fetch(`/api/user-started-tasks/activity-task/${activityTaskId}`);
+  const response = await fetch(`/api/user-started-tasks/activity-task/${activityTaskId}`, {
+    credentials: 'include',
+  });
 
   if (!response.ok) {
     const error = await response.json();
@@ -13,6 +15,7 @@ export const getUserStartedTask = async (activityTaskId: string): Promise<UserSt
 
 export const createUserStartedTask = async (activityTaskId: number) => {
   const response = await fetch('/api/user-started-tasks/', {
+    credentials: 'include',
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ activity_task_id: activityTaskId }),
@@ -28,6 +31,7 @@ export const createUserStartedTask = async (activityTaskId: number) => {
 
 export const updateUserStartedTask = async (ustId: number, data: { current_value: string }) => {
   const response = await fetch(`/api/user-started-tasks/${ustId}`, {
+    credentials: 'include',
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),

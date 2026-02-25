@@ -94,6 +94,7 @@ def list_robots():
 
 
 # ---------- SEND COMMAND ----------
+# TODO - ovo treba bit dostupno samo kad ima aktivnost koja trenutno traje ili ako si teacher/admin
 @bp.route("/robots/<robot_id>/command", methods=["POST"])
 @broker_auth
 def send_command(robot_id: str):

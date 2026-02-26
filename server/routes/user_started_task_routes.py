@@ -46,6 +46,7 @@ def _user_started_task_to_dict(ust):
     }
 
 # ---------- READ INFO FOR USER AND ACTIVITY TASK ----------
+# TODO - if activity isnt active or ran out of time, cant continue
 @bp.route("/activity-task/<int:activity_task_id>", methods=["GET"])
 def get_user_started_task_activity_task(activity_task_id: int):
     with db_session() as session:

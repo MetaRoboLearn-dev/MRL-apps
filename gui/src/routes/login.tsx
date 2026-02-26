@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useMutation } from '@tanstack/react-query'
 import { useState, FormEvent } from 'react'
 import {useAuth} from "../hooks/useAuth.ts";
+import LogoWhite from '/logo_black_notext.svg'
 
 export const Route = createFileRoute('/login')({
   component: RouteComponent,
@@ -44,10 +45,11 @@ function RouteComponent() {
     <div className="flex-1 flex items-center justify-center ">
       <div className="w-full max-w-md">
         <div className="bg-white rounded-lg border-3 border-sunglow-500 shadow-lg p-8">
-          <h1 className="text-3xl font-display font-bold text-dark-neutrals-500 text-center mb-2">
-            MRL Platforma
-          </h1>
-          <p className="text-dark-neutrals-400 text-center mb-8">Prijavi se za nastavak</p>
+          <div className={'flex flex-col items-center justify-center'}>
+            <img src={LogoWhite} alt={'logo-white'} className={'h-full w-20'}/>
+            <h1 className={'font-display font-bold text-2xl mt-1'}>MetaRoboLearn</h1>
+          </div>
+          <p className="text-dark-neutrals-400 text-center mb-8 mt-4">Prijavi se za nastavak</p>
 
           {error && (
             <div className="mb-4 p-3 bg-red-100 border border-red-300 text-red-700 rounded-md text-sm">

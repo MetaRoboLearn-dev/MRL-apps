@@ -57,8 +57,8 @@ class UserTaskLogRepository:
         )
 
         self.session.add(log)
-        self.session.commit()
-        self.session.refresh(log)
+        # self.session.commit()
+        # self.session.refresh(log)
         return log
 
     # ---------- DELETE ----------

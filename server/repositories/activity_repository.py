@@ -75,6 +75,7 @@ class ActivityRepository(BaseRepository[Activity]):
 
     # ---------- READ ALL ACTIVITIES AVAILABLE TO STUDENTS ----------
     def list_student_available_activities(self):
+        now = utc_now()
         q = (
             self.session.query(Activity)
             .options(
@@ -85,6 +86,8 @@ class ActivityRepository(BaseRepository[Activity]):
             .filter(
                 exists().where(ActivityTask.activity_id == Activity.id)
             )
+            .filter(Activity.time_from <= now)
+            .filter(Activity.time_to >= now)
         )
 
         # q = q.filter(TODO - ovdje filtrirat po vremenu)

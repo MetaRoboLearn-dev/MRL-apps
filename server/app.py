@@ -16,6 +16,7 @@ logger.info("Starting MetaRoboLearn server (log level: %s)", log_level)
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from werkzeug.middleware.proxy_fix import ProxyFix
 from database import init_db
 from sb import sb_run_python
 from auth import init_auth
@@ -24,6 +25,7 @@ from routes import user_routes, task_routes, activity_routes, activity_task_rout
 import models
 
 app = Flask(__name__)
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -92,4 +94,4 @@ def run_python():
     return sb_run_python(code)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)

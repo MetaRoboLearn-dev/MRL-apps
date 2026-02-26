@@ -17,9 +17,9 @@ def require_login():
 
 sock = Sock()
 
-BROKER_URL = os.environ.get("BROKER_API_URL", "http://localhost:5000")
-BROKER_WS_URL = os.environ.get("BROKER_WS_URL", "ws://localhost:5000")
-BROKER_CLIENT_NAME = os.environ.get("BROKER_CLIENT_NAME", "mrl-server")
+BROKER_URL = os.environ.get("BROKER_API_URL", "http://localhost:8000")
+BROKER_WS_URL = os.environ.get("BROKER_WS_URL", "ws://localhost:8000")
+BROKER_CLIENT_NAME = os.environ.get("BROKER_CLIENT_NAME", "mrl-app-server")
 BROKER_API_KEY = os.environ.get("BROKER_API_KEY", "")
 
 _broker_state = {

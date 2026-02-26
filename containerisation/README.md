@@ -59,8 +59,8 @@ FLASK_ENV=production
 CORS_ORIGIN=https://localhost
 
 # Optional – only needed when a physical robot broker is connected
-BROKER_API_URL=http://<broker-host>:5000
-BROKER_WS_URL=ws://<broker-host>:5000
+BROKER_API_URL=http://<broker-host>:8000
+BROKER_WS_URL=ws://<broker-host>:8000
 BROKER_CLIENT_NAME=mrl-server
 BROKER_API_KEY=
 ```
@@ -206,7 +206,7 @@ docker compose up --build
 | URL | Service |
 |-----|---------|
 | `http://localhost:3000` | Vite dev frontend |
-| `http://localhost:8000` | Flask API |
+| `http://localhost:5000` | Flask API |
 
 ---
 

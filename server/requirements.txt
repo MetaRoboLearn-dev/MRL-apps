@@ -11,3 +11,6 @@ requests
 websocket-client
 bcrypt
 flask_login
+gunicorn
+gevent
+gevent-websocket

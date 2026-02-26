@@ -1,4 +1,18 @@
 import os
+import logging
+
+from dotenv import load_dotenv
+load_dotenv()  # loads .env when running outside Docker
+
+# ── Logging setup ────────────────────────────────────────────────────────────
+log_level = os.environ.get("LOG_LEVEL", "INFO").upper()
+logging.basicConfig(
+    level=log_level,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+logger = logging.getLogger(__name__)
+logger.info("Starting MetaRoboLearn server (log level: %s)", log_level)
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -11,9 +25,12 @@ import models
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:123@localhost:5432/mrl'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.secret_key = os.environ.get("AUTH_KEY", "")  # needed for flask_login sessions
+app.secret_key = os.environ.get("FLASK_SECRET_KEY", "")
+
+if not app.secret_key:
+    logger.warning("FLASK_SECRET_KEY is not set – sessions will not survive restarts")
 
 app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
@@ -24,6 +41,7 @@ app.config.update(
 )
 
 init_db(app)
+logger.info("Blueprints registering ...")
 init_auth(app)
 
 app.register_blueprint(auth_routes.bp)
@@ -38,15 +56,31 @@ app.register_blueprint(type_routes.bp)
 app.register_blueprint(broker_routes.bp)
 broker_routes.init_broker_websocket(app)
 
+logger.info("All blueprints registered")
+
 CORS(app,
-     origins=["http://localhost:3000"],
+     origins=[os.environ.get("CORS_ORIGIN", "https://localhost")],
      methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],  # added PATCH/DELETE
      allow_headers=["Content-Type"],
      supports_credentials=True)
 
 @app.route('/health', methods=['GET'])
 def health():
-    return jsonify({"status": "ok"}), 200
+    """Liveness + DB connectivity check."""
+    import database
+    from sqlalchemy import text
+    db_status = "ok"
+    db_error = None
+    try:
+        with database.engine.connect() as conn:
+            conn.execute(text("SELECT 1"))
+    except Exception as exc:
+        db_status = "error"
+        db_error = str(exc)
+        logger.error("Health check: DB unreachable – %s", exc)
+
+    status_code = 200 if db_status == "ok" else 503
+    return jsonify({"status": "ok" if db_status == "ok" else "degraded", "db": db_status, "db_error": db_error}), status_code
 
 @app.route('/execute', methods=['POST'])
 def execute():

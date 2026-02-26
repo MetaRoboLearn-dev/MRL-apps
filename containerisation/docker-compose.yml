@@ -1,0 +1,26 @@
+services:
+
+  # ── Flask backend (gunicorn + gevent) ───────────────────────────────────────
+  backend:
+    build:
+      context: ../server
+    restart: unless-stopped
+    env_file: .env
+    # DATABASE_URL is read directly from .env
+
+  # ── Nginx (HTTPS + static frontend + API/WebSocket proxy) ──────────────────
+  nginx:
+    build:
+      context: ..                                   # project root
+      dockerfile: containerisation/nginx/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ssl_certs:/etc/nginx/ssl
+    depends_on:
+      - backend
+
+volumes:
+  ssl_certs:

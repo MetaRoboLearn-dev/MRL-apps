@@ -70,7 +70,7 @@ const BrokerTestPage = () => {
   const [cmdResult, setCmdResult] = useState("");
 
   const [abortStatus, setAbortStatus] = useState<StepStatus>("idle");
-  const [abortResult, setAbortResult] = useState("");
+  const [_abortResult, setAbortResult] = useState("");
 
   const [logEntries, setLogEntries] = useState<{ level: string; message: string; timestamp?: string }[]>([]);
   const [wsStatus, setWsStatus] = useState<"idle" | "connecting" | "connected" | "disconnected" | "error">("idle");

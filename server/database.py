@@ -3,7 +3,7 @@ import logging
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker, scoped_session, Session
 from contextlib import contextmanager
-from seed import seed_roles, seed_types
+from seed import seed_roles, seed_types, seed_event_types
 from models.base import Base
 from flask_migrate import Migrate
 
@@ -53,6 +53,7 @@ def init_db(app=None):
         with Session(engine) as session:
             seed_roles(session)
             seed_types(session)
+            seed_event_types(session)
         logger.info("Seeding complete")
     except Exception as exc:
         logger.error("Seeding failed: %s", exc)

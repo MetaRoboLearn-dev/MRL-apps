@@ -1,13 +1,13 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, UniqueConstraint
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, UniqueConstraint, Boolean
 from sqlalchemy.orm import relationship
 from .base import Base
 from utils import utc_now
 
 class UserStartedTask(Base):
     __tablename__ = 'user_started_tasks'
-    # __table_args__ = (
-    #     UniqueConstraint('started_by', 'activity_id', 'task_id'),
-    # )
+    __table_args__ = (
+        UniqueConstraint('started_by', 'activity_task_id'),
+    )
 
     id = Column(Integer, primary_key=True)
 
@@ -19,9 +19,7 @@ class UserStartedTask(Base):
     updated_by = Column(Integer, ForeignKey("users.id"))
 
     current_value = Column(String)
-
-    # activity_id = Column(Integer, ForeignKey('activities.id'))
-    # task_id = Column(Integer, ForeignKey('tasks.id'))
+    is_finished = Column(Boolean, default=False)
 
     activity_task_id = Column(Integer, ForeignKey('activity_tasks.id'))
 
@@ -29,8 +27,6 @@ class UserStartedTask(Base):
     creator = relationship('User', foreign_keys="UserStartedTask.created_by")
     updater = relationship('User', foreign_keys="UserStartedTask.updated_by")
 
-    # activity = relationship('Activity')
-    # task = relationship('Task')
     activity_task = relationship('ActivityTask')
 
     logs = relationship('UserTaskLog', back_populates='user_started_task')

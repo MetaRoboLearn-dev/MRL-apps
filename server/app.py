@@ -46,6 +46,12 @@ init_db(app)
 logger.info("Blueprints registering ...")
 init_auth(app)
 
+CORS(app,
+     origins=[os.environ.get("CORS_ORIGIN", "https://localhost")],
+     methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+     allow_headers=["Content-Type"],
+     supports_credentials=True)
+
 app.register_blueprint(auth_routes.bp)
 app.register_blueprint(user_routes.bp)
 app.register_blueprint(task_routes.bp)
@@ -59,12 +65,6 @@ app.register_blueprint(broker_routes.bp)
 broker_routes.init_broker_websocket(app)
 
 logger.info("All blueprints registered")
-
-CORS(app,
-     origins=[os.environ.get("CORS_ORIGIN", "https://localhost")],
-     methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],  # added PATCH/DELETE
-     allow_headers=["Content-Type"],
-     supports_credentials=True)
 
 @app.route('/health', methods=['GET'])
 def health():

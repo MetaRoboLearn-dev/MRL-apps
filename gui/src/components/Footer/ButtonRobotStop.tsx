@@ -1,24 +1,27 @@
-import {abort_robot} from "../../api/robotApi.ts";
 import {FaStop} from "react-icons/fa";
-import {useTaskConfig} from "../../hooks/useTaskConfig.ts";
-import {useToast} from "../../hooks/useToast.ts";
+import { useMutation } from "@tanstack/react-query";
+import { sendAbort } from "../../api/brokerApi.ts";
 
-const ButtonRobotStop = ({disabled}: {disabled: boolean}) => {
-  const { robotUrl } = useTaskConfig();
-  const { showToast } = useToast();
+const ButtonRobotStop = ({ disabled, robot }: { disabled: boolean; robot: string | null }) => {
 
-  const abort = async () => {
-    const res = await abort_robot(robotUrl);
-    if (res.error) {
-      showToast(res.status + " " + res.statusText);
-    }
-  }
+
+  const mutation = useMutation({
+    mutationFn: () => {
+      if (!robot) throw new Error("No robot selected");
+      return sendAbort(robot);
+    },
+    onError: (e) => console.error("Failed to send abort:", e),
+  });
 
   return (
     <button disabled={disabled}
             className={`bg-tomato-500 text-light-cyan-200 button-square ml-2 
                     ${disabled ? 'bg-tomato-700 text-light-cyan-700' : 'hover:cursor-pointer hover:bg-tomato-600'} transition`}
-            onClick={abort}>
+            onClick={() => {
+              if (!robot) return;
+              mutation.mutate();
+            }}
+    >
       <FaStop size={18}/>
     </button>
   );

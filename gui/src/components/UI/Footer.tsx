@@ -43,7 +43,7 @@ const Footer = () => {
             selectedRobotId={selectedRobotId}
             onSelectRobot={setSelectedRobotId}
           />
-          <ButtonRobotStop disabled={disabled} />
+          <ButtonRobotStop disabled={disabled} robot={selectedRobotId} />
           <ButtonRobotRun disabled={disabled || awaitingReview} robot={selectedRobotId} />
         </>}
 

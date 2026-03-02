@@ -5,6 +5,7 @@ import {
   sendCommand,
   connectRobotLogSocket,
   safeCloseWs,
+  sendAbort,
 } from "../api/brokerApi.ts";
 
 interface Robot {
@@ -68,6 +69,9 @@ const BrokerTestPage = () => {
   const [cmdStatus, setCmdStatus] = useState<StepStatus>("idle");
   const [cmdResult, setCmdResult] = useState("");
 
+  const [abortStatus, setAbortStatus] = useState<StepStatus>("idle");
+  const [abortResult, setAbortResult] = useState("");
+
   const [logEntries, setLogEntries] = useState<{ level: string; message: string; timestamp?: string }[]>([]);
   const [wsStatus, setWsStatus] = useState<"idle" | "connecting" | "connected" | "disconnected" | "error">("idle");
   const wsRef = useRef<WebSocket | null>(null);
@@ -125,6 +129,20 @@ const BrokerTestPage = () => {
       setCmdStatus("error");
     }
   };
+
+  const handleAbortCommand = async () => {
+        setAbortStatus("loading");
+    try {
+      const res = await sendAbort(selectedRobotId);
+      setAbortResult(JSON.stringify(res, null, 2));
+      setAbortStatus("ok");
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : String(e);
+      setAbortResult(`Error: ${msg}`);
+      setAbortStatus("error");
+    }
+  };
+
 
   useEffect(() => {
     if (!selectedRobotId) return;
@@ -223,6 +241,10 @@ const BrokerTestPage = () => {
         <Btn onClick={handleSendCommand} disabled={!selectedRobotId || !codeText || cmdStatus === "loading"}>
           {cmdStatus === "loading" ? "Sending…" : "Send Command"}
         </Btn>
+        <button className="ml-2 px-4 py-1.5 bg-red-600 text-white text-sm rounded hover:bg-red-700 disabled:opacity-40 disabled:cursor-not-allowed"
+           onClick={handleAbortCommand} disabled={!selectedRobotId || abortStatus === "loading"}>
+          {abortStatus === "loading" ? "Aborting…" : "Abort Command"}
+        </button>
         <ResultBox result={cmdResult} />
       </Section>
 

@@ -40,6 +40,20 @@ export const sendCommand = async (robotId: string, code: string) => {
   return response.json();
 };
 
+export const sendAbort = async (robotId: string) => {
+  const response = await fetch(`/api/broker/robots/${robotId}/abort`, {
+    credentials: 'include',
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to send abort');
+  }
+  return response.json();
+};
+
 export const safeCloseWs = (ws: WebSocket | null) => {
   if (ws && ws.readyState !== WebSocket.CLOSING && ws.readyState !== WebSocket.CLOSED) {
     ws.close();

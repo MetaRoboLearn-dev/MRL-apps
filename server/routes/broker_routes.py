@@ -114,6 +114,21 @@ def send_command(robot_id: str):
     res.raise_for_status()
     return jsonify(res.json()), 200
 
+# ---------- ABORT COMMAND ----------
+# TODO - ovo treba bit dostupno samo kad ima aktivnost koja trenutno traje ili ako si teacher/admin
+@bp.route("/robots/<robot_id>/abort", methods=["POST"])
+@broker_auth
+def abort_command(robot_id: str):
+    res = requests.post(
+        f"{BROKER_URL}/robot/{robot_id}/command",
+        headers=_broker_headers(),
+        json={
+            "CommandType": "ABORT",
+        },
+    )
+    res.raise_for_status()
+    return jsonify(res.json()), 200
+
 
 # ---------- WEBSOCKET PROXY ----------
 def init_broker_websocket(app):

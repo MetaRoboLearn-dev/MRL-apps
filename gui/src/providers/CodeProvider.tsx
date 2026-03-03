@@ -4,8 +4,7 @@ import {useTaskConfig} from "../hooks/useTaskConfig.ts";
 import * as Blockly from "blockly";
 import {pythonGenerator} from "blockly/python";
 import {MoveCommand} from "../types.ts";
-import {run_code, run_robot} from "../api/robotApi.ts";
-import {useToast} from "../hooks/useToast.ts";
+import {run_code} from "../api/robotApi.ts";
 import {useConsole} from "../hooks/useConsole.ts";
 
 interface Props {
@@ -16,9 +15,8 @@ interface Props {
 }
 
 export const CodeProvider = ({ init_code, init_blocks, editorMode, onSave, children }: PropsWithChildren<Props>) => {
-  const { showToast } = useToast()
   const { addLog } = useConsole()
-  const { setSimFocused, robotUrl, setAwaitingReview, ustId } = useTaskConfig();
+  const { setSimFocused, ustId } = useTaskConfig();
   const [code, setCodeState] = useState<string>(init_code || '');
   const [blocks, setBlocksState] = useState<string>(init_blocks || '')
 
@@ -87,17 +85,6 @@ export const CodeProvider = ({ init_code, init_blocks, editorMode, onSave, child
     return processSteps(compiled.output.split('\n'));
   }
 
-  const runRobot = async () => {
-    const code = getCurrentCode();
-    const res = await run_robot(code, robotUrl);
-    if (res.error) {
-      showToast(res.status + " " + res.statusText);
-    }
-    else {
-      setAwaitingReview(true);
-    }
-  }
-
   useEffect(() => {
     if (!onSave) return;
 
@@ -120,7 +107,7 @@ export const CodeProvider = ({ init_code, init_blocks, editorMode, onSave, child
       blocks, setBlocks, blocksRef,
       modeRef,
       getCurrentCode, getCurrentValue,
-      runCode, runRobot,
+      runCode,
     }}>
       {children}
     </CodeContext.Provider>

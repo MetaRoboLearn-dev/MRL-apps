@@ -19,9 +19,9 @@ const SimScreen = () => {
   return (
     <div className={`w-2/5 flex-center flex-col box-border z-20 relative`}>
       <SimHeader />
+      {awaitingReview && <SimPopUp />}
       {show()}
       <SimConsole />
-      {awaitingReview && <SimPopUp />}
     </div>
   );
 };

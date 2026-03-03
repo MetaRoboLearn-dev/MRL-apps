@@ -100,7 +100,6 @@ export interface CodeContextType {
   getCurrentCode: () => string;
   getCurrentValue: () => string;
   runCode: () => Promise<MoveCommand[] | null>;
-  runRobot: () => Promise<void>;
 }
 
 export interface UIContextType {

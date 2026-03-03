@@ -8,11 +8,12 @@ import {useConsole} from "../../hooks/useConsole.ts";
 const ButtonRobotRun = ({ disabled, robot }: { disabled: boolean; robot: string | null }) => {
   const { addLog } = useConsole();
   const { getCurrentCode } = useCode();
-  const { ustId } = useTaskConfig();
+  const { ustId, setAwaitingReview } = useTaskConfig();
 
   const mutation = useMutation({
     mutationFn: (code: string) => {
       if (!robot) throw new Error("No robot selected");
+      setAwaitingReview(true);
       return sendCommand(robot, code, ustId);
     },
     onError: (e) => console.error("Failed to send command:", e),

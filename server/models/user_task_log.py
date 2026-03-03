@@ -17,8 +17,8 @@ class EventTypes:
     SIM_END_FAIL = 5 # ok
     ROBOT_RUN = 6 # ok
     ROBOT_CODE_ERR = 7
-    ROBOT_END_SUCC = 8
-    ROBOT_END_FAIL = 9
+    ROBOT_END_SUCC = 8 # ok
+    ROBOT_END_FAIL = 9 # ok
     TASK_START = 10 # ok
     TASK_CONTINUE = 11
     TASK_FINISH = 12 # ok

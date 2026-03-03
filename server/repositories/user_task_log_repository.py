@@ -11,36 +11,6 @@ class UserTaskLogRepository:
     def __init__(self, session: Session):
         self.session = session
 
-    # ---------- READ ONE ----------
-    def get_by_id(self, log_id: int) -> Optional[UserTaskLog]:
-        return (
-            self.session.query(UserTaskLog)
-            .filter(UserTaskLog.id == log_id)
-            .first()
-        )
-
-    # ---------- LIST ----------
-    def list(
-        self,
-        *,
-        skip: int = 0,
-        limit: int = 50,
-        user_started_task_id: Optional[int] = None,
-        event_type_id: Optional[int] = None,
-        order_by_created_at: bool = True,
-    ) -> list[UserTaskLog]:
-        q = self.session.query(UserTaskLog)
-
-        if user_started_task_id is not None:
-            q = q.filter(UserTaskLog.user_started_task_id == user_started_task_id)
-        if event_type_id is not None:
-            q = q.filter(UserTaskLog.event_type_id == event_type_id)
-
-        if order_by_created_at:
-            q = q.order_by(UserTaskLog.created_at.asc().nullslast(), UserTaskLog.id.asc())
-
-        return q.offset(skip).limit(limit).all()
-
     # ---------- CREATE ----------
     def create(
             self,

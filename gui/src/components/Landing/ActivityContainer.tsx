@@ -66,7 +66,9 @@ const ActivityContainer = () => {
                     <span className="mr-2">Tip zadatka:</span>
                     <span className="font-bold text-dark-neutrals-400">{capitalizeFirstLetter(at.task_type)}</span>
                   </span>
-                  {at.started ? (
+                  {at.is_finished ? (
+                    <span className="font-bold text-turquoise-600">Završeno</span>
+                  ) : at.started ? (
                     <ButtonSolveContinue activityTaskId={at.activity_task_id} />
                   ) : (
                     <ButtonSolveStart activityTaskId={at.activity_task_id} />

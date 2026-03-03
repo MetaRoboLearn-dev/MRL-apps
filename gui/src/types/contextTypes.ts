@@ -13,7 +13,8 @@ export interface AuthContextType {
 }
 
 export interface TaskConfigType {
-  mode: TaskMode
+  ustId: number | null;
+  mode: TaskMode;
   setMode: (taskMode: TaskMode) => void;
   selectedType: TileType;
   setSelectedType: (selectedType: TileType) => void;

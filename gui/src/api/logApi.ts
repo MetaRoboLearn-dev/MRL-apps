@@ -1,27 +1,33 @@
-export const enum Action {
-  CODE_EDIT = "code_edit",
-  SIM_RUN = "sim_run",
-  SIM_CODE_ERR = "sim_code_err",
-  SIM_END_SUCC = "sim_end_succ",
-  SIM_END_FAIL = "sim_end_fail",
-  ROBOT_RUN = "robot_run",
-  ROBOT_CODE_ERR = "robot_code_err",
-  ROBOT_END_SUCC = "robot_end_succ",
-  ROBOT_END_FAIL = "robot_end_fail",
-  TASK_START = "task_start",
-  TASK_CONTINUE = "task_continue",
-  TASK_FINISH = "task_finish"
-}
+export const EventTypes = {
+  TASK_START: 1,
+  SIM_RUN: 2,
+  SIM_CODE_ERR: 3,
+  SIM_END_SUCC: 4,
+  SIM_END_FAIL: 5,
+  ROBOT_RUN: 6,
+  ROBOT_CODE_ERR: 7,
+  ROBOT_END_SUCC: 8,
+  ROBOT_END_FAIL: 9,
+  CODE_EDIT: 10,
+  TASK_CONTINUE: 11,
+  TASK_FINISH: 12,
+} as const;
 
-export const log_action = (group:string, mode:string, action:Action, value:string) => {
-  const url = "api/log-action";
-  fetch(url, {
+export const createLog = async (
+  userStartedTaskId: number | null,
+  eventTypeId: number,
+  codeSnapshot?: string | null,
+) => {
+  if (!userStartedTaskId) return
+  const response = await fetch("/api/user-task-logs", {
     method: "POST",
-    body: JSON.stringify({ group, mode, action, value }),
-    headers: {
-      "Content-Type": "application/json"
-    }
-  }).catch((err) => {
-    console.error("log_action failed:", err);
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({
+      user_started_task_id: userStartedTaskId,
+      event_type_id: eventTypeId,
+      code_snapshot: codeSnapshot,
+    }),
   });
-}
+  return response.json();
+};

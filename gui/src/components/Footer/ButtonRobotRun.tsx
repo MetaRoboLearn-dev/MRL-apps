@@ -2,15 +2,16 @@ import { FaRobot } from "react-icons/fa";
 import { useCode } from "../../hooks/useCode.ts";
 import { useMutation } from "@tanstack/react-query";
 import { sendCommand } from "../../api/brokerApi.ts";
+import {useTaskConfig} from "../../hooks/useTaskConfig.ts";
 
 const ButtonRobotRun = ({ disabled, robot }: { disabled: boolean; robot: string | null }) => {
-
   const { getCurrentCode } = useCode();
+  const { ustId } = useTaskConfig();
 
   const mutation = useMutation({
     mutationFn: (code: string) => {
       if (!robot) throw new Error("No robot selected");
-      return sendCommand(robot, code);
+      return sendCommand(robot, code, ustId);
     },
     onError: (e) => console.error("Failed to send command:", e),
   });

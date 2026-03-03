@@ -8,6 +8,10 @@ from flask_sock import Sock
 from functools import wraps
 import threading
 
+from database import db_session
+from models.user_task_log import EventTypes
+from repositories.user_task_log_repository import UserTaskLogRepository
+
 bp = Blueprint("broker", __name__, url_prefix="/api/broker")
 
 @bp.before_request
@@ -100,6 +104,8 @@ def list_robots():
 def send_command(robot_id: str):
     data = request.get_json(silent=True) or {}
     code = data.get("code", "")
+    user_started_task_id = data.get("user_started_task_id")
+
     if not code:
         return jsonify({"error": "code is required"}), 400
 
@@ -112,6 +118,17 @@ def send_command(robot_id: str):
         },
     )
     res.raise_for_status()
+
+    if user_started_task_id:
+        with db_session() as session:
+            log_repo = UserTaskLogRepository(session)
+            log_repo.create(
+                user_started_task_id=user_started_task_id,
+                event_type_id=EventTypes.ROBOT_RUN,
+                code_snapshot=code,
+            )
+            session.commit()
+
     return jsonify(res.json()), 200
 
 # ---------- ABORT COMMAND ----------
@@ -127,6 +144,9 @@ def abort_command(robot_id: str):
         },
     )
     res.raise_for_status()
+
+    # mozda napravit i log za abort
+
     return jsonify(res.json()), 200
 
 

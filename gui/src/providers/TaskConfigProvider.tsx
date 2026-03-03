@@ -12,7 +12,6 @@ interface Props {
 }
 
 export const TaskConfigProvider = ({ust, task, mode, children }: PropsWithChildren<Props>) => {
-
   // Grid editing options
   const [taskMode, setTaskMode] = useState<TaskMode>(mode || 'solve') // this is going to be true only while editing/creaing task
   const [selectedType, setSelectedType] = useState<TileType>(TileType.GROUND);
@@ -26,6 +25,9 @@ export const TaskConfigProvider = ({ust, task, mode, children }: PropsWithChildr
   const [isActive, setIsActive] = useState<boolean>(task.active);
   const [isLogged, setIsLogged] = useState<boolean>(ust?.activity_task.is_logged || false);
   const [hasRobotAccess, setHasRobotAccess] = useState<boolean>(ust?.activity_task.allows_robot || true)
+
+  // Task solving specific options
+  const ustId: number | null = ust?.id ?? null;
 
   // Generic options
   const [camMode, setCamMode] = useState<boolean>(false);
@@ -105,6 +107,7 @@ export const TaskConfigProvider = ({ust, task, mode, children }: PropsWithChildr
 
   return (
     <TaskConfigContext.Provider value={{
+      ustId,
       mode: taskMode, setMode: setTaskMode,
       selectedType, setSelectedType,
       selectedSticker, setSelectedSticker,

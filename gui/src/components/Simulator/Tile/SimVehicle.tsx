@@ -8,15 +8,15 @@ import {useFrame} from "@react-three/fiber";
 import {useTaskConfig} from "../../../hooks/useTaskConfig.ts";
 import {useGrid} from "../../../hooks/useGrid.ts";
 import {useUI} from "../../../hooks/useUI.ts";
-// import {Action, log_action} from "../../../api/logApi.ts";
-// import {useCode} from "../../../hooks/useCode.ts";
+import {createLog, EventTypes} from "../../../api/logApi.ts";
+import {useCode} from "../../../hooks/useCode.ts";
 
 const SimVehicle = () => {
-  // const { modeRef, getCurrentValue } = useCode();
+  const { getCurrentValue } = useCode();
   const { sizeX, sizeZ, barriers, finish } = useGrid();
   const { vehicleRef, startPosition, startRotation, position, rotation, isMoving, moveQueue, reset,
     setPosition, setRotation, setIsMoving, queueMoves, setCurrentMove } = useVehicle();
-  const { animationSpeed } = useTaskConfig();
+  const { animationSpeed, ustId } = useTaskConfig();
   const { setModalVisible, setModalHeader, setModalBody, setModalFooter } = useUI();
 
   const currentMoveRef = useRef<MoveCommand | null>(null);
@@ -40,19 +40,19 @@ const SimVehicle = () => {
   }
 
   const showModalWindow = (type: string) => {
-    // const val = getCurrentValue();
+    const val = getCurrentValue();
     if (type === 'succ'){
-      // log_action(groupName, modeRef.current, Action.SIM_END_SUCC, val)
+      void createLog(ustId, EventTypes.SIM_END_SUCC, val);
       setModalHeader('Čestitke!');
       setModalBody('Uspješno ste uputili vozilo do cilja, svaka čast!');
     }
     else if (type === 'fail'){
-      // log_action(groupName, modeRef.current, Action.SIM_END_FAIL, val)
+      void createLog(ustId, EventTypes.SIM_END_FAIL, val);
       setModalHeader('Uuuups!');
       setModalBody('Niste stigli do kraja, pokušajte ponovno!');
     }
     else if (type === 'stuck'){
-      // log_action(groupName, modeRef.current, Action.SIM_END_STUCK, val)
+      void createLog(ustId, EventTypes.SIM_END_FAIL, val);
       setModalHeader('Uuuups!');
       setModalBody('Negdje ste zapeli na putu, pokušajte ponovno!');
     }

@@ -64,22 +64,26 @@ def list_user_task_logs():
 
 # ---------- CREATE ----------
 @bp.route("/", methods=["POST"])
-def create_user_task_log():
+def create_log():
     data = request.get_json(silent=True) or {}
-    required = ("user_started_task_id",)
+
+    required = ("user_started_task_id", "event_type_id")
     missing = [k for k in required if k not in data]
     if missing:
         return jsonify({"error": "Missing fields", "missing": missing}), 400
 
     with db_session() as session:
-        repo = UserTaskLogRepository(session)
-        log = repo.create(
-            user_started_task_id=int(data["user_started_task_id"]),
-            event_type_id=int(data["event_type_id"]) if "event_type_id" in data and data["event_type_id"] is not None else None,
+        log_repo = UserTaskLogRepository(session)
+        log = log_repo.create(
+            user_started_task_id=data["user_started_task_id"],
+            event_type_id=data["event_type_id"],
             code_snapshot=data.get("code_snapshot"),
         )
-        return jsonify(_user_task_log_to_dict(log)), 201
+        session.commit()
 
+        if not log:
+            return jsonify({"skipped": True}), 200
+        return jsonify({"id": log.id}), 201
 
 # ---------- DELETE ----------
 @bp.route("/<int:log_id>", methods=["DELETE"])

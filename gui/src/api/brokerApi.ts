@@ -24,12 +24,15 @@ export const fetchRobots = async () => {
   return response.json();
 };
 
-export const sendCommand = async (robotId: string, code: string) => {
+export const sendCommand = async (robotId: string, code: string, ustId: number | null = null) => {
   const response = await fetch(`/api/broker/robots/${robotId}/command`, {
     credentials: 'include',
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ code }),
+    body: JSON.stringify({
+      code,
+      user_started_task_id: ustId,
+    }),
   });
 
   if (!response.ok) {

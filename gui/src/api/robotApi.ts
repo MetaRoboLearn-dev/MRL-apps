@@ -9,12 +9,13 @@ export const run_code = async (code: string, currentValue: string, ustId: number
         "Content-Type": "application/json",
       }
     });
-    if (response.ok) {
-      return await response.json();
-    }
+    return await response.json();
   } catch (e) {
     if (e instanceof Error) {
-      console.error(e.message);
+      return {
+        error: e.message,
+        output: ''
+      };
     }
   }
 }

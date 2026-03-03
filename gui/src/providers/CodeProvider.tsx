@@ -6,6 +6,7 @@ import {pythonGenerator} from "blockly/python";
 import {MoveCommand} from "../types.ts";
 import {run_code, run_robot} from "../api/robotApi.ts";
 import {useToast} from "../hooks/useToast.ts";
+import {useConsole} from "../hooks/useConsole.ts";
 
 interface Props {
   init_code: string
@@ -16,6 +17,7 @@ interface Props {
 
 export const CodeProvider = ({ init_code, init_blocks, editorMode, onSave, children }: PropsWithChildren<Props>) => {
   const { showToast } = useToast()
+  const { addLog } = useConsole()
   const { setSimFocused, robotUrl, setAwaitingReview, ustId } = useTaskConfig();
   const [code, setCodeState] = useState<string>(init_code || '');
   const [blocks, setBlocksState] = useState<string>(init_blocks || '')
@@ -78,9 +80,9 @@ export const CodeProvider = ({ init_code, init_blocks, editorMode, onSave, child
     const code = getCurrentCode();
     const value = getCurrentValue();
     const compiled = await run_code(code, value, ustId);
-
     if (compiled.error){
-      return null;
+      addLog("ERROR", compiled.error);
+      return null
     }
     return processSteps(compiled.output.split('\n'));
   }

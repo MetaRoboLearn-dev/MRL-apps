@@ -1,9 +1,10 @@
 import {FaStop} from "react-icons/fa";
 import { useMutation } from "@tanstack/react-query";
 import { sendAbort } from "../../api/brokerApi.ts";
+import {useConsole} from "../../hooks/useConsole.ts";
 
 const ButtonRobotStop = ({ disabled, robot }: { disabled: boolean; robot: string | null }) => {
-
+  const { addLog } = useConsole();
 
   const mutation = useMutation({
     mutationFn: () => {
@@ -18,7 +19,10 @@ const ButtonRobotStop = ({ disabled, robot }: { disabled: boolean; robot: string
             className={`bg-tomato-500 text-light-cyan-200 button-square ml-2 
                     ${disabled ? 'bg-tomato-700 text-light-cyan-700' : 'hover:cursor-pointer hover:bg-tomato-600'} transition`}
             onClick={() => {
-              if (!robot) return;
+              if (!robot) {
+                addLog("ERROR","Abort - No robot selected");
+                return;
+              }
               mutation.mutate();
             }}
     >

@@ -4,6 +4,7 @@ import * as THREE from "three";
 import {Barrier, MoveCommand, Position, Rotation, Sticker, TileType} from "../types.ts";
 import {TaskMode} from "./tasksTypes.ts";
 import {CurrentUser} from "./userTypes.ts";
+import {LogEntry} from "./consoleTypes.ts";
 
 export interface AuthContextType {
   user: CurrentUser | null;
@@ -117,4 +118,10 @@ export interface UIContextType {
 export interface ToastContextType {
   showToast: (message: string) => void;
   closeToast: (id: number) => void;
+}
+
+export interface ConsoleContextType {
+  logs: LogEntry[];
+  addLog: (level: LogEntry["level"], message: string) => void;
+  clearLogs: () => void;
 }

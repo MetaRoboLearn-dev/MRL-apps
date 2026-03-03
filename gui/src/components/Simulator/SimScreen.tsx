@@ -4,6 +4,7 @@ import {useTaskConfig} from "../../hooks/useTaskConfig.ts";
 import CamScreen from "./Camera/CamScreen.tsx";
 import SimPopUp from "./SimPopUp.tsx";
 import SimOptions from "./UI/SimOptions.tsx";
+import SimConsole from "./SimConsole.tsx";
 
 const SimScreen = () => {
   const { camMode, editMode, mode, awaitingReview } = useTaskConfig();
@@ -19,6 +20,7 @@ const SimScreen = () => {
     <div className={`w-2/5 flex-center flex-col box-border z-20 relative`}>
       <SimHeader />
       {show()}
+      <SimConsole />
       {awaitingReview && <SimPopUp />}
     </div>
   );

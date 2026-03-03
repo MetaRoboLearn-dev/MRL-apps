@@ -60,6 +60,34 @@ export const safeCloseWs = (ws: WebSocket | null) => {
   }
 };
 
+export const connectRobotPrintSocket = (
+  robotId: string,
+  onMessage: (entry: { RobotId: string; Timestamp: string; Text: string }) => void,
+  onStatusChange: (status: 'connecting' | 'connected' | 'disconnected' | 'error') => void,
+): WebSocket => {
+  const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+  const url = `${protocol}://${window.location.host}/api/broker/robots/${robotId}/stdout`;
+
+  onStatusChange('connecting');
+  const ws = new WebSocket(url);
+  ws.onopen = () => onStatusChange('connected');
+  ws.onclose = () => onStatusChange('disconnected');
+  ws.onerror = () => onStatusChange('error');
+  ws.onmessage = (event) => {
+    try {
+      const data = JSON.parse(event.data);
+      if (data.RobotId !== undefined) {
+        onMessage(data as { RobotId: string; Timestamp: string; Text: string });
+      }
+    } catch {
+
+      onMessage({ RobotId: robotId, Timestamp: new Date().toISOString(), Text: event.data });
+    }
+  };
+
+  return ws;
+};
+
 export const connectRobotLogSocket = (
   robotId: string,
   onMessage: (log: { LogLevel: string; Message: string; RobotId?: string; Timestamp?: string }) => void,

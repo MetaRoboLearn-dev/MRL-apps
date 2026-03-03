@@ -4,6 +4,7 @@ import {
   fetchRobots,
   sendCommand,
   connectRobotLogSocket,
+  connectRobotPrintSocket,
   safeCloseWs,
   sendAbort,
 } from "../api/brokerApi.ts";
@@ -76,6 +77,11 @@ const BrokerTestPage = () => {
   const [wsStatus, setWsStatus] = useState<"idle" | "connecting" | "connected" | "disconnected" | "error">("idle");
   const wsRef = useRef<WebSocket | null>(null);
   const logEndRef = useRef<HTMLDivElement>(null);
+
+  const [printEntries, setPrintEntries] = useState<{ text: string; timestamp?: string }[]>([]);
+  const [printWsStatus, setPrintWsStatus] = useState<"idle" | "connecting" | "connected" | "disconnected" | "error">("idle");
+  const printWsRef = useRef<WebSocket | null>(null);
+  const printEndRef = useRef<HTMLDivElement>(null);
 
   const didRun = useRef(false);
 
@@ -164,6 +170,29 @@ const BrokerTestPage = () => {
     return () => {
       safeCloseWs(ws);
       wsRef.current = null;
+    };
+  }, [selectedRobotId]);
+
+  useEffect(() => {
+    if (!selectedRobotId) return;
+
+    safeCloseWs(printWsRef.current);
+    printWsRef.current = null;
+    setPrintEntries([]);
+
+    const ws = connectRobotPrintSocket(
+      selectedRobotId,
+      (msg) => {
+        setPrintEntries((prev) => [...prev, { text: msg.Text, timestamp: msg.Timestamp }]);
+        setTimeout(() => printEndRef.current?.scrollIntoView({ behavior: "smooth" }), 50);
+      },
+      (status) => setPrintWsStatus(status),
+    );
+    printWsRef.current = ws;
+
+    return () => {
+      safeCloseWs(ws);
+      printWsRef.current = null;
     };
   }, [selectedRobotId]);
 
@@ -284,6 +313,33 @@ const BrokerTestPage = () => {
             </div>
           ))}
           <div ref={logEndRef} />
+        </div>
+      </Section>
+      {/* Step 5 — Robot stdout (robot-print) */}
+      <Section
+        title="5. Robot stdout (WebSocket)"
+        status={printWsStatus === "idle" ? "idle" : printWsStatus === "connecting" ? "loading" : printWsStatus === "connected" ? "ok" : "error"}
+      >
+        <p className="text-xs text-gray-400">
+          Streams live <code>print()</code> output from the robot. Status:{" "}
+          <span className="font-medium">{printWsStatus}</span>
+        </p>
+        <div className="flex gap-2">
+          <button onClick={() => setPrintEntries([])} className="px-4 py-1.5 text-xs text-gray-400 hover:text-gray-600">
+            Clear
+          </button>
+        </div>
+        <div className="bg-gray-900 rounded p-3 h-64 overflow-y-auto font-mono text-xs">
+          {printEntries.length === 0 && <span className="text-gray-500">No output yet…</span>}
+          {printEntries.map((entry, i) => (
+            <div key={i} className="leading-5 text-green-300">
+              <span className="text-gray-500 mr-2">
+                {entry.timestamp ? new Date(entry.timestamp).toLocaleTimeString() : ""}
+              </span>
+              {entry.text}
+            </div>
+          ))}
+          <div ref={printEndRef} />
         </div>
       </Section>
     </div>

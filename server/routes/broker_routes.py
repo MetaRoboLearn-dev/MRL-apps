@@ -189,3 +189,59 @@ def init_broker_websocket(app):
             closed.set()
             if broker_ws:
                 broker_ws.close()
+
+    @sock.route("/api/broker/robots/<robot_id>/stdout")
+    def robot_stdout_proxy(ws, robot_id):
+        print(f"[WS] stdout connection attempt for robot {robot_id}")
+        try:
+            _ensure_logged_in()
+        except Exception as e:
+            ws.send(json.dumps({"error": f"Broker login failed: {str(e)}"}))
+            ws.close()
+            return
+
+        broker_ws = None
+        closed = threading.Event()
+
+        def on_broker_message(_, message):
+            if not closed.is_set():
+                try:
+                    ws.send(message)
+                except Exception:
+                    closed.set()
+
+        def on_broker_error(_, error):
+            if not closed.is_set():
+                try:
+                    ws.send(json.dumps({"error": str(error)}))
+                except Exception:
+                    pass
+            closed.set()
+
+        def on_broker_close(_, close_status_code, close_msg):
+            closed.set()
+
+        broker_ws = websocket.WebSocketApp(
+            f"{BROKER_WS_URL}/client/robot-print/{robot_id}",
+            header={
+                "client-id": str(_broker_state["client_id"]),
+                "token": str(_broker_state["token"]),
+            },
+            on_message=on_broker_message,
+            on_error=on_broker_error,
+            on_close=on_broker_close,
+        )
+
+        broker_thread = threading.Thread(target=broker_ws.run_forever, daemon=True)
+        broker_thread.start()
+
+        try:
+            while not closed.is_set():
+                try:
+                    ws.receive(timeout=1)
+                except Exception:
+                    break
+        finally:
+            closed.set()
+            if broker_ws:
+                broker_ws.close()

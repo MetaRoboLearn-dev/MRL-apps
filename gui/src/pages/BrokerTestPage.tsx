@@ -5,6 +5,7 @@ import {
   sendCommand,
   connectRobotLogSocket,
   connectRobotPrintSocket,
+  connectRobotCameraSocket,
   safeCloseWs,
   sendAbort,
 } from "../api/brokerApi.ts";
@@ -82,6 +83,11 @@ const BrokerTestPage = () => {
   const [printWsStatus, setPrintWsStatus] = useState<"idle" | "connecting" | "connected" | "disconnected" | "error">("idle");
   const printWsRef = useRef<WebSocket | null>(null);
   const printEndRef = useRef<HTMLDivElement>(null);
+
+  const [cameraFrameUrl, setCameraFrameUrl] = useState<string | null>(null);
+  const [cameraWsStatus, setCameraWsStatus] = useState<"idle" | "connecting" | "connected" | "disconnected" | "error">("idle");
+  const cameraWsRef = useRef<WebSocket | null>(null);
+  const prevFrameUrlRef = useRef<string | null>(null);
 
   const didRun = useRef(false);
 
@@ -193,6 +199,41 @@ const BrokerTestPage = () => {
     return () => {
       safeCloseWs(ws);
       printWsRef.current = null;
+    };
+  }, [selectedRobotId]);
+
+  useEffect(() => {
+    if (!selectedRobotId) return;
+
+    safeCloseWs(cameraWsRef.current);
+    cameraWsRef.current = null;
+    if (prevFrameUrlRef.current) {
+      URL.revokeObjectURL(prevFrameUrlRef.current);
+      prevFrameUrlRef.current = null;
+    }
+    setCameraFrameUrl(null);
+    
+    const ws = connectRobotCameraSocket(
+      selectedRobotId,
+      (blob) => {
+        const url = URL.createObjectURL(blob);
+        setCameraFrameUrl((prev) => {
+          if (prev) URL.revokeObjectURL(prev);
+          return url;
+        });
+        prevFrameUrlRef.current = url;
+      },
+      (status) => setCameraWsStatus(status),
+    );
+    cameraWsRef.current = ws;
+
+    return () => {
+      safeCloseWs(ws);
+      cameraWsRef.current = null;      
+      if (prevFrameUrlRef.current) {
+        URL.revokeObjectURL(prevFrameUrlRef.current);
+        prevFrameUrlRef.current = null;
+      }
     };
   }, [selectedRobotId]);
 
@@ -340,6 +381,52 @@ const BrokerTestPage = () => {
             </div>
           ))}
           <div ref={printEndRef} />
+        </div>
+      </Section>
+      {/* Step 6 — Robot stdout (robot-print) */}
+      <Section
+        title="6. Robot camra (WebSocket)"
+        status={printWsStatus === "idle" ? "idle" : printWsStatus === "connecting" ? "loading" : printWsStatus === "connected" ? "ok" : "error"}
+      >
+        <p className="text-xs text-gray-400">
+          Streams live <code>camera feed</code> from the robot. Status:{" "}
+          <span className="font-medium">{printWsStatus}</span>
+        </p>
+        <div className="flex gap-2">
+          <button onClick={() => setPrintEntries([])} className="px-4 py-1.5 text-xs text-gray-400 hover:text-gray-600">
+            Clear
+          </button>
+        </div>
+        <div className="bg-gray-900 rounded p-3 h-64 overflow-y-auto font-mono text-xs">
+          {printEntries.length === 0 && <span className="text-gray-500">No output yet…</span>}
+          {printEntries.map((entry, i) => (
+            <div key={i} className="leading-5 text-green-300">
+              <span className="text-gray-500 mr-2">
+                {entry.timestamp ? new Date(entry.timestamp).toLocaleTimeString() : ""}
+              </span>
+              {entry.text}
+            </div>
+          ))}
+          <div ref={printEndRef} />
+        </div>
+      </Section>
+      {/* Step 6 — Camera feed (WebSocket) */}
+      <Section
+        title="6. Camera Feed (WebSocket)"
+        status={cameraWsStatus === "idle" ? "idle" : cameraWsStatus === "connecting" ? "loading" : cameraWsStatus === "connected" ? "ok" : "error"}
+      >
+        <p className="text-xs text-gray-400">
+          Live JPEG frames from the robot camera. Status:{" "}
+          <span className="font-medium">{cameraWsStatus}</span>
+        </p>
+        <div className="bg-gray-900 rounded flex items-center justify-center" style={{ minHeight: "240px" }}>
+          {cameraFrameUrl ? (
+            <img src={cameraFrameUrl} alt="Robot camera" className="max-w-full max-h-60 rounded" />
+          ) : (
+            <span className="text-gray-500 text-xs font-mono">
+              {selectedRobotId ? "Waiting for frames…" : "No robot selected."}
+            </span>
+          )}
         </div>
       </Section>
     </div>

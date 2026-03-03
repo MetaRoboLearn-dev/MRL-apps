@@ -21,6 +21,7 @@ BROKER_URL = os.environ.get("BROKER_API_URL", "http://localhost:8000")
 BROKER_WS_URL = os.environ.get("BROKER_WS_URL", "ws://localhost:8000")
 BROKER_CLIENT_NAME = os.environ.get("BROKER_CLIENT_NAME", "mrl-app-server")
 BROKER_API_KEY = os.environ.get("BROKER_API_KEY", "")
+VIDEO_WS_URL = os.environ.get("VIDEO_WS_URL", "ws://localhost:8001")
 
 _broker_state = {
     "client_id": None,
@@ -245,3 +246,61 @@ def init_broker_websocket(app):
             closed.set()
             if broker_ws:
                 broker_ws.close()
+
+    @sock.route("/api/broker/robots/<robot_id>/camera")
+    def robot_camera_proxy(ws, robot_id):
+        print(f"[WS] camera connection attempt for robot {robot_id}")
+        try:
+            _ensure_logged_in()
+        except Exception as e:
+            ws.send(json.dumps({"error": f"Broker login failed: {str(e)}"}))
+            ws.close()
+            return
+
+        video_ws = None
+        closed = threading.Event()
+
+        def on_video_message(_, message):
+            if not closed.is_set():
+                try:
+                    ws.send(message)
+                except Exception:
+                    closed.set()
+
+        def on_video_error(_, error):
+            if not closed.is_set():
+                try:
+                    ws.send(json.dumps({"error": str(error)}))
+                except Exception:
+                    pass
+            closed.set()
+
+        def on_video_close(_, close_status_code, close_msg):
+            closed.set()
+
+        video_ws = websocket.WebSocketApp(
+            f"{VIDEO_WS_URL}/robot/{robot_id}/get-video-stream",
+            header={
+                # send both forms — video server decorator may check either
+                "client-id": str(_broker_state["client_id"]),
+                "client_id": str(_broker_state["client_id"]),
+                "token": str(_broker_state["token"]),
+            },
+            on_message=on_video_message,
+            on_error=on_video_error,
+            on_close=on_video_close,
+        )
+
+        video_thread = threading.Thread(target=video_ws.run_forever, daemon=True)
+        video_thread.start()
+
+        try:
+            while not closed.is_set():
+                try:
+                    ws.receive(timeout=1)
+                except Exception:
+                    break
+        finally:
+            closed.set()
+            if video_ws:
+                video_ws.close()

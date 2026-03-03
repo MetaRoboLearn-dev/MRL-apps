@@ -60,6 +60,36 @@ export const safeCloseWs = (ws: WebSocket | null) => {
   }
 };
 
+export const connectRobotCameraSocket = (
+  robotId: string,
+  onFrame: (blob:Blob) => void,
+  onStatusChange: (status: 'connecting' | 'connected' | 'disconnected' | 'error') => void,
+): WebSocket => {
+  const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+  const url = `${protocol}://${window.location.host}/api/broker/robots/${robotId}/camera`;
+
+  onStatusChange('connecting');
+  const ws = new WebSocket(url);
+  ws.binaryType = 'blob';
+
+  ws.onopen = () => onStatusChange('connected');
+  ws.onclose = () => onStatusChange('disconnected');
+  ws.onerror = () => onStatusChange('error');
+  ws.onmessage = (event) => {
+    try {
+      if (event.data instanceof Blob) {
+        onFrame(event.data);
+      } else {
+        const data = JSON.parse(event.data);
+        console.error('Received non-blob message on camera socket:', data);
+      }
+    } catch (error) {
+      console.error('Error processing camera socket message:', error);
+    }
+  };
+  return ws;
+};
+
 export const connectRobotPrintSocket = (
   robotId: string,
   onMessage: (entry: { RobotId: string; Timestamp: string; Text: string }) => void,

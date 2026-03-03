@@ -10,3 +10,6 @@ containerisation/.env
 # SSL certificates – generated at runtime
 nginx/ssl/
 containerisation/nginx/ssl/
+
+# Backups – generated at runtime
+containerisation/backups/

@@ -16,7 +16,7 @@ interface Props {
 
 export const CodeProvider = ({ init_code, init_blocks, editorMode, onSave, children }: PropsWithChildren<Props>) => {
   const { showToast } = useToast()
-  const { setSimFocused, robotUrl, setAwaitingReview } = useTaskConfig();
+  const { setSimFocused, robotUrl, setAwaitingReview, ustId } = useTaskConfig();
   const [code, setCodeState] = useState<string>(init_code || '');
   const [blocks, setBlocksState] = useState<string>(init_blocks || '')
 
@@ -76,7 +76,8 @@ export const CodeProvider = ({ init_code, init_blocks, editorMode, onSave, child
   const runCode = async () => {
     setSimFocused(false);
     const code = getCurrentCode();
-    const compiled = await run_code(code);
+    const value = getCurrentValue();
+    const compiled = await run_code(code, value, ustId);
 
     if (compiled.error){
       return null;

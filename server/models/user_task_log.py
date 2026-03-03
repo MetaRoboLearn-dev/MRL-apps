@@ -11,8 +11,8 @@ class EventType(Base):
 class EventTypes:
     """Constants matching event_types seed data."""
     CODE_EDIT = 1 # ok
-    SIM_RUN = 2
-    SIM_CODE_ERR = 3
+    SIM_RUN = 2 # ok
+    SIM_CODE_ERR = 3 # ok
     SIM_END_SUCC = 4 # ok
     SIM_END_FAIL = 5 # ok
     ROBOT_RUN = 6 # ok

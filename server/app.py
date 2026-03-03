@@ -21,7 +21,7 @@ from database import init_db
 from sb import sb_run_python
 from auth import init_auth
 from routes import user_routes, task_routes, activity_routes, activity_task_routes, user_started_task_routes, \
-    user_task_log_routes, type_routes, broker_routes, auth_routes
+    user_task_log_routes, type_routes, broker_routes, auth_routes, sandbox_routes
 import models
 
 app = Flask(__name__)
@@ -60,7 +60,7 @@ app.register_blueprint(activity_task_routes.bp)
 app.register_blueprint(user_started_task_routes.bp)
 app.register_blueprint(user_task_log_routes.bp)
 app.register_blueprint(type_routes.bp)
-
+app.register_blueprint(sandbox_routes.bp)
 app.register_blueprint(broker_routes.bp)
 broker_routes.init_broker_websocket(app)
 
@@ -87,11 +87,6 @@ def health():
 @app.route('/execute', methods=['POST'])
 def execute():
     return jsonify({"status": "ok"}), 200
-
-@app.route('/api/run-python', methods=['POST'])
-def run_python():
-    code = request.json.get("code", "")
-    return sb_run_python(code)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

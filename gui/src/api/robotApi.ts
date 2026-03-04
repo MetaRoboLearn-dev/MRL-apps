@@ -1,10 +1,22 @@
-export const run_code = async (code: string, currentValue: string, ustId: number | null = null) => {
+import {GridState} from "../types/tasksTypes.ts";
+
+export const run_code = async (
+  code: string,
+  currentValue: string,
+  ustId: number | null = null,
+  gridState: GridState | null = null,
+) => {
   const url = "/api/sandbox/run-python";
   try {
     const response = await fetch(url, {
       credentials: 'include',
       method: "POST",
-      body: JSON.stringify({ code, user_started_task_id: ustId, code_snapshot: currentValue }),
+      body: JSON.stringify({
+        code,
+        user_started_task_id: ustId,
+        code_snapshot: currentValue,
+        grid_state: gridState,
+      }),
       headers: {
         "Content-Type": "application/json",
       }
@@ -16,35 +28,6 @@ export const run_code = async (code: string, currentValue: string, ustId: number
         error: e.message,
         output: ''
       };
-    }
-  }
-}
-
-export const run_robot = async (code: string, robotUrl: string | null) => {
-  if (!robotUrl) return;
-  const url = robotUrl + "/execute";
-  try {
-    const response = await fetch(url, {
-      credentials: 'include',
-      method: "POST",
-      body: JSON.stringify({ code: code }),
-      headers: {
-        "Content-Type": "application/json",
-      }
-    });
-    if (response.ok) {
-      return response.json();
-    }
-    else {
-      return {
-        error: "Robot error",
-        status: response.status,
-        statusText: response.statusText
-      }
-    }
-  } catch (e) {
-    if(e instanceof Error) {
-      return e;
     }
   }
 }

@@ -12,6 +12,19 @@ export default defineConfig({
     }),
     react(),
     tailwindcss(),
+    // Suppress expected "client disconnected mid-stream" noise from the
+    // WebSocket proxy (camera feed, hot-reload, navigation, etc.).
+    {
+      name: 'suppress-ws-proxy-noise',
+      configureServer(server) {
+        const NOISE = /ECONNABORTED|ECONNRESET|EPIPE|ETIMEDOUT/;
+        const orig = server.config.logger.error.bind(server.config.logger);
+        server.config.logger.error = (msg, opts) => {
+          if (typeof msg === 'string' && msg.includes('ws proxy') && NOISE.test(msg)) return;
+          orig(msg, opts);
+        };
+      },
+    },
   ],
   server: {
     port: 3000,
@@ -20,7 +33,7 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:5000',
         changeOrigin: true,
-        ws: true
+        ws: true,
       }
     }
   },

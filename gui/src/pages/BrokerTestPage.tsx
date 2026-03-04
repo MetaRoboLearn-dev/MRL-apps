@@ -383,40 +383,14 @@ const BrokerTestPage = () => {
           <div ref={printEndRef} />
         </div>
       </Section>
-      {/* Step 6 — Robot stdout (robot-print) */}
-      <Section
-        title="6. Robot camra (WebSocket)"
-        status={printWsStatus === "idle" ? "idle" : printWsStatus === "connecting" ? "loading" : printWsStatus === "connected" ? "ok" : "error"}
-      >
-        <p className="text-xs text-gray-400">
-          Streams live <code>camera feed</code> from the robot. Status:{" "}
-          <span className="font-medium">{printWsStatus}</span>
-        </p>
-        <div className="flex gap-2">
-          <button onClick={() => setPrintEntries([])} className="px-4 py-1.5 text-xs text-gray-400 hover:text-gray-600">
-            Clear
-          </button>
-        </div>
-        <div className="bg-gray-900 rounded p-3 h-64 overflow-y-auto font-mono text-xs">
-          {printEntries.length === 0 && <span className="text-gray-500">No output yet…</span>}
-          {printEntries.map((entry, i) => (
-            <div key={i} className="leading-5 text-green-300">
-              <span className="text-gray-500 mr-2">
-                {entry.timestamp ? new Date(entry.timestamp).toLocaleTimeString() : ""}
-              </span>
-              {entry.text}
-            </div>
-          ))}
-          <div ref={printEndRef} />
-        </div>
-      </Section>
+      
       {/* Step 6 — Camera feed (WebSocket) */}
       <Section
         title="6. Camera Feed (WebSocket)"
         status={cameraWsStatus === "idle" ? "idle" : cameraWsStatus === "connecting" ? "loading" : cameraWsStatus === "connected" ? "ok" : "error"}
       >
         <p className="text-xs text-gray-400">
-          Live JPEG frames from the robot camera. Status:{" "}
+          Live frames from the robot camera. Status:{" "}
           <span className="font-medium">{cameraWsStatus}</span>
         </p>
         <div className="bg-gray-900 rounded flex items-center justify-center" style={{ minHeight: "240px" }}>

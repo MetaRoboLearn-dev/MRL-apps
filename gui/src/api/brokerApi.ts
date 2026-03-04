@@ -81,13 +81,39 @@ export const connectRobotCameraSocket = (
   ws.onmessage = (event) => {
     try {
       if (event.data instanceof Blob) {
-        onFrame(event.data);
-      } else {
-        const data = JSON.parse(event.data);
-        console.error('Received non-blob message on camera socket:', data);
+        // Raw binary frame from the video pipeline.
+        // The BridgeNode sends bytes(msg.data) with no format metadata, so
+        // we must tag explicitly. The ROS ImageCompressorNode always encodes
+        // to WebP — tag accordingly so browsers don't need to content-sniff.
+        const blob = event.data.type
+          ? event.data
+          : new Blob([event.data], { type: 'image/webp' });
+        onFrame(blob);
+      } else if (typeof event.data === 'string') {
+        // rosbridge JSON envelope:
+        //   { op: "publish", topic: "/robot/camera_frame",
+        //     msg: { format: "webp" | "jpeg", data: "<base64>" } }
+        // or a flat { format, data } from custom servers.
+        const parsed = JSON.parse(event.data);
+        const msg: { format?: string; data?: string } = parsed.msg ?? parsed;
+
+        if (msg?.data && typeof msg.format === 'string') {
+          const fmt = msg.format.toLowerCase();
+          const mimeType = fmt.includes('webp') ? 'image/webp'
+            : fmt.includes('jpeg') || fmt.includes('jpg') ? 'image/jpeg'
+            : fmt.includes('png') ? 'image/png'
+            : 'application/octet-stream';
+
+          const raw = atob(msg.data);
+          const bytes = new Uint8Array(raw.length);
+          for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
+          onFrame(new Blob([bytes], { type: mimeType }));
+        } else {
+          console.warn('[camera] Unexpected message shape:', parsed);
+        }
       }
     } catch (error) {
-      console.error('Error processing camera socket message:', error);
+      console.error('[camera] Error processing message:', error, event.data);
     }
   };
   return ws;

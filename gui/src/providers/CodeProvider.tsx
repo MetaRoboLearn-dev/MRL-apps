@@ -3,7 +3,6 @@ import {CodeContext} from "./Context.tsx";
 import {useTaskConfig} from "../hooks/useTaskConfig.ts";
 import * as Blockly from "blockly";
 import {pythonGenerator} from "blockly/python";
-import {MoveCommand} from "../types.ts";
 import {run_code} from "../api/robotApi.ts";
 import {useConsole} from "../hooks/useConsole.ts";
 
@@ -52,37 +51,16 @@ export const CodeProvider = ({ init_code, init_blocks, editorMode, onSave, child
     }
   }
 
-  const processSteps = (steps: string[]): MoveCommand[] => {
-    return steps
-      .filter(step => step.trim() !== '')
-      .map(step => {
-        const command = step.trim().toLowerCase();
-        if (command === 'naprijed') {
-          return { type: 'move', direction: 'forward' }
-        }
-        else if (command === 'nazad') {
-          return { type: 'move', direction: 'backward' }
-        }
-        else if (command === 'lijevo') {
-          return { type: 'rotate', direction: 'left' }
-        }
-        else if (command === 'desno') {
-          return { type: 'rotate', direction: 'right' }
-        }
-        return { type: 'invalid', command }
-      })
-  }
-
   const runCode = async () => {
     setSimFocused(false);
     const code = getCurrentCode();
     const value = getCurrentValue();
     const compiled = await run_code(code, value, ustId);
-    if (compiled.error){
+    if (compiled.error) {
       addLog("ERROR", compiled.error);
-      return null
+      return null;
     }
-    return processSteps(compiled.output.split('\n'));
+    return compiled.steps;
   }
 
   useEffect(() => {

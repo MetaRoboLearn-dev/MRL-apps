@@ -82,8 +82,6 @@ const SimVehicle = () => {
     const targetQuat = new THREE.Quaternion().setFromEuler(targetRot.current);
     const rotationCloseEnough = vehicleRef.current.quaternion.angleTo(targetQuat) < 0.01;
 
-    // console.log(positionCloseEnough, vehicleRef.current.position, targetPos.current);
-
     if (positionCloseEnough && rotationCloseEnough) {
       if(moveQueue.length === 0){
         setIsMoving(false);
@@ -99,8 +97,6 @@ const SimVehicle = () => {
       const nextMove = moveQueue[0];
       currentMoveRef.current = nextMove;
       const newMoveQueue = [...moveQueue.slice(1)];
-
-      // console.log(nextMove, currentMove);
 
       if (nextMove.type === 'move' && nextMove.direction) {
         const moveDirection = new Vector3(0, 0, 0);

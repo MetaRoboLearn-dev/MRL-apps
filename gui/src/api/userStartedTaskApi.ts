@@ -44,3 +44,11 @@ export const updateUserStartedTask = async (ustId: number, data: { current_value
 
   return response.json();
 };
+
+export const finishTask = async (ustId: number) => {
+  const response = await fetch(`/api/user-started-tasks/${ustId}/finish`, {
+    method: "POST",
+    credentials: "include",
+  });
+  return response.json();
+};

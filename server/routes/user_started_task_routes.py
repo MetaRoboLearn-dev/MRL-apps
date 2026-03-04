@@ -6,7 +6,7 @@ from flask_login import current_user, login_required
 from auth import role_required
 from database import db_session
 from repositories.user_started_task_repository import UserStartedTaskRepository
-from utils import parse_boolean_param, _to_utc_iso
+from utils import parse_boolean_param, _to_utc_iso, utc_now
 
 bp = Blueprint("user_started_tasks", __name__, url_prefix="/api/user-started-tasks")
 
@@ -46,7 +46,6 @@ def _user_started_task_to_dict(ust):
     }
 
 # ---------- READ INFO FOR USER AND ACTIVITY TASK ----------
-# TODO - if activity isnt active or ran out of time, cant continue
 @bp.route("/activity-task/<int:activity_task_id>", methods=["GET"])
 def get_user_started_task_activity_task(activity_task_id: int):
     with db_session() as session:
@@ -54,6 +53,17 @@ def get_user_started_task_activity_task(activity_task_id: int):
         ust = repo.get_by_user_activity_task(activity_task_id, current_user.id)
         if not ust:
             return jsonify({"error": "UserStartedTask not found for that activity task"}), 404
+
+        if ust.is_finished:
+            return jsonify({"error": "Task is already finished"}), 400
+
+        activity = ust.activity_task.activity if ust.activity_task else None
+        if activity:
+            if not activity.active:
+                return jsonify({"error": "Activity is no longer active"}), 403
+            if activity.time_to and activity.time_to < utc_now():
+                return jsonify({"error": "Activity has expired"}), 403
+
         return jsonify(_user_started_task_to_dict(ust)), 200
 
 # ---------- READ ONE ----------
@@ -132,3 +142,14 @@ def delete_user_started_task(user_started_task_id: int):
         if not ok:
             return jsonify({"error": "UserStartedTask not found"}), 404
         return jsonify({"deleted": True}), 200
+
+
+# ---------- FINISH SOLVING ----------
+@bp.route("/<int:ust_id>/finish", methods=["POST"])
+def finish_task(ust_id: int):
+    with db_session() as session:
+        repo = UserStartedTaskRepository(session)
+        ust = repo.finish(ust_id, actor_user_id=current_user.id)
+        if not ust:
+            return jsonify({"error": "Not found"}), 404
+        return jsonify({"finished": True}), 200

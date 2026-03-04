@@ -4,6 +4,8 @@ from sqlalchemy.orm import Session, joinedload
 
 from models import ActivityTask
 from models.user_started_task import UserStartedTask
+from models.user_task_log import EventTypes
+from repositories.user_task_log_repository import UserTaskLogRepository
 from utils import utc_now
 
 
@@ -18,6 +20,7 @@ class UserStartedTaskRepository:
             .options(
                 joinedload(UserStartedTask.activity_task).joinedload(ActivityTask.task),
                 joinedload(UserStartedTask.activity_task).joinedload(ActivityTask.type),
+                joinedload(UserStartedTask.activity_task).joinedload(ActivityTask.activity),
             )
             .filter(UserStartedTask.activity_task_id == activity_task_id, UserStartedTask.started_by == user_id)
             .first()
@@ -77,6 +80,15 @@ class UserStartedTaskRepository:
         )
 
         self.session.add(ust)
+        self.session.flush()  # generates ust.id without committing
+
+        log_repo = UserTaskLogRepository(self.session)
+        log_repo.create(
+            user_started_task_id=ust.id,
+            event_type_id=EventTypes.TASK_START,
+            code_snapshot=current_value,
+        )
+
         self.session.commit()
         self.session.refresh(ust)
         return ust
@@ -101,6 +113,13 @@ class UserStartedTaskRepository:
         ust.updated_at = utc_now()
         ust.updated_by = actor_user_id
 
+        log_repo = UserTaskLogRepository(self.session)
+        log_repo.create(
+            user_started_task_id=user_started_task_id,
+            event_type_id=EventTypes.CODE_EDIT,
+            code_snapshot=current_value,
+        )
+
         self.session.commit()
         return ust
 
@@ -113,3 +132,25 @@ class UserStartedTaskRepository:
         self.session.delete(ust)
         self.session.commit()
         return True
+
+    # ---------- FINISH SOLVING ----------
+    def finish(self, user_started_task_id: int, *, actor_user_id: Optional[int] = None):
+        ust = self.session.query(UserStartedTask).filter(
+            UserStartedTask.id == user_started_task_id
+        ).first()
+        if not ust:
+            return None
+
+        ust.is_finished = True
+        ust.updated_at = utc_now()
+        ust.updated_by = actor_user_id
+
+        log_repo = UserTaskLogRepository(self.session)
+        log_repo.create(
+            user_started_task_id=user_started_task_id,
+            event_type_id=EventTypes.TASK_FINISH,
+            code_snapshot=ust.current_value,
+        )
+
+        self.session.commit()
+        return ust

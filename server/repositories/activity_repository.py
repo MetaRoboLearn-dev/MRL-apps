@@ -90,8 +90,6 @@ class ActivityRepository(BaseRepository[Activity]):
             .filter(Activity.time_to >= now)
         )
 
-        # q = q.filter(TODO - ovdje filtrirat po vremenu)
-
         return q.all()
 
     # ---------- CREATE ----------

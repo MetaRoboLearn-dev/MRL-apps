@@ -1,22 +1,23 @@
-// import {useCode} from "../../hooks/useCode.ts";
+import {useCode} from "../../hooks/useCode.ts";
 import {useTaskConfig} from "../../hooks/useTaskConfig.ts";
+import {createLog, EventTypes} from "../../api/logApi.ts";
 
 const SimPopUp = () => {
-  // const { modeRef, getCurrentValue } = useCode();
-  const { awaitingReview, setAwaitingReview } = useTaskConfig();
+  const { getCurrentValue } = useCode();
+  const { awaitingReview, setAwaitingReview, ustId } = useTaskConfig();
 
   const onYes = () => {
-    // log_action(groupName, modeRef.current, Action.ROBOT_END_SUCC, getCurrentValue())
+    void createLog(ustId, EventTypes.ROBOT_END_SUCC, getCurrentValue());
     setAwaitingReview(false);
   }
 
   const onNo = () => {
-    // log_action(groupName, modeRef.current, Action.ROBOT_END_FAIL, getCurrentValue())
+    void createLog(ustId, EventTypes.ROBOT_END_FAIL, getCurrentValue());
     setAwaitingReview(false);
   }
 
   return (
-    <div className="font-display absolute bottom-2.5 w-full h-15 bg-cyan-700 text-light-cyan-200 p-2 px-5 flex items-center justify-between">
+    <div className="font-display absolute bottom-44 w-full h-15 bg-turquoise-800 text-light-cyan-200 p-2 px-5 flex items-center justify-between z-50">
       <span className={"text-lg"}>Je li robot uspješno dosegnuo cilj?</span>
 
       <div className="flex gap-2">

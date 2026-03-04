@@ -143,7 +143,7 @@ def list_student_available_activities():
 
         # Get all user started tasks for this user in one query
         started = {
-            ust.activity_task_id: ust.id
+            ust.activity_task_id: ust
             for ust in session.query(UserStartedTask)
             .filter(UserStartedTask.started_by == user_id)
             .all()
@@ -168,7 +168,8 @@ def list_student_available_activities():
                         "is_logged": at.is_logged,
                         "allows_robot": at.allows_robot,
                         "started": at.id in started,
-                        "user_started_task_id": started.get(at.id),
+                        "user_started_task_id": started[at.id].id if at.id in started else None,
+                        "is_finished": started[at.id].is_finished if at.id in started else False,
                     }
                     for at in a.activity_tasks
                 ],

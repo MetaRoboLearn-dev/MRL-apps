@@ -8,6 +8,21 @@ class EventType(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
 
+class EventTypes:
+    """Constants matching event_types seed data."""
+    CODE_EDIT = 1 # ok
+    SIM_RUN = 2 # ok
+    SIM_CODE_ERR = 3 # ok
+    SIM_END_SUCC = 4 # ok
+    SIM_END_FAIL = 5 # ok
+    ROBOT_RUN = 6 # ok
+    ROBOT_CODE_ERR = 7
+    ROBOT_END_SUCC = 8 # ok
+    ROBOT_END_FAIL = 9 # ok
+    TASK_START = 10 # ok
+    TASK_CONTINUE = 11
+    TASK_FINISH = 12 # ok
+
 class UserTaskLog(Base):
     __tablename__ = 'user_task_logs'
 

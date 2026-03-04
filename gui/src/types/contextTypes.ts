@@ -4,6 +4,7 @@ import * as THREE from "three";
 import {Barrier, MoveCommand, Position, Rotation, Sticker, TileType} from "../types.ts";
 import {TaskMode} from "./tasksTypes.ts";
 import {CurrentUser} from "./userTypes.ts";
+import {LogEntry} from "./consoleTypes.ts";
 
 export interface AuthContextType {
   user: CurrentUser | null;
@@ -13,7 +14,8 @@ export interface AuthContextType {
 }
 
 export interface TaskConfigType {
-  mode: TaskMode
+  ustId: number | null;
+  mode: TaskMode;
   setMode: (taskMode: TaskMode) => void;
   selectedType: TileType;
   setSelectedType: (selectedType: TileType) => void;
@@ -98,7 +100,6 @@ export interface CodeContextType {
   getCurrentCode: () => string;
   getCurrentValue: () => string;
   runCode: () => Promise<MoveCommand[] | null>;
-  runRobot: () => Promise<void>;
 }
 
 export interface UIContextType {
@@ -116,4 +117,10 @@ export interface UIContextType {
 export interface ToastContextType {
   showToast: (message: string) => void;
   closeToast: (id: number) => void;
+}
+
+export interface ConsoleContextType {
+  logs: LogEntry[];
+  addLog: (level: LogEntry["level"], message: string) => void;
+  clearLogs: () => void;
 }

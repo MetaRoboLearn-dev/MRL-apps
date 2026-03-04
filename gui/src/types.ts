@@ -12,9 +12,11 @@ export interface Rotation {
 }
 
 export interface MoveCommand {
-  type: 'move' | 'rotate' | 'invalid';
+  type: 'move' | 'rotate' | 'display' | 'detect' | 'print';
   direction?: 'forward' | 'backward' | 'left' | 'right';
-  command?: string;
+  blocked?: boolean;
+  value?: string;
+  result?: string;
 }
 
 

@@ -6,38 +6,22 @@ import * as THREE from 'three';
 import {Euler, Vector3} from "three";
 import {useFrame} from "@react-three/fiber";
 import {useTaskConfig} from "../../../hooks/useTaskConfig.ts";
-import {useGrid} from "../../../hooks/useGrid.ts";
 import {useUI} from "../../../hooks/useUI.ts";
 import {createLog, EventTypes} from "../../../api/logApi.ts";
 import {useCode} from "../../../hooks/useCode.ts";
+import {useConsole} from "../../../hooks/useConsole.ts";
 
 const SimVehicle = () => {
   const { getCurrentValue } = useCode();
-  const { sizeX, sizeZ, barriers, finish } = useGrid();
   const { vehicleRef, startPosition, startRotation, position, rotation, isMoving, moveQueue, reset,
-    setPosition, setRotation, setIsMoving, queueMoves, setCurrentMove } = useVehicle();
+    setPosition, setRotation, setIsMoving, queueMoves, setCurrentMove, simFinished } = useVehicle();
   const { animationSpeed, ustId } = useTaskConfig();
   const { setModalVisible, setModalHeader, setModalBody, setModalFooter } = useUI();
+  const { addLog } = useConsole();
 
   const currentMoveRef = useRef<MoveCommand | null>(null);
   const targetPos = useRef<Vector3>(new Vector3(position.x, position.y, position.z));
   const targetRot = useRef<Euler>(new Euler(rotation.x, rotation.y, rotation.z));
-
-  const isValidMove = (newPosition: Position) => {
-    const x = Math.floor(sizeX / 2) - newPosition.x;
-    const z = 2 - newPosition.z;
-    const index = x * sizeZ + z;
-
-    return !(x >= sizeX || x < 0 || z >= sizeZ || z < 0 || [...barriers.keys()].includes(index));
-  }
-
-  const checkCompleted = (newPosition: Position) => {
-    const x = Math.floor(sizeX / 2) - newPosition.x;
-    const z = 2 - newPosition.z;
-    const index = x * sizeZ + z;
-
-    return index === finish;
-  }
 
   const showModalWindow = (type: string) => {
     const val = getCurrentValue();
@@ -76,77 +60,97 @@ const SimVehicle = () => {
   }, [rotation]);
 
   useFrame(() => {
-    if(!vehicleRef.current || !isMoving) return;
+  if (!vehicleRef.current || !isMoving) return;
 
-    const positionCloseEnough = vehicleRef.current.position.distanceTo(targetPos.current) < 0.01;
-    const targetQuat = new THREE.Quaternion().setFromEuler(targetRot.current);
-    const rotationCloseEnough = vehicleRef.current.quaternion.angleTo(targetQuat) < 0.01;
+  const positionCloseEnough = vehicleRef.current.position.distanceTo(targetPos.current) < 0.01;
+  const targetQuat = new THREE.Quaternion().setFromEuler(targetRot.current);
+  const rotationCloseEnough = vehicleRef.current.quaternion.angleTo(targetQuat) < 0.01;
 
-    if (positionCloseEnough && rotationCloseEnough) {
-      if(moveQueue.length === 0){
-        setIsMoving(false);
-        setCurrentMove(null);
-        if (checkCompleted({ x: targetPos.current.x, y: targetPos.current.y, z: targetPos.current.z })){
-          showModalWindow('succ');
-        } else {
-          showModalWindow('fail');
-        }
-        return;
+  if (positionCloseEnough && rotationCloseEnough) {
+    if (moveQueue.length === 0) {
+      setIsMoving(false);
+      setCurrentMove(null);
+      if (simFinished) {
+        showModalWindow('succ');
+      } else {
+        showModalWindow('fail');
       }
+      return;
+    }
 
-      const nextMove = moveQueue[0];
-      currentMoveRef.current = nextMove;
-      const newMoveQueue = [...moveQueue.slice(1)];
+    const nextMove = moveQueue[0];
+    const newMoveQueue = [...moveQueue.slice(1)];
 
-      if (nextMove.type === 'move' && nextMove.direction) {
-        const moveDirection = new Vector3(0, 0, 0);
-        if (nextMove.direction === 'forward'){
-          moveDirection.x = -1;
-        } else if (nextMove.direction === 'backward'){
-          moveDirection.x = 1;
-        }
-
-        moveDirection.applyEuler(vehicleRef.current.rotation);
-
-        const newPos: Position = {
-          x: position.x + Math.round(moveDirection.x),
-          y: position.y,
-          z: position.z + Math.round(moveDirection.z),
-        }
-
-        if (!isValidMove(newPos)){
-          setIsMoving(false);
-          setCurrentMove(null);
-          showModalWindow('stuck');
-          return;
-        }
-        targetPos.current.set(newPos.x, newPos.y, newPos.z);
-        setPosition(newPos);
-      }
-      else if (nextMove.type === 'rotate' && nextMove.direction) {
-        const newRot: Rotation = {...rotation}
-        if (nextMove.direction === 'left') {
-          newRot.y += Math.PI / 2;
-        } else if (nextMove.direction === 'right') {
-          newRot.y -= Math.PI / 2;
-        }
-
-        targetRot.current.set(newRot.x, newRot.y, newRot.z);
-        setRotation(newRot);
-      }
-
+    // Handle non-animation steps immediately
+    if (nextMove.type === 'print') {
+      addLog("OUTPUT", nextMove.value || 'nothing');
       queueMoves(newMoveQueue);
+      return;
     }
 
-    if (currentMoveRef.current?.type === 'move') {
-      vehicleRef.current.position.lerp(targetPos.current, animationSpeed);
-    } else if (currentMoveRef.current?.type === 'rotate') {
-      vehicleRef.current.quaternion.slerp(
-        new THREE.Quaternion().setFromEuler(targetRot.current),
-        animationSpeed
-      );
+    if (nextMove.type === 'display') {
+      addLog("DISPLAY", nextMove.value || 'nothing');
+      queueMoves(newMoveQueue);
+      return;
     }
-  })
+
+    if (nextMove.type === 'detect') {
+      queueMoves(newMoveQueue);
+      return;
+    }
+
+    if (nextMove.type === 'move' && nextMove.blocked) {
+      setIsMoving(false);
+      setCurrentMove(null);
+      showModalWindow('stuck');
+      return;
+    }
+
+    // Movement and rotation
+    currentMoveRef.current = nextMove;
+
+    if (nextMove.type === 'move' && nextMove.direction) {
+      const moveDirection = new Vector3(0, 0, 0);
+      if (nextMove.direction === 'forward') {
+        moveDirection.x = -1;
+      } else if (nextMove.direction === 'backward') {
+        moveDirection.x = 1;
+      }
+
+      moveDirection.applyEuler(vehicleRef.current.rotation);
+
+      const newPos: Position = {
+        x: position.x + Math.round(moveDirection.x),
+        y: position.y,
+        z: position.z + Math.round(moveDirection.z),
+      };
+
+      targetPos.current.set(newPos.x, newPos.y, newPos.z);
+      setPosition(newPos);
+    } else if (nextMove.type === 'rotate' && nextMove.direction) {
+      const newRot: Rotation = { ...rotation };
+      if (nextMove.direction === 'left') {
+        newRot.y += Math.PI / 2;
+      } else if (nextMove.direction === 'right') {
+        newRot.y -= Math.PI / 2;
+      }
+
+      targetRot.current.set(newRot.x, newRot.y, newRot.z);
+      setRotation(newRot);
+    }
+
+    queueMoves(newMoveQueue);
+  }
+
+  if (currentMoveRef.current?.type === 'move') {
+    vehicleRef.current.position.lerp(targetPos.current, animationSpeed);
+  } else if (currentMoveRef.current?.type === 'rotate') {
+    vehicleRef.current.quaternion.slerp(
+      new THREE.Quaternion().setFromEuler(targetRot.current),
+      animationSpeed
+    );
+  }
+});
 
   const { scene } = useGLTF('/Car.glb');
   useEffect(() => {

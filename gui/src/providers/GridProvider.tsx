@@ -1,7 +1,7 @@
 import {PropsWithChildren, useState} from "react";
 import {GridContext} from "./Context.tsx";
 import {Barrier, Sticker} from "../types.ts";
-import {Task} from "../types/tasksTypes.ts";
+import {GridState, Task} from "../types/tasksTypes.ts";
 
 interface Props {
   task: Task
@@ -29,6 +29,18 @@ const GridProvider = ({ task: t, children }: PropsWithChildren<Props>) => {
     }))
   );
 
+  const buildGridState = (): GridState => {
+    return {
+      size_x: sizeX,
+      size_z: sizeZ,
+      start,
+      start_rotation: startRotationOffset,
+      finish,
+      barriers: [...barriers.keys()],
+      stickers: stickers.map(s => ({ index: s.index, sticker: s.sticker })),
+    };
+  }
+
   return (
     <GridContext.Provider value={{
       sizeX, setSizeX,
@@ -37,7 +49,8 @@ const GridProvider = ({ task: t, children }: PropsWithChildren<Props>) => {
       startRotationOffset, setStartRotationOffset,
       finish, setFinish,
       barriers, setBarriers,
-      stickers, setStickers
+      stickers, setStickers,
+      buildGridState,
     }}>
       {children}
     </GridContext.Provider>

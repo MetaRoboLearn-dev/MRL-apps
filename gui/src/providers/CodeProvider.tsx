@@ -5,6 +5,7 @@ import * as Blockly from "blockly";
 import {pythonGenerator} from "blockly/python";
 import {run_code} from "../api/robotApi.ts";
 import {useConsole} from "../hooks/useConsole.ts";
+import {useGrid} from "../hooks/useGrid.ts";
 
 interface Props {
   init_code: string
@@ -15,6 +16,7 @@ interface Props {
 
 export const CodeProvider = ({ init_code, init_blocks, editorMode, onSave, children }: PropsWithChildren<Props>) => {
   const { addLog } = useConsole()
+  const { buildGridState } = useGrid();
   const { setSimFocused, ustId } = useTaskConfig();
   const [code, setCodeState] = useState<string>(init_code || '');
   const [blocks, setBlocksState] = useState<string>(init_blocks || '')
@@ -55,12 +57,15 @@ export const CodeProvider = ({ init_code, init_blocks, editorMode, onSave, child
     setSimFocused(false);
     const code = getCurrentCode();
     const value = getCurrentValue();
-    const compiled = await run_code(code, value, ustId);
+    const compiled = await run_code(code, value, ustId, buildGridState());
     if (compiled.error) {
       addLog("ERROR", compiled.error);
       return null;
     }
-    return compiled.steps;
+    if (compiled.output) {
+      addLog("OUTPUT", compiled.output);
+    }
+    return { steps: compiled.steps, finished: compiled.finished };
   }
 
   useEffect(() => {

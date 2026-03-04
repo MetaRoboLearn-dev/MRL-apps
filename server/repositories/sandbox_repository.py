@@ -10,7 +10,13 @@ class SandboxRepository:
     def __init__(self, session: Session):
         self.session = session
 
-    def run_python(self, code: str, user_started_task_id: Optional[int] = None, code_snapshot: Optional[str] = None):
+    def run_python(
+            self,
+            code: str,
+            user_started_task_id: Optional[int] = None,
+            code_snapshot: Optional[str] = None,
+            grid_state: Optional[dict] = None,
+    ):
         if user_started_task_id:
             log_repo = UserTaskLogRepository(self.session)
             log_repo.create(
@@ -20,7 +26,7 @@ class SandboxRepository:
             )
             self.session.commit()
 
-        result = sb_run_python(code)
+        result = sb_run_python(code, grid_state=grid_state)
 
         if user_started_task_id:
             response_data = result[0].get_json() if isinstance(result, tuple) else result.get_json()

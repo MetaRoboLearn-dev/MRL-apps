@@ -2,7 +2,7 @@ import {Texture} from "three";
 import {ReactNode, RefObject} from "react";
 import * as THREE from "three";
 import {Barrier, MoveCommand, Position, Rotation, Sticker, TileType} from "../types.ts";
-import {TaskMode} from "./tasksTypes.ts";
+import {GridState, TaskMode} from "./tasksTypes.ts";
 import {CurrentUser} from "./userTypes.ts";
 import {LogEntry} from "./consoleTypes.ts";
 
@@ -70,6 +70,8 @@ export interface VehicleContextType {
   queueMoves: (moves: MoveCommand[] | null) => void;
   currentMove: MoveCommand | null;
   setCurrentMove: (currentMove: MoveCommand | null) => void;
+  simFinished: boolean;
+  setSimFinished: (simFinished: boolean) => void;
 }
 
 export interface GridContextType {
@@ -87,6 +89,7 @@ export interface GridContextType {
   setBarriers: (barriers: Map<number, Barrier>) => void;
   stickers: { index: number, sticker: Sticker, rotation: number }[];
   setStickers: (stickers: { index: number, sticker: Sticker, rotation: number }[]) => void;
+  buildGridState: () => GridState;
 }
 
 export interface CodeContextType {
@@ -99,7 +102,7 @@ export interface CodeContextType {
   modeRef: RefObject<string>;
   getCurrentCode: () => string;
   getCurrentValue: () => string;
-  runCode: () => Promise<MoveCommand[] | null>;
+  runCode: () => Promise<{ steps: MoveCommand[]; finished: boolean } | null>;
 }
 
 export interface UIContextType {

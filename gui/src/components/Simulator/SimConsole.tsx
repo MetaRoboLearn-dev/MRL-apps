@@ -6,6 +6,7 @@ const levelColor: Record<string, string> = {
   WARNING: "text-amber-600",
   INFO: "text-teal-600",
   OUTPUT: "text-gray-700",
+  DISPLAY: "text-orange-600"
 };
 
 const SimConsole = () => {

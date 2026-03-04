@@ -1,6 +1,16 @@
 import {UserBasic} from "./userTypes.ts";
 import {Barrier, Sticker} from "../types.ts";
 
+export type GridState = {
+  size_x: number;
+  size_z: number;
+  start: number | null;
+  start_rotation: number;
+  finish: number | null;
+  barriers: number[];
+  stickers: { index: number; sticker: string }[];
+}
+
 export type TaskMode = 'solve' | 'create' | 'edit';
 
 export type TaskPreview = {

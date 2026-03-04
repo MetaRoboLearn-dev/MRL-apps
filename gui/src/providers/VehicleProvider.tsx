@@ -36,6 +36,7 @@ export const VehicleProvider = ({ children }: PropsWithChildren) => {
   const [isMoving, setIsMoving] = useState<boolean>(false);
   const [moveQueue, setMoveQueue] = useState<MoveCommand[]>([]);
   const [currentMove, setCurrentMove] = useState<MoveCommand | null>(null);
+  const [simFinished, setSimFinished] = useState<boolean>(false);
 
   const vehicleRef = useRef<THREE.Object3D | null>(null);
 
@@ -67,7 +68,8 @@ export const VehicleProvider = ({ children }: PropsWithChildren) => {
       rotation, setRotation,
       isMoving, setIsMoving,
       moveQueue, queueMoves,
-      currentMove, setCurrentMove
+      currentMove, setCurrentMove,
+      simFinished, setSimFinished
     }}>
       {children}
     </VehicleContext.Provider>

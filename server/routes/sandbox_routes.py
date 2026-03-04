@@ -15,13 +15,15 @@ def require_login():
 def run_python():
     data = request.get_json(silent=True) or {}
     code = data.get("code", "")
-    value = data.get("code_snapshot", "")
     user_started_task_id = data.get("user_started_task_id")
+    code_snapshot = data.get("code_snapshot")
+    grid_state = data.get("grid_state")
 
     with db_session() as session:
         repo = SandboxRepository(session)
         return repo.run_python(
             code=code,
-            code_snapshot=value,
             user_started_task_id=user_started_task_id,
+            code_snapshot=code_snapshot,
+            grid_state=grid_state,
         )

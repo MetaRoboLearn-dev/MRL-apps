@@ -269,6 +269,7 @@ def init_broker_websocket(app):
 
     @sock.route("/api/broker/robots/<robot_id>/camera")
     def robot_camera_proxy(ws, robot_id):
+        import time
         print(f"[WS] camera connection attempt for robot {robot_id}")
         try:
             _ensure_logged_in()
@@ -277,42 +278,51 @@ def init_broker_websocket(app):
             ws.close()
             return
 
-        video_ws = None
         closed = threading.Event()
+        RETRY_DELAY = 2  # seconds between reconnect attempts
 
-        def on_video_message(_, message):
-            if not closed.is_set():
+        def run_upstream():
+            """Synchronous loop: connect to the video broker, recv frames,
+            forward them to the browser WS.  Retries on any failure until
+            the browser disconnects (closed is set)."""
+            while not closed.is_set():
+                upstream = None
                 try:
-                    ws.send(message)
-                except Exception:
-                    closed.set()
+                    upstream = websocket.create_connection(
+                        f"{VIDEO_WS_URL}/robot/{robot_id}/get-video-stream",
+                        header={
+                            "client-id": str(_broker_state["client_id"]),
+                            "client_id": str(_broker_state["client_id"]),
+                            "token": str(_broker_state["token"]),
+                        },
+                        timeout=5,
+                    )
+                    print(f"[WS] camera: upstream connected for robot {robot_id}")
+                    upstream.settimeout(1.0)
+                    while not closed.is_set():
+                        try:
+                            _opcode, data = upstream.recv_data()
+                            if data:
+                                ws.send(data)
+                        except websocket.WebSocketTimeoutException:
+                            # No frame within 1 s — just keep waiting
+                            continue
+                        except Exception:
+                            break
+                except Exception as exc:
+                    print(f"[WS] camera: upstream failed for robot {robot_id}: {exc}")
+                finally:
+                    if upstream:
+                        try:
+                            upstream.close()
+                        except Exception:
+                            pass
+                if not closed.is_set():
+                    print(f"[WS] camera: retrying for robot {robot_id} in {RETRY_DELAY}s")
+                    time.sleep(RETRY_DELAY)
 
-        def on_video_error(_, error):
-            if not closed.is_set():
-                try:
-                    ws.send(json.dumps({"error": str(error)}))
-                except Exception:
-                    pass
-            closed.set()
-
-        def on_video_close(_, close_status_code, close_msg):
-            closed.set()
-
-        video_ws = websocket.WebSocketApp(
-            f"{VIDEO_WS_URL}/robot/{robot_id}/get-video-stream",
-            header={
-                # send both forms — video server decorator may check either
-                "client-id": str(_broker_state["client_id"]),
-                "client_id": str(_broker_state["client_id"]),
-                "token": str(_broker_state["token"]),
-            },
-            on_message=on_video_message,
-            on_error=on_video_error,
-            on_close=on_video_close,
-        )
-
-        video_thread = threading.Thread(target=video_ws.run_forever, daemon=True)
-        video_thread.start()
+        upstream_thread = threading.Thread(target=run_upstream, daemon=True)
+        upstream_thread.start()
 
         try:
             while not closed.is_set():
@@ -322,5 +332,3 @@ def init_broker_websocket(app):
                     break
         finally:
             closed.set()
-            if video_ws:
-                video_ws.close()

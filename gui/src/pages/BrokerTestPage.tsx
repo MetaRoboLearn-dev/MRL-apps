@@ -212,7 +212,9 @@ const BrokerTestPage = () => {
       prevFrameUrlRef.current = null;
     }
     setCameraFrameUrl(null);
-    
+
+    // Single persistent connection — server handles upstream reconnection,
+    // so we just keep this socket open and wait for frames.
     const ws = connectRobotCameraSocket(
       selectedRobotId,
       (blob) => {
@@ -228,8 +230,8 @@ const BrokerTestPage = () => {
     cameraWsRef.current = ws;
 
     return () => {
-      safeCloseWs(ws);
-      cameraWsRef.current = null;      
+      safeCloseWs(cameraWsRef.current);
+      cameraWsRef.current = null;
       if (prevFrameUrlRef.current) {
         URL.revokeObjectURL(prevFrameUrlRef.current);
         prevFrameUrlRef.current = null;

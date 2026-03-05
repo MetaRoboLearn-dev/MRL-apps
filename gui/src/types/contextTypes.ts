@@ -53,6 +53,7 @@ export interface TaskConfigType {
   setTitle: (title: string) => void;
   description: string | null;
   setDescription: (description: string | null) => void;
+  instructions: string;
 }
 
 export interface VehicleContextType {

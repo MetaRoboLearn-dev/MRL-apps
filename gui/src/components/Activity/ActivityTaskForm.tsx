@@ -10,6 +10,7 @@ import {
 import { getTasksPreview } from '../../api/tasksApi.ts'
 import { TaskType } from '../../api/typesApi.ts'
 import { TaskPreview } from '../../types/tasksTypes.ts'
+import {RichTextEditor} from "../UI/RichTextEditor.tsx";
 
 const tasksQueryOptions = (search: string) =>
   queryOptions({
@@ -21,7 +22,8 @@ type ActivityTaskFormData = {
   task_id: number | null;
   task_title: string;
   type_id: number;
-  description: string;
+  preview: string;
+  instructions: string;
   is_logged: boolean;
   allows_robot: boolean;
 }
@@ -135,7 +137,8 @@ export function ActivityTaskForm({ initialData, types, onSubmit, isLoading, erro
     task_id: null,
     task_title: '',
     type_id: types[0]?.id || 1,
-    description: '',
+    preview: '',
+    instructions: '',
     is_logged: true,
     allows_robot: true,
   })
@@ -209,15 +212,15 @@ export function ActivityTaskForm({ initialData, types, onSubmit, isLoading, erro
           {errors.type_id && <p className="mt-1 text-sm text-red-600">{errors.type_id}</p>}
         </div>
 
-        {/* Description */}
+        {/* Preview */}
         <div>
-          <label className="block text-sm font-medium mb-1">Description</label>
+          <label className="block text-sm font-medium mb-1">Preview</label>
           <input
             type="text"
-            value={formData.description}
-            onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
+            value={formData.preview}
+            onChange={(e) => setFormData((prev) => ({ ...prev, preview: e.target.value }))}
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
-            placeholder="Optional description"
+            placeholder="Optional preview"
           />
         </div>
 
@@ -239,6 +242,19 @@ export function ActivityTaskForm({ initialData, types, onSubmit, isLoading, erro
             />
             <span className="text-sm font-medium">Is logged</span>
           </label>
+        </div>
+
+        {/* Instructions */}
+        <div>
+          <label className="block text-sm font-medium mb-1">Instructions</label>
+          <RichTextEditor
+            value={formData.instructions}
+            onChange={(val) => setFormData((prev) => ({ ...prev, instructions: val }))}
+            placeholder=""
+          />
+          <p className="mt-1 text-xs text-gray-400">
+            Supports bold, italic, underline, headings, and lists. Shortcuts: Ctrl+B, Ctrl+I, Ctrl+U.
+          </p>
         </div>
       </div>
 

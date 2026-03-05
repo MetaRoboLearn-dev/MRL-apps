@@ -1,17 +1,8 @@
 import CodeSnippetEntry from "./CodeSnippetEntry.tsx";
 
-interface Props{
-  active: boolean;
-}
-
-const CodeSnippets = ({active}: Props) => {
+const CodeSnippets = () => {
   return (
-    <div className={`bg-tomato-50 w-2/5 h-full py-5 absolute top-0 right-0 
-                      flex flex-col items-start overflow-y-scroll overflow-x-hidden scrollbar-red
-                      border-tomato-600 border-t-8 border-b-10 
-                      transition duration-400 ease-in-out
-                      ${active ? 'translate-x-0' : 'translate-x-full'}`}>
-
+    <>
       <h1 className={'mb-5 w-full text-center font-display font-bold text-2xl tracking-wide text-dark-neutrals-400'}>Priručnik za korištenje!</h1>
 
       <CodeSnippetEntry title={'Uređivanje simulacije'}>
@@ -62,7 +53,7 @@ const CodeSnippets = ({active}: Props) => {
       <CodeSnippetEntry title={'Petlje u jeziku Python'}>
         dummy
       </CodeSnippetEntry>
-    </div>
+    </>
   );
 };
 

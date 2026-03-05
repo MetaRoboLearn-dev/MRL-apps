@@ -1,15 +1,18 @@
 import CodePlayground from "./CodePlayground.tsx";
 import CodeHeader from "./CodeHeader.tsx";
 import {useState} from "react";
-import CodeSnippets from "./CodeSnippets.tsx";
 import BlockPlayground from "../BlockEditor/BlockPlayground.tsx";
 import {useTaskConfig} from "../../hooks/useTaskConfig.ts";
 import {useCode} from "../../hooks/useCode.ts";
+import CodeSnippets from "./CodeSnippets.tsx";
+import CodeInstructions from "./CodeInstructions.tsx";
+import CodeSideScreen from "./CodeSideScreen.tsx";
 
 const CodeScreen = () => {
   const { mode } = useTaskConfig()
   const { modeRef: editorMode } = useCode()
-  const [active, setActive] = useState<boolean>(false);
+  const [activeSnippets, setActiveSnippets] = useState<boolean>(false);
+  const [activeInstructions, setActiveInstructions] = useState<boolean>(false);
   const [editor, setEditor] = useState<string>(editorMode.current)
 
   const updateEditor = (editor: string) => {
@@ -20,12 +23,17 @@ const CodeScreen = () => {
   const solveEditor = () => {
     return (
       <>
-        <div className={editorMode.current === "blockly" ? "w-full h-full" : "hidden"}>
-            <BlockPlayground />
-          </div>
-          <div className={editorMode.current === "python" ? "w-full h-full" : "hidden"}>
+        {editorMode.current === "python" ? (
             <CodePlayground />
-        </div>
+        ) : (
+            <BlockPlayground />
+        )}
+        {/*<div className={editorMode.current === "blockly" ? "w-full h-full" : "hidden"}>*/}
+        {/*    <BlockPlayground />*/}
+        {/*  </div>*/}
+        {/*  <div className={editorMode.current === "python" ? "w-full h-full" : "hidden"}>*/}
+        {/*    <CodePlayground />*/}
+        {/*</div>*/}
       </>
     )
   }
@@ -44,11 +52,18 @@ const CodeScreen = () => {
 
   return (
     <div className={'w-3/5 flex-center flex-col box-border'}>
-      <CodeHeader active={active} setActive={setActive} setEditor={updateEditor} />
+      <CodeHeader activeS={activeSnippets}
+                  setActiveS={setActiveSnippets}
+                  activeI={activeInstructions}
+                  setActiveI={setActiveInstructions}
+                  setEditor={updateEditor} />
       <div className="bg-sunglow-400 w-full flex-1 pt-2 pb-2.5 z-20 relative">
         {mode === "solve" && solveEditor()}
         {mode !== "solve" && editEditor()}
-        <CodeSnippets active={active} />
+        <CodeSideScreen active={activeSnippets || activeInstructions}>
+          {activeSnippets && <CodeSnippets />}
+          {activeInstructions && <CodeInstructions />}
+        </CodeSideScreen>
       </div>
     </div>
   );

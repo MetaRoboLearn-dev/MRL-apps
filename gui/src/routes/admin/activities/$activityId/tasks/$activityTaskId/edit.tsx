@@ -47,7 +47,7 @@ function RouteComponent() {
     },
   })
 
-  const handleSubmit = async (data: { task_id: number | null; type_id: number; description: string; is_logged: boolean; allows_robot: boolean }) => {
+  const handleSubmit = async (data: { task_id: number | null; type_id: number; preview: string; instructions: string; is_logged: boolean; allows_robot: boolean }) => {
     setError(undefined)
     if (!data.task_id) return
 
@@ -55,21 +55,23 @@ function RouteComponent() {
       id: activityTaskId,
       task_id: data.task_id,
       type_id: data.type_id,
-      description: data.description || undefined,
+      preview: data.preview || undefined,
+      instructions: data.instructions || undefined,
       is_logged: data.is_logged,
       allows_robot: data.allows_robot,
     })
   }
 
   return (
-    <div className="p-4 max-w-2xl w-2xl mx-auto">
+    <div className="p-4 w-3xl mx-auto">
       <h1 className="text-2xl font-bold mb-6">Edit Activity Task</h1>
       <ActivityTaskForm
         initialData={{
           task_id: activityTask.task_id,
           task_title: activityTask.task_title,
           type_id: activityTask.type_id,
-          description: activityTask.description || '',
+          preview: activityTask.preview || '',
+          instructions: activityTask.instructions || '',
           is_logged: activityTask.is_logged,
           allows_robot: activityTask.allows_robot,
         }}

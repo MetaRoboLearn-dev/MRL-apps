@@ -8,7 +8,8 @@ export type UserStartedTask = {
   activity_task: {
     act_task_id: number;
     task_type: string;
-    description: string | null;
+    preview: string | null;
+    instructions: string | null;
     is_logged: boolean;
     allows_robot: boolean;
   };

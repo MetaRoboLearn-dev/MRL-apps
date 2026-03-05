@@ -25,6 +25,7 @@ export const TaskConfigProvider = ({ust, task, mode, children }: PropsWithChildr
   const [isActive, setIsActive] = useState<boolean>(task.active);
   const [isLogged, setIsLogged] = useState<boolean>(ust?.activity_task.is_logged || false);
   const [hasRobotAccess, setHasRobotAccess] = useState<boolean>(ust?.activity_task.allows_robot || false)
+  const instructions = ust?.activity_task.instructions || '';
 
   // Task solving specific options
   const ustId: number | null = ust?.id ?? null;
@@ -126,7 +127,8 @@ export const TaskConfigProvider = ({ust, task, mode, children }: PropsWithChildr
       hasRobotAccess, setHasRobotAccess,
       isActive, setIsActive,
       title, setTitle,
-      description, setDescription
+      description, setDescription,
+      instructions
     }}>
       {children}
     </TaskConfigContext.Provider>

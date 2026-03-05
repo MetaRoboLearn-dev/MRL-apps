@@ -56,8 +56,8 @@ const ActivityContainer = () => {
                   </span>
                   <div className="min-w-0">
                     <div className="font-bold text-lg">{at.task_title}</div>
-                    {at.task_description && (
-                      <div className="text-sm text-dark-neutrals-400 mt-0.5">{at.task_description}</div>
+                    {at.preview && (
+                      <div className="text-sm text-dark-neutrals-400 mt-0.5">{at.preview}</div>
                     )}
                   </div>
                 </div>

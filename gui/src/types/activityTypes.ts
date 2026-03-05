@@ -4,7 +4,8 @@ export interface ActivityTask {
   activity_task_id: number;
   task_id: number;
   task_title: string | null;
-  activity_task_description: string | null;
+  preview: string | null;
+  instructions: string | null;
   order: number;
   task_type: string | null;
   is_logged: boolean;
@@ -17,7 +18,8 @@ export type ActivityTaskBasic = {
   activity_task_id: number;
   task_id: number;
   task_title: string | null;
-  activity_task_description: string | null;
+  preview: string | null;
+  instructions: string | null;
   order: number;
   task_type: string | null;
   is_logged: boolean;
@@ -50,7 +52,8 @@ export type CreateActivityRequest = {
 type TaskType = "blockly" | "python";
 
 type AvailableActivityTask = {
-  activity_task_description: string | null;
+  preview: string | null;
+  instructions: string | null;
   activity_task_id: number;
   allows_robot: boolean;
   is_logged: boolean;

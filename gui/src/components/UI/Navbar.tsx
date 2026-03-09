@@ -26,6 +26,9 @@ const Navbar = () => {
             <Link to="/admin/tasks" className="[&.active]:font-bold">
               Tasks
             </Link>
+            <Link to="/admin/robots" className="[&.active]:font-bold">
+              Robots
+            </Link>
           </div>
         )}
         {user && (

@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
-import BrokerTestPage from '../pages/BrokerTestPage'
+import BrokerTestPage from '../../pages/BrokerTestPage'
 
-export const Route = createFileRoute('/test_broker')({
+export const Route = createFileRoute('/admin/robots')({
   component: RouteComponent,
 })
 

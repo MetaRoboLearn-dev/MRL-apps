@@ -150,6 +150,21 @@ def abort_command(robot_id: str):
 
     return jsonify(res.json()), 200
 
+# ---------- GET ROBOT STATUS ----------
+# TODO - ovo treba bit dostupno samo kad ima aktivnost koja trenutno traje ili ako si teacher/admin
+@bp.route("/robots/<robot_id>/shutdown", methods=["POST"])
+@broker_auth
+def shutdown_robot(robot_id: str):
+    res = requests.post(
+        f"{BROKER_URL}/robot/{robot_id}/command",
+        headers=_broker_headers(),
+        json={
+            "CommandType": "SHUTDOWN",
+        },
+    )
+    res.raise_for_status()
+    return jsonify(res.json()), 200
+
 
 # ---------- WEBSOCKET PROXY ----------
 def init_broker_websocket(app):

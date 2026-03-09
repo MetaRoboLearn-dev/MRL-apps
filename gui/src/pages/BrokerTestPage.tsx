@@ -8,6 +8,7 @@ import {
   connectRobotCameraSocket,
   safeCloseWs,
   sendAbort,
+  shutdownRobot,
 } from "../api/brokerApi.ts";
 
 interface Robot {
@@ -19,45 +20,6 @@ interface Robot {
 
 type StepStatus = "idle" | "loading" | "ok" | "error";
 
-const Section = ({ title, status, children }: { title: string; status: StepStatus; children: React.ReactNode }) => {
-  const badge: Record<StepStatus, string> = {
-    idle: "bg-gray-200 text-gray-500",
-    loading: "bg-yellow-100 text-yellow-700 animate-pulse",
-    ok: "bg-green-100 text-green-700",
-    error: "bg-red-100 text-red-700",
-  };
-  const label: Record<StepStatus, string> = {
-    idle: "pending",
-    loading: "loading…",
-    ok: "ok",
-    error: "error",
-  };
-  return (
-    <div className="border border-gray-300 rounded-lg p-4 space-y-3">
-      <div className="flex items-center gap-3">
-        <h2 className="text-lg font-semibold text-gray-700">{title}</h2>
-        <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${badge[status]}`}>{label[status]}</span>
-      </div>
-      {children}
-    </div>
-  );
-};
-
-const ResultBox = ({ result }: { result: string }) =>
-  result ? (
-    <pre className="bg-gray-100 rounded p-3 text-xs overflow-auto max-h-40 whitespace-pre-wrap break-all">{result}</pre>
-  ) : null;
-
-const Btn = ({ onClick, children, disabled }: { onClick: () => void; children: React.ReactNode; disabled?: boolean }) => (
-  <button
-    onClick={onClick}
-    disabled={disabled}
-    className="px-4 py-1.5 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed"
-  >
-    {children}
-  </button>
-);
-
 const BrokerTestPage = () => {
   const [connStatus, setConnStatus] = useState<StepStatus>("idle");
   const [connResult, setConnResult] = useState("");
@@ -66,13 +28,16 @@ const BrokerTestPage = () => {
   const [robotsResult, setRobotsResult] = useState("");
   const [robots, setRobots] = useState<Robot[]>([]);
 
-  const [selectedRobotId, setSelectedRobotId] = useState("");
+  const [selectedRobotId, setSelectedRobotId] = useState<string>("");
   const [codeText, setCodeText] = useState("print('Hello from webapp')");
   const [cmdStatus, setCmdStatus] = useState<StepStatus>("idle");
   const [cmdResult, setCmdResult] = useState("");
 
   const [abortStatus, setAbortStatus] = useState<StepStatus>("idle");
-  const [_abortResult, setAbortResult] = useState("");
+  const [abortResult, setAbortResult] = useState("");
+
+  const [shuttingDownIds, setShuttingDownIds] = useState<Set<string>>(new Set());
+  const [shutdownResults, setShutdownResults] = useState<Record<string, { ok: boolean; message: string }>>({});
 
   const [logEntries, setLogEntries] = useState<{ level: string; message: string; timestamp?: string }[]>([]);
   const [wsStatus, setWsStatus] = useState<"idle" | "connecting" | "connected" | "disconnected" | "error">("idle");
@@ -115,10 +80,8 @@ const BrokerTestPage = () => {
         const res: Robot[] = await fetchRobots();
         setRobots(res);
         setRobotsResult(JSON.stringify(res, null, 2));
-        if (res.length > 0) {
-          setSelectedRobotId(res.filter(res => res.IsActivated)[0].RobotId);
-        }
-        setRobotsStatus("ok");
+        setShutdownResults({});
+       setRobotsStatus("ok");
       } catch (e: unknown) {
         const msg = e instanceof Error ? e.message : String(e);
         setRobotsResult(`Error: ${msg}`);
@@ -142,6 +105,24 @@ const BrokerTestPage = () => {
     }
   };
 
+  const handleShutdown = async (robotId: string) => {
+    setShuttingDownIds((prev) => new Set(prev).add(robotId));
+    try {
+      await shutdownRobot(robotId);
+      setShutdownResults((prev) => ({ ...prev, [robotId]: { ok: true, message: "Shutdown sent" } }));
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : String(e);
+      setShutdownResults((prev) => ({ ...prev, [robotId]: { ok: false, message: msg } }));
+    } finally {
+      setShuttingDownIds((prev) => {
+        const next = new Set(prev);
+        next.delete(robotId);
+        return next;
+      });
+    }
+  };
+
+
   const handleAbortCommand = async () => {
         setAbortStatus("loading");
     try {
@@ -157,56 +138,128 @@ const BrokerTestPage = () => {
 
 
   useEffect(() => {
-    if (!selectedRobotId) return;
+    if (!selectedRobotId) {
+      if (wsRef.current) {
+        // Clear handlers to prevent 'disconnected' status on intentional close
+        wsRef.current.onclose = null;
+        wsRef.current.onerror = null;
+        wsRef.current.onopen = null;
+        wsRef.current.onmessage = null;
+        safeCloseWs(wsRef.current);
+        wsRef.current = null;
+      }
+      setLogEntries([]);
+      setWsStatus("idle");
+      return;
+    }
 
-    safeCloseWs(wsRef.current);
-    wsRef.current = null;
+    if (wsRef.current) {
+      // Clear handlers to prevent 'disconnected' status on intentional close
+      wsRef.current.onclose = null;
+      wsRef.current.onerror = null;
+      wsRef.current.onopen = null;
+      wsRef.current.onmessage = null;
+      safeCloseWs(wsRef.current);
+      wsRef.current = null;
+    }
     setLogEntries([]);
 
     const ws = connectRobotLogSocket(
       selectedRobotId,
       (log) => {
         setLogEntries((prev) => [...prev, { level: log.LogLevel, message: log.Message, timestamp: log.Timestamp }]);
-        setTimeout(() => logEndRef.current?.scrollIntoView({ behavior: "smooth" }), 50);
       },
       (status) => setWsStatus(status),
     );
     wsRef.current = ws;
 
     return () => {
-      safeCloseWs(ws);
-      wsRef.current = null;
+      if (ws) {
+        ws.onclose = null;
+        ws.onerror = null;
+        ws.onopen = null;
+        ws.onmessage = null;
+        safeCloseWs(ws);
+      }
     };
   }, [selectedRobotId]);
 
   useEffect(() => {
-    if (!selectedRobotId) return;
+    if (!selectedRobotId) {
+      if (printWsRef.current) {
+        // Clear handlers to prevent 'disconnected' status on intentional close
+        printWsRef.current.onclose = null;
+        printWsRef.current.onerror = null;
+        printWsRef.current.onopen = null;
+        printWsRef.current.onmessage = null;
+        safeCloseWs(printWsRef.current);
+        printWsRef.current = null;
+      }
+      setPrintEntries([]);
+      setPrintWsStatus("idle");
+      return;
+    }
 
-    safeCloseWs(printWsRef.current);
-    printWsRef.current = null;
+    if (printWsRef.current) {
+      // Clear handlers to prevent 'disconnected' status on intentional close
+      printWsRef.current.onclose = null;
+      printWsRef.current.onerror = null;
+      printWsRef.current.onopen = null;
+      printWsRef.current.onmessage = null;
+      safeCloseWs(printWsRef.current);
+      printWsRef.current = null;
+    }
     setPrintEntries([]);
 
     const ws = connectRobotPrintSocket(
       selectedRobotId,
       (msg) => {
         setPrintEntries((prev) => [...prev, { text: msg.Text, timestamp: msg.Timestamp }]);
-        setTimeout(() => printEndRef.current?.scrollIntoView({ behavior: "smooth" }), 50);
       },
       (status) => setPrintWsStatus(status),
     );
     printWsRef.current = ws;
 
     return () => {
-      safeCloseWs(ws);
-      printWsRef.current = null;
+      if (ws) {
+        ws.onclose = null;
+        ws.onerror = null;
+        ws.onopen = null;
+        ws.onmessage = null;
+        safeCloseWs(ws);
+      }
     };
   }, [selectedRobotId]);
 
   useEffect(() => {
-    if (!selectedRobotId) return;
+    if (!selectedRobotId) {
+      if (cameraWsRef.current) {
+        // Clear handlers to prevent 'disconnected' status on intentional close
+        cameraWsRef.current.onclose = null;
+        cameraWsRef.current.onerror = null;
+        cameraWsRef.current.onopen = null;
+        cameraWsRef.current.onmessage = null;
+        safeCloseWs(cameraWsRef.current);
+        cameraWsRef.current = null;
+      }
+      if (prevFrameUrlRef.current) {
+        URL.revokeObjectURL(prevFrameUrlRef.current);
+        prevFrameUrlRef.current = null;
+      }
+      setCameraFrameUrl(null);
+      setCameraWsStatus("idle");
+      return;
+    }
 
-    safeCloseWs(cameraWsRef.current);
-    cameraWsRef.current = null;
+    if (cameraWsRef.current) {
+      // Clear handlers to prevent 'disconnected' status on intentional close
+      cameraWsRef.current.onclose = null;
+      cameraWsRef.current.onerror = null;
+      cameraWsRef.current.onopen = null;
+      cameraWsRef.current.onmessage = null;
+      safeCloseWs(cameraWsRef.current);
+      cameraWsRef.current = null;
+    }
     if (prevFrameUrlRef.current) {
       URL.revokeObjectURL(prevFrameUrlRef.current);
       prevFrameUrlRef.current = null;
@@ -230,8 +283,13 @@ const BrokerTestPage = () => {
     cameraWsRef.current = ws;
 
     return () => {
-      safeCloseWs(cameraWsRef.current);
-      cameraWsRef.current = null;
+      if (ws) {
+        ws.onclose = null;
+        ws.onerror = null;
+        ws.onopen = null;
+        ws.onmessage = null;
+        safeCloseWs(ws);
+      }
       if (prevFrameUrlRef.current) {
         URL.revokeObjectURL(prevFrameUrlRef.current);
         prevFrameUrlRef.current = null;
@@ -245,7 +303,7 @@ const BrokerTestPage = () => {
       const res: Robot[] = await fetchRobots();
       setRobots(res);
       setRobotsResult(JSON.stringify(res, null, 2));
-      if (res.length > 0 && !selectedRobotId) setSelectedRobotId(res[0].RobotId);
+      setShutdownResults({});
       setRobotsStatus("ok");
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : String(e);
@@ -255,156 +313,432 @@ const BrokerTestPage = () => {
   };
 
   return (
-    <div className="w-2xl mx-auto p-6 space-y-6">
-      <h1 className="text-2xl font-bold text-gray-800">Broker API Test</h1>
-
-      {/* Step 1 — Test Connection */}
-      <Section title="1. Test Connection" status={connStatus}>
-        <p className="text-xs text-gray-400">Tests that the backend can reach and authenticate with the broker.</p>
-        <ResultBox result={connResult} />
-      </Section>
-
-      {/* Step 2 — Fetch Robots */}
-      <Section title="2. Fetch Robots" status={robotsStatus}>
-        <div className="flex items-center gap-2">
-          <p className="text-xs text-gray-400">Fetches available robots via the backend.</p>
-          <button
-            onClick={handleRefreshRobots}
-            disabled={robotsStatus === "loading"}
-            className="ml-auto text-xs px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded disabled:opacity-40 disabled:cursor-not-allowed"
-          >
-            Refresh
-          </button>
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-7xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <h1 className="text-3xl font-bold text-gray-900">Robot Management</h1>
         </div>
-        <ResultBox result={robotsResult} />
-      </Section>
 
-      {/* Step 3 — Send Command */}
-      <Section title="3. Send Code Command" status={cmdStatus}>
-        <div className="flex flex-col gap-1">
-          <label className="text-sm text-gray-500">Select Robot</label>
-          <select
-            className="border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-            value={selectedRobotId}
-            onChange={(e) => {
-              console.log(e.target.value)
-              setSelectedRobotId(e.target.value);
-            }}
-          >
-            {robots.length === 0 && <option value="">— waiting for robots —</option>}
-            {robots
-              .filter((r) => r.IsActivated)
-              .map((robot) => (
-                <option key={robot.RobotId} value={robot.RobotId}>
-                  {robot.Name} ({robot.RobotId})
-                </option>
-              ))}
-          </select>
-        </div>
-        <div className="flex flex-col gap-1">
-          <label className="text-sm text-gray-500">Code</label>
-          <textarea
-            className="border border-gray-300 rounded px-3 py-1.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-400"
-            rows={3}
-            value={codeText}
-            onChange={(e) => setCodeText(e.target.value)}
-          />
-        </div>
-        <Btn onClick={handleSendCommand} disabled={!selectedRobotId || !codeText || cmdStatus === "loading"}>
-          {cmdStatus === "loading" ? "Sending…" : "Send Command"}
-        </Btn>
-        <button className="ml-2 px-4 py-1.5 bg-red-600 text-white text-sm rounded hover:bg-red-700 disabled:opacity-40 disabled:cursor-not-allowed"
-           onClick={handleAbortCommand} disabled={!selectedRobotId || abortStatus === "loading"}>
-          {abortStatus === "loading" ? "Aborting…" : "Abort Command"}
-        </button>
-        <ResultBox result={cmdResult} />
-      </Section>
-
-      {/* Step 4 — Live Logs */}
-      <Section
-        title="4. Robot Logs (WebSocket)"
-        status={wsStatus === "idle" ? "idle" : wsStatus === "connecting" ? "loading" : wsStatus === "connected" ? "ok" : "error"}
-      >
-        <p className="text-xs text-gray-400">
-          Auto-connected to selected robot. Status: <span className="font-medium">{wsStatus}</span>
-        </p>
-        <div className="flex gap-2">
-          <button onClick={() => setLogEntries([])} className="px-4 py-1.5 text-xs text-gray-400 hover:text-gray-600">
-            Clear
-          </button>
-        </div>
-        <div className="bg-gray-900 rounded p-3 h-64 overflow-y-auto font-mono text-xs">
-          {logEntries.length === 0 && <span className="text-gray-500">No logs yet…</span>}
-          {logEntries.map((entry, i) => (
-            <div
-              key={i}
-              className={`leading-5 ${
-                entry.level === "ERROR"
-                  ? "text-red-400"
-                  : entry.level === "WARNING"
-                    ? "text-yellow-300"
-                    : entry.level === "INFO"
-                      ? "text-green-400"
-                      : "text-gray-300"
-              }`}
-            >
-              <span className="text-gray-500 mr-2">
-                {entry.timestamp ? new Date(entry.timestamp).toLocaleTimeString() : ""}
+        {/* Connection Status */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <h2 className="text-sm font-semibold text-gray-700">Broker Connection</h2>
+              <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
+                connStatus === "ok" ? "bg-green-100 text-green-700" :
+                connStatus === "loading" ? "bg-yellow-100 text-yellow-700 animate-pulse" :
+                connStatus === "error" ? "bg-red-100 text-red-700" :
+                "bg-gray-200 text-gray-500"
+              }`}>
+                {connStatus === "ok" ? "Connected" :
+                 connStatus === "loading" ? "Connecting…" :
+                 connStatus === "error" ? "Error" :
+                 "Idle"}
               </span>
-              <span className="mr-2 font-bold">[{entry.level}]</span>
-              {entry.message}
             </div>
-          ))}
-          <div ref={logEndRef} />
+          </div>
         </div>
-      </Section>
-      {/* Step 5 — Robot stdout (robot-print) */}
-      <Section
-        title="5. Robot stdout (WebSocket)"
-        status={printWsStatus === "idle" ? "idle" : printWsStatus === "connecting" ? "loading" : printWsStatus === "connected" ? "ok" : "error"}
-      >
-        <p className="text-xs text-gray-400">
-          Streams live <code>print()</code> output from the robot. Status:{" "}
-          <span className="font-medium">{printWsStatus}</span>
-        </p>
-        <div className="flex gap-2">
-          <button onClick={() => setPrintEntries([])} className="px-4 py-1.5 text-xs text-gray-400 hover:text-gray-600">
-            Clear
-          </button>
-        </div>
-        <div className="bg-gray-900 rounded p-3 h-64 overflow-y-auto font-mono text-xs">
-          {printEntries.length === 0 && <span className="text-gray-500">No output yet…</span>}
-          {printEntries.map((entry, i) => (
-            <div key={i} className="leading-5 text-green-300">
-              <span className="text-gray-500 mr-2">
-                {entry.timestamp ? new Date(entry.timestamp).toLocaleTimeString() : ""}
-              </span>
-              {entry.text}
+
+        {/* Main Grid Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left Column - Robot List and Control */}
+          <div className="lg:col-span-1 space-y-6">
+            {/* Robots List */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold text-gray-800">Active Robots</h2>
+                <button
+                  onClick={handleRefreshRobots}
+                  disabled={robotsStatus === "loading"}
+                  className="text-xs px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-md transition disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  {robotsStatus === "loading" ? "Refreshing…" : "Refresh"}
+                </button>
+              </div>
+              
+              {robots.filter((r) => r.IsActivated).length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-sm text-gray-400 italic">No active robots found</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {robots
+                    .filter((r) => r.IsActivated)
+                    .map((robot) => (
+                      <div
+                        key={robot.RobotId}
+                        className={`border rounded-lg p-4 transition cursor-pointer ${
+                          selectedRobotId === robot.RobotId
+                            ? "border-blue-500 bg-blue-50"
+                            : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
+                        }`}
+                        onClick={() => setSelectedRobotId(robot.RobotId)}
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0 flex-1">
+                            <p className="text-sm font-semibold text-gray-800 truncate">{robot.Name}</p>
+                            <p className="text-xs text-gray-500 truncate font-mono">{robot.RobotId}</p>
+                            {robot.ActivatedOnSSID && (
+                              <p className="text-xs text-gray-400 mt-1">SSID: {robot.ActivatedOnSSID}</p>
+                            )}
+                            {shutdownResults[robot.RobotId] && (
+                              <p className={`text-xs mt-2 font-medium ${
+                                shutdownResults[robot.RobotId].ok ? "text-green-600" : "text-red-600"
+                              }`}>
+                                {shutdownResults[robot.RobotId].message}
+                              </p>
+                            )}
+                          </div>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleShutdown(robot.RobotId);
+                            }}
+                            disabled={shuttingDownIds.has(robot.RobotId)}
+                            className="shrink-0 px-3 py-1 bg-red-50 text-red-600 text-xs rounded-md hover:bg-red-100 transition disabled:opacity-40 disabled:cursor-not-allowed"
+                          >
+                            {shuttingDownIds.has(robot.RobotId) ? "Shutting down…" : "Shutdown"}
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              )}
             </div>
-          ))}
-          <div ref={printEndRef} />
+
+            {/* Control Panel */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+              <h2 className="text-lg font-semibold text-gray-800 mb-4">Send Command</h2>
+              
+              {!selectedRobotId ? (
+                <div className="text-center py-6">
+                  <p className="text-sm text-gray-400 italic">Select a robot to send commands</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Selected Robot</label>
+                    <div className="bg-gray-50 rounded-md px-3 py-2 text-sm text-gray-800">
+                      {robots.find((r) => r.RobotId === selectedRobotId)?.Name || selectedRobotId}
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Python Code</label>
+                    <textarea
+                      className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      rows={6}
+                      value={codeText}
+                      onChange={(e) => setCodeText(e.target.value)}
+                      placeholder="Enter Python code..."
+                    />
+                  </div>
+                  
+                  <div className="flex gap-2">
+                    <button
+                      onClick={handleSendCommand}
+                      disabled={!codeText || cmdStatus === "loading"}
+                      className="flex-1 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition disabled:opacity-40 disabled:cursor-not-allowed"
+                    >
+                      {cmdStatus === "loading" ? "Sending…" : "Send Command"}
+                    </button>
+                    <button
+                      onClick={handleAbortCommand}
+                      disabled={abortStatus === "loading"}
+                      className="px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-md hover:bg-red-700 transition disabled:opacity-40 disabled:cursor-not-allowed"
+                    >
+                      Abort
+                    </button>
+                  </div>
+                  
+                  {cmdResult && (
+                    <div className="mt-3">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Response</label>
+                      <pre className="bg-gray-900 text-gray-100 rounded-md p-3 text-xs overflow-auto max-h-32 font-mono">
+                        {cmdResult}
+                      </pre>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Right Column - Monitoring */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Robot Logs and Output - Side by Side */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Robot Logs */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <h2 className="text-lg font-semibold text-gray-800">Robot Logs</h2>
+                  <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
+                    !selectedRobotId ? "bg-gray-200 text-gray-500" :
+                    wsStatus === "connected" ? "bg-green-100 text-green-700" :
+                    wsStatus === "connecting" ? "bg-yellow-100 text-yellow-700 animate-pulse" :
+                    wsStatus === "error" ? "bg-red-100 text-red-700" :
+                    "bg-gray-200 text-gray-500"
+                  }`}>
+                    {!selectedRobotId ? "Disabled" :
+                     wsStatus === "connected" ? "Connected" :
+                     wsStatus === "connecting" ? "Connecting…" :
+                     wsStatus === "error" ? "Error" :
+                     "Idle"}
+                  </span>
+                </div>
+                {selectedRobotId && (
+                  <button
+                    onClick={() => setLogEntries([])}
+                    className="text-xs px-3 py-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-md transition"
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
+              
+              <div className="bg-gray-900 rounded-md p-4 h-64 overflow-y-auto font-mono text-xs">
+                {!selectedRobotId ? (
+                  <span className="text-gray-500">Select a robot to view logs</span>
+                ) : logEntries.length === 0 ? (
+                  <span className="text-gray-500">No logs yet…</span>
+                ) : (
+                  <>
+                    {logEntries.map((entry, i) => (
+                      <div
+                        key={i}
+                        className={`leading-6 ${
+                          entry.level === "ERROR" ? "text-red-400" :
+                          entry.level === "WARNING" ? "text-yellow-300" :
+                          entry.level === "INFO" ? "text-green-400" :
+                          "text-gray-300"
+                        }`}
+                      >
+                        <span className="text-gray-500 mr-2">
+                          {entry.timestamp ? new Date(entry.timestamp).toLocaleTimeString() : ""}
+                        </span>
+                        <span className="mr-2 font-bold">[{entry.level}]</span>
+                        {entry.message}
+                      </div>
+                    ))}
+                    <div ref={logEndRef} />
+                  </>
+                )}
+              </div>
+              </div>
+
+              {/* Robot Output (stdout) */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <h2 className="text-lg font-semibold text-gray-800">Robot Output</h2>
+                  <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
+                    !selectedRobotId ? "bg-gray-200 text-gray-500" :
+                    printWsStatus === "connected" ? "bg-green-100 text-green-700" :
+                    printWsStatus === "connecting" ? "bg-yellow-100 text-yellow-700 animate-pulse" :
+                    printWsStatus === "error" ? "bg-red-100 text-red-700" :
+                    "bg-gray-200 text-gray-500"
+                  }`}>
+                    {!selectedRobotId ? "Disabled" :
+                     printWsStatus === "connected" ? "Connected" :
+                     printWsStatus === "connecting" ? "Connecting…" :
+                     printWsStatus === "error" ? "Error" :
+                     "Idle"}
+                  </span>
+                </div>
+                {selectedRobotId && (
+                  <button
+                    onClick={() => setPrintEntries([])}
+                    className="text-xs px-3 py-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-md transition"
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
+              
+              <div className="bg-gray-900 rounded-md p-4 h-64 overflow-y-auto font-mono text-xs">
+                {!selectedRobotId ? (
+                  <span className="text-gray-500">Select a robot to view output</span>
+                ) : printEntries.length === 0 ? (
+                  <span className="text-gray-500">No output yet…</span>
+                ) : (
+                  <>
+                    {printEntries.map((entry, i) => (
+                      <div key={i} className="leading-6 text-green-300">
+                        <span className="text-gray-500 mr-2">
+                          {entry.timestamp ? new Date(entry.timestamp).toLocaleTimeString() : ""}
+                        </span>
+                        {entry.text}
+                      </div>
+                    ))}
+                    <div ref={printEndRef} />
+                  </>
+                )}
+              </div>              </div>            </div>
+
+            {/* Camera Feed */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+              <div className="flex items-center gap-3 mb-4">
+                <h2 className="text-lg font-semibold text-gray-800">Camera Feed</h2>
+                <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
+                  !selectedRobotId ? "bg-gray-200 text-gray-500" :
+                  cameraWsStatus === "connected" ? "bg-green-100 text-green-700" :
+                  cameraWsStatus === "connecting" ? "bg-yellow-100 text-yellow-700 animate-pulse" :
+                  cameraWsStatus === "error" ? "bg-red-100 text-red-700" :
+                  "bg-gray-200 text-gray-500"
+                }`}>
+                  {!selectedRobotId ? "Disabled" :
+                   cameraWsStatus === "connected" ? "Connected" :
+                   cameraWsStatus === "connecting" ? "Connecting…" :
+                   cameraWsStatus === "error" ? "Error" :
+                   "Idle"}
+                </span>
+              </div>
+              
+              <div className="bg-gray-900 rounded-md flex items-center justify-center overflow-hidden" style={{ minHeight: "300px" }}>
+                {cameraFrameUrl ? (
+                  <img src={cameraFrameUrl} alt="Robot camera" className="max-w-full h-auto rounded" />
+                ) : (
+                  <span className="text-gray-500 text-sm font-mono">
+                    {!selectedRobotId ? "Select a robot to view camera feed" : "Waiting for frames…"}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
-      </Section>
-      
-      {/* Step 6 — Camera feed (WebSocket) */}
-      <Section
-        title="6. Camera Feed (WebSocket)"
-        status={cameraWsStatus === "idle" ? "idle" : cameraWsStatus === "connecting" ? "loading" : cameraWsStatus === "connected" ? "ok" : "error"}
-      >
-        <p className="text-xs text-gray-400">
-          Live frames from the robot camera. Status:{" "}
-          <span className="font-medium">{cameraWsStatus}</span>
-        </p>
-        <div className="bg-gray-900 rounded flex items-center justify-center" style={{ minHeight: "240px" }}>
-          {cameraFrameUrl ? (
-            <img src={cameraFrameUrl} alt="Robot camera" className="max-w-full max-h-60 rounded" />
-          ) : (
-            <span className="text-gray-500 text-xs font-mono">
-              {selectedRobotId ? "Waiting for frames…" : "No robot selected."}
-            </span>
-          )}
+
+        {/* Detailed Logs Section */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+          <h2 className="text-lg font-semibold text-gray-800 mb-4">Detailed Logs</h2>
+          <div className="space-y-4">
+            {/* Connection Test */}
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <h3 className="text-sm font-medium text-gray-700">1. Broker Connection Test</h3>
+                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                  connStatus === "ok" ? "bg-green-100 text-green-700" :
+                  connStatus === "loading" ? "bg-yellow-100 text-yellow-700" :
+                  connStatus === "error" ? "bg-red-100 text-red-700" :
+                  "bg-gray-200 text-gray-500"
+                }`}>
+                  {connStatus}
+                </span>
+              </div>
+              {connResult && (
+                <pre className="bg-gray-100 rounded-md p-3 text-xs overflow-auto max-h-40 font-mono text-gray-800">
+                  {connResult}
+                </pre>
+              )}
+            </div>
+
+            {/* Fetch Robots */}
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <h3 className="text-sm font-medium text-gray-700">2. Fetch Robots</h3>
+                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                  robotsStatus === "ok" ? "bg-green-100 text-green-700" :
+                  robotsStatus === "loading" ? "bg-yellow-100 text-yellow-700" :
+                  robotsStatus === "error" ? "bg-red-100 text-red-700" :
+                  "bg-gray-200 text-gray-500"
+                }`}>
+                  {robotsStatus}
+                </span>
+              </div>
+              {robotsResult && (
+                <pre className="bg-gray-100 rounded-md p-3 text-xs overflow-auto max-h-40 font-mono text-gray-800">
+                  {robotsResult}
+                </pre>
+              )}
+            </div>
+
+            {/* Send Command */}
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <h3 className="text-sm font-medium text-gray-700">3. Send Command Response</h3>
+                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                  cmdStatus === "ok" ? "bg-green-100 text-green-700" :
+                  cmdStatus === "loading" ? "bg-yellow-100 text-yellow-700" :
+                  cmdStatus === "error" ? "bg-red-100 text-red-700" :
+                  "bg-gray-200 text-gray-500"
+                }`}>
+                  {cmdStatus}
+                </span>
+              </div>
+              {cmdResult ? (
+                <pre className="bg-gray-100 rounded-md p-3 text-xs overflow-auto max-h-40 font-mono text-gray-800">
+                  {cmdResult}
+                </pre>
+              ) : (
+                <p className="text-sm text-gray-400 italic">No command sent yet</p>
+              )}
+            </div>
+
+            {/* Abort Command */}
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <h3 className="text-sm font-medium text-gray-700">4. Abort Command Response</h3>
+                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                  abortStatus === "ok" ? "bg-green-100 text-green-700" :
+                  abortStatus === "loading" ? "bg-yellow-100 text-yellow-700" :
+                  abortStatus === "error" ? "bg-red-100 text-red-700" :
+                  "bg-gray-200 text-gray-500"
+                }`}>
+                  {abortStatus}
+                </span>
+              </div>
+              {abortResult ? (
+                <pre className="bg-gray-100 rounded-md p-3 text-xs overflow-auto max-h-40 font-mono text-gray-800">
+                  {abortResult}
+                </pre>
+              ) : (
+                <p className="text-sm text-gray-400 italic">No abort command sent yet</p>
+              )}
+            </div>
+
+            {/* WebSocket Status */}
+            <div>
+              <h3 className="text-sm font-medium text-gray-700 mb-2">5. WebSocket Connections</h3>
+              <div className="grid grid-cols-3 gap-3">
+                <div className="bg-gray-50 rounded-md p-3">
+                  <p className="text-xs text-gray-500 mb-1">Robot Logs</p>
+                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                    wsStatus === "connected" ? "bg-green-100 text-green-700" :
+                    wsStatus === "connecting" ? "bg-yellow-100 text-yellow-700" :
+                    wsStatus === "error" ? "bg-red-100 text-red-700" :
+                    "bg-gray-200 text-gray-500"
+                  }`}>
+                    {wsStatus}
+                  </span>
+                </div>
+                <div className="bg-gray-50 rounded-md p-3">
+                  <p className="text-xs text-gray-500 mb-1">Robot Output</p>
+                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                    printWsStatus === "connected" ? "bg-green-100 text-green-700" :
+                    printWsStatus === "connecting" ? "bg-yellow-100 text-yellow-700" :
+                    printWsStatus === "error" ? "bg-red-100 text-red-700" :
+                    "bg-gray-200 text-gray-500"
+                  }`}>
+                    {printWsStatus}
+                  </span>
+                </div>
+                <div className="bg-gray-50 rounded-md p-3">
+                  <p className="text-xs text-gray-500 mb-1">Camera Feed</p>
+                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                    cameraWsStatus === "connected" ? "bg-green-100 text-green-700" :
+                    cameraWsStatus === "connecting" ? "bg-yellow-100 text-yellow-700" :
+                    cameraWsStatus === "error" ? "bg-red-100 text-red-700" :
+                    "bg-gray-200 text-gray-500"
+                  }`}>
+                    {cameraWsStatus}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </Section>
+      </div>
     </div>
   );
 };

@@ -9,12 +9,12 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as Test_brokerRouteImport } from './routes/test_broker'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SolveIndexRouteImport } from './routes/solve/index'
+import { Route as AdminRobotsRouteImport } from './routes/admin/robots'
 import { Route as SolveActivityTaskIdIndexRouteImport } from './routes/solve/$activityTaskId/index'
 import { Route as AdminUsersIndexRouteImport } from './routes/admin/users/index'
 import { Route as AdminTasksIndexRouteImport } from './routes/admin/tasks/index'
@@ -32,11 +32,6 @@ import { Route as AdminActivitiesActivityIdEditRouteImport } from './routes/admi
 import { Route as AdminActivitiesActivityIdTasksAddRouteImport } from './routes/admin/activities/$activityId/tasks/add'
 import { Route as AdminActivitiesActivityIdTasksActivityTaskIdEditRouteImport } from './routes/admin/activities/$activityId/tasks/$activityTaskId/edit'
 
-const Test_brokerRoute = Test_brokerRouteImport.update({
-  id: '/test_broker',
-  path: '/test_broker',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -61,6 +56,11 @@ const SolveIndexRoute = SolveIndexRouteImport.update({
   id: '/solve/',
   path: '/solve/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRobotsRoute = AdminRobotsRouteImport.update({
+  id: '/robots',
+  path: '/robots',
+  getParentRoute: () => AdminRouteRoute,
 } as any)
 const SolveActivityTaskIdIndexRoute =
   SolveActivityTaskIdIndexRouteImport.update({
@@ -153,7 +153,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
-  '/test_broker': typeof Test_brokerRoute
+  '/admin/robots': typeof AdminRobotsRoute
   '/solve/': typeof SolveIndexRoute
   '/admin/tasks/$taskId': typeof AdminTasksTaskIdRouteRouteWithChildren
   '/admin/activities/new': typeof AdminActivitiesNewRoute
@@ -177,7 +177,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
-  '/test_broker': typeof Test_brokerRoute
+  '/admin/robots': typeof AdminRobotsRoute
   '/solve': typeof SolveIndexRoute
   '/admin/activities/new': typeof AdminActivitiesNewRoute
   '/admin/tasks/new': typeof AdminTasksNewRoute
@@ -201,7 +201,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
-  '/test_broker': typeof Test_brokerRoute
+  '/admin/robots': typeof AdminRobotsRoute
   '/solve/': typeof SolveIndexRoute
   '/admin/tasks/$taskId': typeof AdminTasksTaskIdRouteRouteWithChildren
   '/admin/activities/new': typeof AdminActivitiesNewRoute
@@ -227,7 +227,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/about'
     | '/login'
-    | '/test_broker'
+    | '/admin/robots'
     | '/solve/'
     | '/admin/tasks/$taskId'
     | '/admin/activities/new'
@@ -251,7 +251,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/about'
     | '/login'
-    | '/test_broker'
+    | '/admin/robots'
     | '/solve'
     | '/admin/activities/new'
     | '/admin/tasks/new'
@@ -274,7 +274,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/about'
     | '/login'
-    | '/test_broker'
+    | '/admin/robots'
     | '/solve/'
     | '/admin/tasks/$taskId'
     | '/admin/activities/new'
@@ -299,20 +299,12 @@ export interface RootRouteChildren {
   AdminRouteRoute: typeof AdminRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
   LoginRoute: typeof LoginRoute
-  Test_brokerRoute: typeof Test_brokerRoute
   SolveIndexRoute: typeof SolveIndexRoute
   SolveActivityTaskIdIndexRoute: typeof SolveActivityTaskIdIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/test_broker': {
-      id: '/test_broker'
-      path: '/test_broker'
-      fullPath: '/test_broker'
-      preLoaderRoute: typeof Test_brokerRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -347,6 +339,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/solve/'
       preLoaderRoute: typeof SolveIndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/admin/robots': {
+      id: '/admin/robots'
+      path: '/robots'
+      fullPath: '/admin/robots'
+      preLoaderRoute: typeof AdminRobotsRouteImport
+      parentRoute: typeof AdminRouteRoute
     }
     '/solve/$activityTaskId/': {
       id: '/solve/$activityTaskId/'
@@ -479,6 +478,7 @@ const AdminTasksTaskIdRouteRouteWithChildren =
   )
 
 interface AdminRouteRouteChildren {
+  AdminRobotsRoute: typeof AdminRobotsRoute
   AdminTasksTaskIdRouteRoute: typeof AdminTasksTaskIdRouteRouteWithChildren
   AdminActivitiesNewRoute: typeof AdminActivitiesNewRoute
   AdminTasksNewRoute: typeof AdminTasksNewRoute
@@ -495,6 +495,7 @@ interface AdminRouteRouteChildren {
 }
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminRobotsRoute: AdminRobotsRoute,
   AdminTasksTaskIdRouteRoute: AdminTasksTaskIdRouteRouteWithChildren,
   AdminActivitiesNewRoute: AdminActivitiesNewRoute,
   AdminTasksNewRoute: AdminTasksNewRoute,
@@ -521,7 +522,6 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRouteRoute: AdminRouteRouteWithChildren,
   AboutRoute: AboutRoute,
   LoginRoute: LoginRoute,
-  Test_brokerRoute: Test_brokerRoute,
   SolveIndexRoute: SolveIndexRoute,
   SolveActivityTaskIdIndexRoute: SolveActivityTaskIdIndexRoute,
 }

@@ -57,6 +57,20 @@ export const sendAbort = async (robotId: string) => {
   return response.json();
 };
 
+export const shutdownRobot = async (robotId: string) => {
+  const response = await fetch(`/api/broker/robots/${robotId}/shutdown`, {
+    credentials: 'include',
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to shutdown robot');
+  }
+  return response.json();
+};
+
 export const safeCloseWs = (ws: WebSocket | null) => {
   if (ws && ws.readyState !== WebSocket.CLOSING && ws.readyState !== WebSocket.CLOSED) {
     ws.close();

@@ -1,5 +1,5 @@
 import SimBarrierMenu from "./SimBarrierMenu.tsx";
-import {TileType} from "../../../types.ts";
+import { TileType } from "../../../types.ts";
 import SimStickerMenu from "./SimStickerMenu.tsx";
 import { BsXLg } from "react-icons/bs";
 
@@ -9,21 +9,23 @@ interface Props {
   type: TileType;
 }
 
-const SimSideMenu = ({show, setShow, type} : Props) => {
-
+const SimSideMenu = ({ show, setShow, type }: Props) => {
   return (
-    <div className={`${!show ? 'translate-x-full' : ''} absolute right-0 top-0 w-32 h-full px-2 transition duration-300`}>
-      <div className="absolute inset-0 bg-turquoise-600 pointer-events-none opacity-50"/>
-      <div className="relative p-2 pt-3 text-black font-semibold justify-end flex" onClick={() => setShow(false)}>
-        <BsXLg className={'stroke-2 stroke-dark-neutrals-600 cursor-pointer'} />
+    <div className={`${!show ? 'translate-y-full' : ''} absolute bottom-0 left-0 w-full transition duration-300 z-30`}>
+      <div className="absolute inset-0 bg-turquoise-600 opacity-50 pointer-events-none" />
+      <div className="relative px-3 py-2">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-sm font-bold text-white uppercase tracking-wide">
+            {type === TileType.BARRIER ? 'Prepreke' : 'Naljepnice'}
+          </span>
+          <BsXLg
+            className="stroke-2 stroke-white cursor-pointer hover:opacity-70 transition"
+            onClick={() => setShow(false)}
+          />
+        </div>
+        {type === TileType.BARRIER ? <SimBarrierMenu /> : null}
+        {type === TileType.STICKER ? <SimStickerMenu /> : null}
       </div>
-      {type === TileType.BARRIER ? (
-        <SimBarrierMenu />
-      ) : null}
-
-      {type === TileType.STICKER ? (
-        <SimStickerMenu />
-      ) : null}
     </div>
   );
 };

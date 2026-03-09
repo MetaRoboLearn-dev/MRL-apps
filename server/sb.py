@@ -44,7 +44,7 @@ def _make_builtins(steps: list, sim: SimState = None):
     def display_text(a=''):
         steps.append({"type": "display", "value": str(a)})
 
-    def get_detected_objects():
+    def detect_object():
         if sim:
             tile = sim.get_tile_ahead()
             steps.append({"type": "detect", "result": tile})
@@ -59,7 +59,7 @@ def _make_builtins(steps: list, sim: SimState = None):
         "turn_right": turn_right,
         "display_char": display_char,
         "display_text": display_text,
-        "get_detected_objects": get_detected_objects,
+        "detect_object": detect_object,
         "abs": abs,
         "bool": bool,
         "dict": dict,

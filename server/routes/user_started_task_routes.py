@@ -24,7 +24,8 @@ def _user_started_task_to_dict(ust):
         "activity_task": {
             "act_task_id": ust.activity_task_id,
             "task_type": ust.activity_task.type.name if ust.activity_task.type else None,
-            "description": ust.activity_task.description,
+            "preview": ust.activity_task.preview,
+            "instructions": ust.activity_task.instructions,
             "is_logged": ust.activity_task.is_logged,
             "allows_robot": ust.activity_task.allows_robot,
         },

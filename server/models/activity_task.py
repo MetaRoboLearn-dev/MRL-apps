@@ -7,7 +7,6 @@ class Type(Base):
     __tablename__ = 'types'
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
-    description = Column(String)
 
     activity_tasks = relationship('ActivityTask')
 
@@ -16,7 +15,8 @@ class ActivityTask(Base):
     __tablename__ = 'activity_tasks'
 
     id = Column(Integer, primary_key=True)
-    description = Column(String)
+    preview = Column(String)
+    instructions = Column(String)
 
     activity_id = Column(Integer, ForeignKey('activities.id'))
     task_id = Column(Integer, ForeignKey('tasks.id'))

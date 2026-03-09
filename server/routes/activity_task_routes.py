@@ -16,7 +16,8 @@ def require_login():
 def _activity_task_to_dict(at):
     return {
         "id": at.id,
-        "description": at.description,
+        "preview": at.preview,
+        "instructions": at.instructions,
         "activity_id": at.activity_id,
         "task_id": at.task_id,
         "type_id": at.type_id,
@@ -42,7 +43,8 @@ def get_activity_task(activity_task_id: int):
             "activity_id": at.activity_id,
             "task_id": at.task_id,
             "task_title": at.task.title if at.task else None,
-            "description": at.description,
+            "preview": at.preview,
+            "instructions": at.instructions,
             "order": at.order,
             "type_id": at.type_id,
             "task_type": at.type.name if at.type else None,
@@ -69,7 +71,8 @@ def list_activity_tasks():
                 "activity_task_id": at.id,
                 "task_id": at.task_id,
                 "task_title": at.task.title if at.task else None,
-                "activity_task_description": at.description,
+                "preview": at.preview,
+                "instructions": at.instructions,
                 "order": at.order,
                 "task_type": at.type.name if at.type else None,
                 "is_logged": at.is_logged,
@@ -108,7 +111,8 @@ def create_activity_task():
             order=int(data["order"]),
             is_logged=parse_boolean_param(data["is_logged"]),
             allows_robot=parse_boolean_param(data["allows_robot"]),
-            description=data.get("description"),
+            preview=data.get("preview"),
+            instructions=data.get("instructions"),
             actor_user_id=current_user.id,
         )
         return jsonify(_activity_task_to_dict(at)), 201
@@ -121,7 +125,7 @@ def update_activity_task(activity_task_id: int):
     data = request.get_json(silent=True) or {}
 
     # allow only these fields to be updated through this endpoint
-    allowed = {"description", "activity_id", "task_id", "type_id", "order", "is_logged", "allows_robot"}
+    allowed = {"preview", "instructions", "activity_id", "task_id", "type_id", "order", "is_logged", "allows_robot"}
     unknown = [k for k in data.keys() if k not in allowed]
     if unknown:
         return jsonify({"error": "Unknown fields", "unknown": unknown}), 400
@@ -130,7 +134,8 @@ def update_activity_task(activity_task_id: int):
         repo = ActivityTaskRepository(session)
         at = repo.update(
             activity_task_id,
-            description=data.get("description"),
+            preview=data.get("preview") if "preview" in data else None,
+            instructions=data.get("instructions") if "instructions" in data else None,
             activity_id=int(data["activity_id"]) if "activity_id" in data else None,
             task_id=int(data["task_id"]) if "task_id" in data else None,
             type_id=int(data["type_id"]) if "type_id" in data else None,

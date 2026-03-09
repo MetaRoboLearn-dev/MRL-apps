@@ -111,7 +111,8 @@ export const createActivityTask = async (data: {
   task_id: number;
   type_id: number;
   order: number;
-  description?: string;
+  preview?: string;
+  instructions?: string;
   is_logged: boolean;
   allows_robot: boolean;
 }) => {
@@ -134,7 +135,8 @@ export const updateActivityTask = async ({ id, ...data }: {
   id: string;
   task_id?: number;
   type_id?: number;
-  description?: string;
+  preview?: string;
+  instructions?: string;
   is_logged?: boolean;
   allows_robot?: boolean;
 }) => {

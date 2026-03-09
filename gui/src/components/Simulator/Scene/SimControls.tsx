@@ -81,7 +81,7 @@ const SimControls = () => {
       enablePan={true}
       enableZoom={true}
       minZoom={0.5}
-      maxZoom={1}
+      maxZoom={2}
     />
   );
 };

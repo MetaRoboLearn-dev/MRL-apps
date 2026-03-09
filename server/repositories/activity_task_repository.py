@@ -45,7 +45,8 @@ class ActivityTaskRepository:
         order: int,
         is_logged: bool,
         allows_robot: bool,
-        description: Optional[str] = None,
+        instructions: Optional[str] = None,
+        preview: Optional[str] = None,
         actor_user_id: Optional[int] = None,
     ) -> ActivityTask:
         now = utc_now()
@@ -56,7 +57,8 @@ class ActivityTaskRepository:
             order=order,
             is_logged=is_logged,
             allows_robot=allows_robot,
-            description=description,
+            instructions=instructions,
+            preview=preview,
             created_at=now,
             updated_at=now,
             created_by=actor_user_id,
@@ -73,7 +75,8 @@ class ActivityTaskRepository:
         self,
         activity_task_id: int,
         *,
-        description: Optional[str] = None,
+        instructions: Optional[str] = None,
+        preview: Optional[str] = None,
         activity_id: Optional[int] = None,
         task_id: Optional[int] = None,
         type_id: Optional[int] = None,
@@ -86,8 +89,10 @@ class ActivityTaskRepository:
         if not activity_task:
             return None
 
-        if description is not None:
-            activity_task.description = description
+        if instructions is not None:
+            activity_task.instructions = instructions
+        if preview is not None:
+            activity_task.preview = preview
         if activity_id is not None:
             activity_task.activity_id = activity_id
         if task_id is not None:

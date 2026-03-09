@@ -132,8 +132,8 @@ export const Route = createFileRoute('/admin/activities/')({
       header: 'Task Title',
       cell: (info) => info.getValue() || '—',
     }),
-    taskColumnHelper.accessor('activity_task_description', {
-      header: 'Description',
+    taskColumnHelper.accessor('preview', {
+      header: 'Preview',
       cell: (info) => info.getValue() || '—',
     }),
     taskColumnHelper.accessor('task_type', {

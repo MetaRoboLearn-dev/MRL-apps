@@ -57,8 +57,8 @@ const columns = [
     header: 'Task Title',
     cell: (info) => info.getValue() || '—',
   }),
-  columnHelper.accessor('activity_task_description', {
-    header: 'Description',
+  columnHelper.accessor('preview', {
+    header: 'Preview',
     cell: (info) => info.getValue() || '—',
   }),
   columnHelper.accessor('task_type', {

@@ -1,19 +1,27 @@
 import {useTaskConfig} from "../../hooks/useTaskConfig.ts";
 
 interface Props {
-  active: boolean;
-  setActive: (active: boolean) => void;
+  activeS: boolean;
+  setActiveS: (active: boolean) => void;
+  activeI: boolean;
+  setActiveI: (active: boolean) => void;
   setEditor: (editor: string) => void;
 }
 
-const CodeHeader = ({active, setActive, setEditor}: Props) => {
+const CodeHeader = ({activeS, setActiveS, activeI, setActiveI, setEditor}: Props) => {
   const {mode} = useTaskConfig()
   const editingMode = mode === 'edit' || mode === 'create'
-  const style = active
-    ? 'bg-tomato-600' : 'bg-tomato-300 pt-2 pb-3.5 translate-y-1.5 hover:bg-tomato-600 hover:translate-y-0.5';
+  const styleS = activeS ? 'bg-tomato-600' : 'bg-tomato-300 pt-2 pb-3.5 translate-y-1.5 hover:bg-tomato-600 hover:translate-y-0.5';
+  const styleI = activeI ? 'bg-tomato-600' : 'bg-tomato-300 pt-2 pb-3.5 translate-y-1.5 hover:bg-tomato-600 hover:translate-y-0.5';
 
-  const handleClick = () => {
-    setActive(!active);
+  const handleClickS = () => {
+    setActiveI(false);
+    setActiveS(!activeS);
+  }
+
+  const handleClickI = () => {
+    setActiveS(false);
+    setActiveI(!activeI);
   }
 
   return (
@@ -41,12 +49,22 @@ const CodeHeader = ({active, setActive, setEditor}: Props) => {
 
       </div>
 
-      <div
-        className={`${style} text-light tab hover:cursor-pointer transition`}
-        onClick={handleClick}
-      >
-        <h1>Priručnik</h1>
+      <div className={'flex'}>
+        <div
+          className={`${styleI} text-light tab hover:cursor-pointer transition`}
+          onClick={handleClickI}
+        >
+          <h1>Upute</h1>
+        </div>
+
+        <div
+          className={`${styleS} text-light tab hover:cursor-pointer transition`}
+          onClick={handleClickS}
+        >
+          <h1>Priručnik</h1>
+        </div>
       </div>
+
     </div>
   );
 };

@@ -8,8 +8,8 @@ import Footer from "../UI/Footer.tsx";
 function AssetPreload() {
   useEffect(() => {
     const loader = new TextureLoader()
-    loader.load('/textures/fountain.png')
-    loader.load('/textures/lake.png')
+    loader.load('/textures/fountain.webp')
+    loader.load('/textures/lake.webp')
   }, [])
 
   useGLTF('/models/Tree_big.glb')

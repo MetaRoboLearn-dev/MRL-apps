@@ -44,6 +44,12 @@ def _make_builtins(steps: list, sim: SimState = None):
     def display_text(a=''):
         steps.append({"type": "display", "value": str(a)})
 
+    def display_clear():
+        steps.append({"type": "display_clear"})
+
+    def sleep(a=0):
+        steps.append({"type": "sleep", "value": a})
+
     def detect_object():
         if sim:
             tile = sim.get_tile_ahead()
@@ -59,6 +65,8 @@ def _make_builtins(steps: list, sim: SimState = None):
         "turn_right": turn_right,
         "display_char": display_char,
         "display_text": display_text,
+        "display_clear": display_clear,
+        "sleep": sleep,
         "detect_object": detect_object,
         "abs": abs,
         "bool": bool,

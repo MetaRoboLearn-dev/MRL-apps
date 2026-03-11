@@ -47,7 +47,7 @@ function RouteComponent() {
     },
   })
 
-  const handleSubmit = async (data: { task_id: number | null; type_id: number; preview: string; instructions: string; is_logged: boolean; allows_robot: boolean }) => {
+  const handleSubmit = async (data: { task_id: number | null; type_id: number; preview: string; instructions: string; is_logged: boolean; allows_robot: boolean; difficulty: number | null }) => {
     setError(undefined)
     if (!data.task_id) return
 
@@ -59,6 +59,7 @@ function RouteComponent() {
       instructions: data.instructions || undefined,
       is_logged: data.is_logged,
       allows_robot: data.allows_robot,
+      difficulty: data.difficulty,
     })
   }
 
@@ -74,6 +75,7 @@ function RouteComponent() {
           instructions: activityTask.instructions || '',
           is_logged: activityTask.is_logged,
           allows_robot: activityTask.allows_robot,
+          difficulty: activityTask.difficulty ?? null,
         }}
         types={types}
         onSubmit={handleSubmit}

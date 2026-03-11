@@ -50,6 +50,7 @@ def get_activity_task(activity_task_id: int):
             "task_type": at.type.name if at.type else None,
             "is_logged": at.is_logged,
             "allows_robot": at.allows_robot,
+            "difficulty": at.difficulty
         }), 200
 
 
@@ -113,6 +114,7 @@ def create_activity_task():
             allows_robot=parse_boolean_param(data["allows_robot"]),
             preview=data.get("preview"),
             instructions=data.get("instructions"),
+            difficulty=data.get("difficulty"),
             actor_user_id=current_user.id,
         )
         return jsonify(_activity_task_to_dict(at)), 201
@@ -125,7 +127,7 @@ def update_activity_task(activity_task_id: int):
     data = request.get_json(silent=True) or {}
 
     # allow only these fields to be updated through this endpoint
-    allowed = {"preview", "instructions", "activity_id", "task_id", "type_id", "order", "is_logged", "allows_robot"}
+    allowed = {"preview", "instructions", "activity_id", "task_id", "type_id", "order", "is_logged", "allows_robot", "difficulty"}
     unknown = [k for k in data.keys() if k not in allowed]
     if unknown:
         return jsonify({"error": "Unknown fields", "unknown": unknown}), 400
@@ -142,6 +144,7 @@ def update_activity_task(activity_task_id: int):
             order=int(data["order"]) if "order" in data else None,
             is_logged=parse_boolean_param(data["is_logged"]) if "is_logged" in data else None,
             allows_robot=parse_boolean_param(data["allows_robot"]) if "allows_robot" in data else None,
+            difficulty=int(data["difficulty"]) if "difficulty" in data and data["difficulty"] is not None else None,
             actor_user_id=current_user.id,
         )
         if not at:

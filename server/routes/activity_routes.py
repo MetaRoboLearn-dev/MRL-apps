@@ -171,8 +171,9 @@ def list_student_available_activities():
                         "started": at.id in started,
                         "user_started_task_id": started[at.id].id if at.id in started else None,
                         "is_finished": started[at.id].is_finished if at.id in started else False,
+                        "difficulty": at.difficulty,
                     }
-                    for at in a.activity_tasks
+                    for at in sorted(a.activity_tasks, key=lambda at: at.order)
                 ],
             }
             for a in activities

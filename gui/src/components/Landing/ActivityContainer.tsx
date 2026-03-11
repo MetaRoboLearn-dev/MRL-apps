@@ -55,10 +55,18 @@ const ActivityContainer = () => {
                     {at.order}
                   </span>
                   <div className="min-w-0">
-                    <div className="font-bold text-lg">{at.task_title}</div>
-                    {at.preview && (
-                      <div className="text-sm text-dark-neutrals-400 mt-0.5">{at.preview}</div>
-                    )}
+                    <div className="flex items-center gap-3 text-lg font-semibold text-gray-800">
+                      <span>{at.task_title}</span>
+                      {at.difficulty != null && (
+                        <span className="flex items-center gap-1.5 rounded-full border border-yellow-300 bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-700">
+                          <span className="text-yellow-700/80">Težina</span>
+                            <span className="tracking-wide text-yellow-500">
+                            {'★'.repeat(at.difficulty)}
+                          </span>
+                        </span>
+                      )}
+                    </div>
+                    {at.preview && (<div className="text-sm text-dark-neutrals-400 mt-0.5">{at.preview}</div>)}
                   </div>
                 </div>
                 <div className="flex items-center gap-6 ml-6 shrink-0">

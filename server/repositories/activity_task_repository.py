@@ -47,6 +47,7 @@ class ActivityTaskRepository:
         allows_robot: bool,
         instructions: Optional[str] = None,
         preview: Optional[str] = None,
+        difficulty: Optional[int] = None,
         actor_user_id: Optional[int] = None,
     ) -> ActivityTask:
         now = utc_now()
@@ -59,6 +60,7 @@ class ActivityTaskRepository:
             allows_robot=allows_robot,
             instructions=instructions,
             preview=preview,
+            difficulty=difficulty,
             created_at=now,
             updated_at=now,
             created_by=actor_user_id,
@@ -83,6 +85,7 @@ class ActivityTaskRepository:
         order: Optional[int] = None,
         is_logged: Optional[bool] = None,
         allows_robot: Optional[bool] = None,
+        difficulty: Optional[int] = None,
         actor_user_id: Optional[int] = None,
     ) -> Optional[ActivityTask]:
         activity_task = self.get_by_id(activity_task_id)
@@ -105,6 +108,8 @@ class ActivityTaskRepository:
             activity_task.is_logged = is_logged
         if allows_robot is not None:
             activity_task.allows_robot = allows_robot
+        if difficulty is not None:
+            activity_task.difficulty = difficulty
 
         activity_task.updated_at = utc_now()
         activity_task.updated_by = actor_user_id

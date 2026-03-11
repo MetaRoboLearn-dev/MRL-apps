@@ -26,6 +26,7 @@ type ActivityTaskFormData = {
   instructions: string;
   is_logged: boolean;
   allows_robot: boolean;
+  difficulty: number | null;
 }
 
 type ActivityTaskFormProps = {
@@ -141,6 +142,7 @@ export function ActivityTaskForm({ initialData, types, onSubmit, isLoading, erro
     instructions: '',
     is_logged: true,
     allows_robot: true,
+    difficulty: null,
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [showPicker, setShowPicker] = useState(!initialData)
@@ -210,6 +212,21 @@ export function ActivityTaskForm({ initialData, types, onSubmit, isLoading, erro
             ))}
           </select>
           {errors.type_id && <p className="mt-1 text-sm text-red-600">{errors.type_id}</p>}
+        </div>
+
+        {/* Difficulty */}
+        <div>
+          <label className="block text-sm font-medium mb-1">Težina</label>
+          <select
+            value={formData.difficulty ?? ''}
+            onChange={(e) => setFormData((prev) => ({ ...prev, difficulty: e.target.value ? Number(e.target.value) : null }))}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+          >
+            <option value="">— bez težine —</option>
+            <option value="1">★ (1)</option>
+            <option value="2">★★ (2)</option>
+            <option value="3">★★★ (3)</option>
+          </select>
         </div>
 
         {/* Preview */}

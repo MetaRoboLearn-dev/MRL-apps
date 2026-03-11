@@ -17,11 +17,12 @@ const SimVehicle = () => {
     setPosition, setRotation, setIsMoving, queueMoves, setCurrentMove, simFinished } = useVehicle();
   const { animationSpeed, ustId } = useTaskConfig();
   const { setModalVisible, setModalHeader, setModalBody, setModalFooter } = useUI();
-  const { addLog } = useConsole();
+  const { addLog, clearLogs } = useConsole();
 
   const currentMoveRef = useRef<MoveCommand | null>(null);
   const targetPos = useRef<Vector3>(new Vector3(position.x, position.y, position.z));
   const targetRot = useRef<Euler>(new Euler(rotation.x, rotation.y, rotation.z));
+  const isSleeping = useRef<boolean>(false);
 
   const showModalWindow = (type: string) => {
     const val = getCurrentValue();
@@ -60,7 +61,7 @@ const SimVehicle = () => {
   }, [rotation]);
 
   useFrame(() => {
-  if (!vehicleRef.current || !isMoving) return;
+  if (!vehicleRef.current || !isMoving || isSleeping.current) return;
 
   const positionCloseEnough = vehicleRef.current.position.distanceTo(targetPos.current) < 0.01;
   const targetQuat = new THREE.Quaternion().setFromEuler(targetRot.current);
@@ -91,6 +92,21 @@ const SimVehicle = () => {
     if (nextMove.type === 'display') {
       addLog("DISPLAY", nextMove.value || 'nothing');
       queueMoves(newMoveQueue);
+      return;
+    }
+
+    if (nextMove.type === 'display_clear') {
+      clearLogs();
+      queueMoves(newMoveQueue);
+      return;
+    }
+
+    if (nextMove.type === 'sleep') {
+      isSleeping.current = true;
+      queueMoves(newMoveQueue);
+      setTimeout(() => {
+        isSleeping.current = false;
+      }, Number(nextMove.value ?? 1) * 1000);
       return;
     }
 

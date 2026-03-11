@@ -31,6 +31,8 @@ class ActivityTask(Base):
     is_logged = Column(Boolean, nullable=False, default=True)
     allows_robot = Column(Boolean, nullable=False, default=True)
 
+    difficulty = Column(Integer)
+
     activity = relationship('Activity', back_populates='activity_tasks')
     task = relationship('Task')
     type = relationship('Type')

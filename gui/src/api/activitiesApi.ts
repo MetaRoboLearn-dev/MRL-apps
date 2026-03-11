@@ -115,6 +115,7 @@ export const createActivityTask = async (data: {
   instructions?: string;
   is_logged: boolean;
   allows_robot: boolean;
+  difficulty?: number | null;
 }) => {
   const response = await fetch('/api/activity-tasks/', {
     credentials: 'include',
@@ -139,6 +140,7 @@ export const updateActivityTask = async ({ id, ...data }: {
   instructions?: string;
   is_logged?: boolean;
   allows_robot?: boolean;
+  difficulty?: number | null;
 }) => {
   const response = await fetch(`/api/activity-tasks/${id}`, {
     credentials: 'include',

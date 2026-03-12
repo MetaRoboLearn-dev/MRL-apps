@@ -95,11 +95,19 @@ const CamScreen = () => {
   return (
     <div className="flex flex-col flex-1 min-h-0 w-full border-t-8 border-y-10 border-indigo-700 overflow-hidden">
       {/* Header */}
-      <div className="flex items-center gap-3 px-4 py-2 bg-white border-b border-gray-200 shrink-0">
-        <span className="text-sm font-semibold text-gray-700">Kamera</span>
-        <span className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${statusClass}`}>
-          {statusLabel}
-        </span>
+      <div className="flex items-center justify-between px-4 py-2 bg-white border-b border-gray-200 shrink-0">
+        <div className="flex items-center gap-3">
+          <span className="text-sm font-semibold text-gray-700">Kamera</span>
+          <span className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${statusClass}`}>
+            {statusLabel}
+          </span>
+        </div>
+        <button
+          onClick={() => setImageSrc(null)}
+          className="text-xs text-gray-400 hover:text-gray-600 transition"
+        >
+          Obriši
+        </button>
       </div>
 
       {/* Feed */}

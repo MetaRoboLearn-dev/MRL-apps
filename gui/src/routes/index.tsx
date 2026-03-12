@@ -1,6 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
 import ActivityContainer from "../components/Landing/ActivityContainer.tsx";
-import {Suspense} from "react";
 
 export const Route = createFileRoute('/')({
   component: Index,
@@ -13,9 +12,7 @@ function Index() {
         <h1 className="text-5xl font-bold text-dark-neutrals-500 tracking-wide">Tvoje aktivnosti</h1>
         <div className="mt-3 mx-auto w-24 h-1 bg-sunglow-400 rounded-full"/>
       </div>
-      <Suspense fallback={<div>Loading...</div>}>
-        <ActivityContainer/>
-      </Suspense>
+      <ActivityContainer/>
     </div>
   )
 }

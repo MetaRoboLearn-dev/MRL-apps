@@ -1,16 +1,27 @@
-import { queryOptions, useSuspenseQuery } from '@tanstack/react-query'
+import {queryOptions, useQuery} from '@tanstack/react-query'
 import {getAvailableActivities} from "../../api/activitiesApi.ts";
 import {capitalizeFirstLetter, formatLocalDateTime} from "../../utils.ts";
 import ButtonSolveStart from "../Solve/ButtonSolveStart.tsx";
 import ButtonSolveContinue from "../Solve/ButtonSolveContinue.tsx";
+import {useAuth} from "../../hooks/useAuth.ts";
 
 const availableActivitiesQueryOptions = queryOptions({
   queryKey: ['activities', 'available'],
   queryFn: getAvailableActivities,
+  retry: false,
 })
 
 const ActivityContainer = () => {
-  const { data: activities } = useSuspenseQuery(availableActivitiesQueryOptions)
+  // const { data: activities } = useSuspenseQuery(availableActivitiesQueryOptions)
+  const { user } = useAuth();
+  const { data: activities, isLoading } = useQuery({
+    ...availableActivitiesQueryOptions,
+    enabled: !!user,
+  });
+
+  if (isLoading || !activities) {
+    return <div>Loading...</div>;
+  }
 
   if (activities.length === 0) {
     return (

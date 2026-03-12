@@ -25,6 +25,10 @@ function ProtectedLayout() {
     return <div className="w-full h-screen flex items-center justify-center">Loading...</div>;
   }
 
+  if (!user && location.pathname !== '/login') {
+    return null;
+  }
+
   return (
     <div className="w-full h-screen flex flex-col">
       {location.pathname !== '/login' && <Navbar />}

@@ -45,6 +45,7 @@ export const TaskConfigProvider = ({ust, task, mode, children }: PropsWithChildr
   // TODO - replace robot url with call from broker api and dropdown
   const [robotUrl, setRobotUrl] = useState<string | null>(null);
   const [awaitingReview, setAwaitingReview] = useState<boolean>(false);
+  const [selectedRobotId, setSelectedRobotId] = useState<string | null>(null);
 
   const setAnimationSpeed = (speed: number) => {
     // max 0.1, min 0.02, default 0.4
@@ -123,6 +124,7 @@ export const TaskConfigProvider = ({ust, task, mode, children }: PropsWithChildr
       barrierTextures, loadBarrierTextures,
       robotUrl, setRobotUrl,
       awaitingReview, setAwaitingReview,
+      selectedRobotId, setSelectedRobotId,
       isLogged, setIsLogged,
       hasRobotAccess, setHasRobotAccess,
       isActive, setIsActive,

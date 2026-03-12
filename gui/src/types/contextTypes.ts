@@ -54,6 +54,8 @@ export interface TaskConfigType {
   description: string | null;
   setDescription: (description: string | null) => void;
   instructions: string;
+  selectedRobotId: string | null;
+  setSelectedRobotId: (robotId: string | null) => void;
 }
 
 export interface VehicleContextType {

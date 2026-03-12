@@ -42,17 +42,23 @@ const BrokerTestPage = () => {
   const [logEntries, setLogEntries] = useState<{ level: string; message: string; timestamp?: string }[]>([]);
   const [wsStatus, setWsStatus] = useState<"idle" | "connecting" | "connected" | "disconnected" | "error">("idle");
   const wsRef = useRef<WebSocket | null>(null);
+  const wsRetryRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const wsSessionRef = useRef(0);
   const logEndRef = useRef<HTMLDivElement>(null);
 
   const [printEntries, setPrintEntries] = useState<{ text: string; timestamp?: string }[]>([]);
   const [printWsStatus, setPrintWsStatus] = useState<"idle" | "connecting" | "connected" | "disconnected" | "error">("idle");
   const printWsRef = useRef<WebSocket | null>(null);
+  const printRetryRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const printSessionRef = useRef(0);
   const printEndRef = useRef<HTMLDivElement>(null);
 
   const [cameraFrameUrl, setCameraFrameUrl] = useState<string | null>(null);
   const [cameraWsStatus, setCameraWsStatus] = useState<"idle" | "connecting" | "connected" | "disconnected" | "error">("idle");
   const cameraWsRef = useRef<WebSocket | null>(null);
-  const prevFrameUrlRef = useRef<string | null>(null);
+  const cameraRetryRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const cameraSessionRef = useRef(0);
+  const currentFrameUrlRef = useRef<string | null>(null);
 
   const didRun = useRef(false);
 
@@ -137,164 +143,124 @@ const BrokerTestPage = () => {
   };
 
 
+  const RECONNECT_DELAY_MS = 3000;
+
+  const teardownWs = (ws: WebSocket | null) => {
+    if (!ws) return;
+    ws.onclose = null;
+    ws.onerror = null;
+    ws.onopen = null;
+    ws.onmessage = null;
+    safeCloseWs(ws);
+  };
+
   useEffect(() => {
-    if (!selectedRobotId) {
-      if (wsRef.current) {
-        // Clear handlers to prevent 'disconnected' status on intentional close
-        wsRef.current.onclose = null;
-        wsRef.current.onerror = null;
-        wsRef.current.onopen = null;
-        wsRef.current.onmessage = null;
-        safeCloseWs(wsRef.current);
-        wsRef.current = null;
-      }
+    const cleanup = () => {
+      wsSessionRef.current++;
+      if (wsRetryRef.current !== null) { clearTimeout(wsRetryRef.current); wsRetryRef.current = null; }
+      teardownWs(wsRef.current); wsRef.current = null;
       setLogEntries([]);
       setWsStatus("idle");
-      return;
-    }
-
-    if (wsRef.current) {
-      // Clear handlers to prevent 'disconnected' status on intentional close
-      wsRef.current.onclose = null;
-      wsRef.current.onerror = null;
-      wsRef.current.onopen = null;
-      wsRef.current.onmessage = null;
-      safeCloseWs(wsRef.current);
-      wsRef.current = null;
-    }
-    setLogEntries([]);
-
-    const ws = connectRobotLogSocket(
-      selectedRobotId,
-      (log) => {
-        setLogEntries((prev) => [...prev, { level: log.LogLevel, message: log.Message, timestamp: log.Timestamp }]);
-      },
-      (status) => setWsStatus(status),
-    );
-    wsRef.current = ws;
-
-    return () => {
-      if (ws) {
-        ws.onclose = null;
-        ws.onerror = null;
-        ws.onopen = null;
-        ws.onmessage = null;
-        safeCloseWs(ws);
-      }
     };
+
+    cleanup();
+    if (!selectedRobotId) return cleanup;
+
+    const session = wsSessionRef.current;
+    const connect = () => {
+      if (wsSessionRef.current !== session) return;
+      teardownWs(wsRef.current);
+      wsRef.current = connectRobotLogSocket(
+        selectedRobotId,
+        (log) => {
+          if (wsSessionRef.current !== session) return;
+          setLogEntries((prev) => [...prev, { level: log.LogLevel, message: log.Message, timestamp: log.Timestamp }]);
+        },
+        (status) => {
+          if (wsSessionRef.current !== session) return;
+          setWsStatus(status);
+          if (status === "disconnected" || status === "error") {
+            wsRetryRef.current = setTimeout(() => { wsRetryRef.current = null; connect(); }, RECONNECT_DELAY_MS);
+          }
+        },
+      );
+    };
+    connect();
+    return cleanup;
   }, [selectedRobotId]);
 
   useEffect(() => {
-    if (!selectedRobotId) {
-      if (printWsRef.current) {
-        // Clear handlers to prevent 'disconnected' status on intentional close
-        printWsRef.current.onclose = null;
-        printWsRef.current.onerror = null;
-        printWsRef.current.onopen = null;
-        printWsRef.current.onmessage = null;
-        safeCloseWs(printWsRef.current);
-        printWsRef.current = null;
-      }
+    const cleanup = () => {
+      printSessionRef.current++;
+      if (printRetryRef.current !== null) { clearTimeout(printRetryRef.current); printRetryRef.current = null; }
+      teardownWs(printWsRef.current); printWsRef.current = null;
       setPrintEntries([]);
       setPrintWsStatus("idle");
-      return;
-    }
-
-    if (printWsRef.current) {
-      // Clear handlers to prevent 'disconnected' status on intentional close
-      printWsRef.current.onclose = null;
-      printWsRef.current.onerror = null;
-      printWsRef.current.onopen = null;
-      printWsRef.current.onmessage = null;
-      safeCloseWs(printWsRef.current);
-      printWsRef.current = null;
-    }
-    setPrintEntries([]);
-
-    const ws = connectRobotPrintSocket(
-      selectedRobotId,
-      (msg) => {
-        setPrintEntries((prev) => [...prev, { text: msg.Text, timestamp: msg.Timestamp }]);
-      },
-      (status) => setPrintWsStatus(status),
-    );
-    printWsRef.current = ws;
-
-    return () => {
-      if (ws) {
-        ws.onclose = null;
-        ws.onerror = null;
-        ws.onopen = null;
-        ws.onmessage = null;
-        safeCloseWs(ws);
-      }
     };
+
+    cleanup();
+    if (!selectedRobotId) return cleanup;
+
+    const session = printSessionRef.current;
+    const connect = () => {
+      if (printSessionRef.current !== session) return;
+      teardownWs(printWsRef.current);
+      printWsRef.current = connectRobotPrintSocket(
+        selectedRobotId,
+        (msg) => {
+          if (printSessionRef.current !== session) return;
+          setPrintEntries((prev) => [...prev, { text: msg.Text, timestamp: msg.Timestamp }]);
+        },
+        (status) => {
+          if (printSessionRef.current !== session) return;
+          setPrintWsStatus(status);
+          if (status === "disconnected" || status === "error") {
+            printRetryRef.current = setTimeout(() => { printRetryRef.current = null; connect(); }, RECONNECT_DELAY_MS);
+          }
+        },
+      );
+    };
+    connect();
+    return cleanup;
   }, [selectedRobotId]);
 
   useEffect(() => {
-    if (!selectedRobotId) {
-      if (cameraWsRef.current) {
-        // Clear handlers to prevent 'disconnected' status on intentional close
-        cameraWsRef.current.onclose = null;
-        cameraWsRef.current.onerror = null;
-        cameraWsRef.current.onopen = null;
-        cameraWsRef.current.onmessage = null;
-        safeCloseWs(cameraWsRef.current);
-        cameraWsRef.current = null;
-      }
-      if (prevFrameUrlRef.current) {
-        URL.revokeObjectURL(prevFrameUrlRef.current);
-        prevFrameUrlRef.current = null;
-      }
+    const cleanup = () => {
+      cameraSessionRef.current++;
+      if (cameraRetryRef.current !== null) { clearTimeout(cameraRetryRef.current); cameraRetryRef.current = null; }
+      teardownWs(cameraWsRef.current); cameraWsRef.current = null;
+      if (currentFrameUrlRef.current) { URL.revokeObjectURL(currentFrameUrlRef.current); currentFrameUrlRef.current = null; }
       setCameraFrameUrl(null);
       setCameraWsStatus("idle");
-      return;
-    }
-
-    if (cameraWsRef.current) {
-      // Clear handlers to prevent 'disconnected' status on intentional close
-      cameraWsRef.current.onclose = null;
-      cameraWsRef.current.onerror = null;
-      cameraWsRef.current.onopen = null;
-      cameraWsRef.current.onmessage = null;
-      safeCloseWs(cameraWsRef.current);
-      cameraWsRef.current = null;
-    }
-    if (prevFrameUrlRef.current) {
-      URL.revokeObjectURL(prevFrameUrlRef.current);
-      prevFrameUrlRef.current = null;
-    }
-    setCameraFrameUrl(null);
-
-    // Single persistent connection — server handles upstream reconnection,
-    // so we just keep this socket open and wait for frames.
-    const ws = connectRobotCameraSocket(
-      selectedRobotId,
-      (blob) => {
-        const url = URL.createObjectURL(blob);
-        setCameraFrameUrl((prev) => {
-          if (prev) URL.revokeObjectURL(prev);
-          return url;
-        });
-        prevFrameUrlRef.current = url;
-      },
-      (status) => setCameraWsStatus(status),
-    );
-    cameraWsRef.current = ws;
-
-    return () => {
-      if (ws) {
-        ws.onclose = null;
-        ws.onerror = null;
-        ws.onopen = null;
-        ws.onmessage = null;
-        safeCloseWs(ws);
-      }
-      if (prevFrameUrlRef.current) {
-        URL.revokeObjectURL(prevFrameUrlRef.current);
-        prevFrameUrlRef.current = null;
-      }
     };
+
+    cleanup();
+    if (!selectedRobotId) return cleanup;
+
+    const session = cameraSessionRef.current;
+    const connect = () => {
+      if (cameraSessionRef.current !== session) return;
+      teardownWs(cameraWsRef.current);
+      cameraWsRef.current = connectRobotCameraSocket(
+        selectedRobotId,
+        (blob) => {
+          if (cameraSessionRef.current !== session) return;
+          const url = URL.createObjectURL(blob);
+          if (currentFrameUrlRef.current) URL.revokeObjectURL(currentFrameUrlRef.current);
+          currentFrameUrlRef.current = url;
+          setCameraFrameUrl(url);
+        },
+        (status) => {
+          if (cameraSessionRef.current !== session) return;
+          setCameraWsStatus(status);
+          if (status === "disconnected" || status === "error") {
+            cameraRetryRef.current = setTimeout(() => { cameraRetryRef.current = null; connect(); }, RECONNECT_DELAY_MS);
+          }
+        },
+      );
+    };
+    connect();
+    return cleanup;
   }, [selectedRobotId]);
 
   const handleRefreshRobots = async () => {

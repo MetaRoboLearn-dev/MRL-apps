@@ -6,6 +6,7 @@ import {TaskConfigProvider} from "../TaskConfigProvider.tsx";
 import {Task, TaskMode} from "../../types/tasksTypes.ts";
 import {UserStartedTask} from "../../types/userStartedTasksTypes.ts";
 import {ConsoleProvider} from "../ConsoleProvider.tsx";
+import RobotSocketManager from "../../components/Simulator/RobotSocketManager.tsx";
 
 interface Props {
   ust?: UserStartedTask;
@@ -20,6 +21,7 @@ const TaskProviders = ({ ust, task, code, blocks, mode, onCodeSave, children }: 
   return (
     <ConsoleProvider>
       <TaskConfigProvider ust={ust} task={task} mode={mode}>
+        <RobotSocketManager />
         <GridProvider task={task}>
           <CodeProvider
             init_code={code}

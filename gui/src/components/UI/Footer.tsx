@@ -2,7 +2,6 @@ import {useVehicle} from "../../hooks/useVehicle.ts";
 import {useUI} from "../../hooks/useUI.ts";
 import {useTaskConfig} from "../../hooks/useTaskConfig.ts";
 import {useGrid} from "../../hooks/useGrid.ts";
-import {useState} from "react";
 import ButtonSim from "../Footer/ButtonSim.tsx";
 import ButtonSimStop from "../Footer/ButtonSimStop.tsx";
 import ButtonRobotRun from "../Footer/ButtonRobotRun.tsx";
@@ -16,10 +15,8 @@ import ButtonRobotSelect from "../Footer/ButtonRobotSelect.tsx";
 const Footer = () => {
   const { moveQueue, isMoving } = useVehicle();
   const { modalVisible } = useUI();
-  const { camMode, awaitingReview, mode, hasRobotAccess } = useTaskConfig();
+  const { camMode, awaitingReview, mode, hasRobotAccess, selectedRobotId, setSelectedRobotId } = useTaskConfig();
   const { start, finish } = useGrid();
-
-  const [selectedRobotId, setSelectedRobotId] = useState<string | null>(null);
 
   const disabled = isMoving || modalVisible || start === null || finish === null;
 

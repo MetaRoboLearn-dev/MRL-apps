@@ -6,7 +6,7 @@ import {useTaskConfig} from "../../../hooks/useTaskConfig.ts";
 const degToRad = (deg: number) => deg * Math.PI / 180;
 
 const SimVehicleOutline = () => {
-  const { scene } = useGLTF("/Car.glb");
+  const { scene } = useGLTF("/RoboRanger-v1.glb");
 
   const { selectedRotation } = useTaskConfig();
 

@@ -84,13 +84,13 @@ const SimVehicle = () => {
 
     // Handle non-animation steps immediately
     if (nextMove.type === 'print') {
-      addLog("OUTPUT", nextMove.value || 'nothing');
+      addLog("OUTPUT", nextMove.value || '');
       queueMoves(newMoveQueue);
       return;
     }
 
     if (nextMove.type === 'display') {
-      addLog("DISPLAY", nextMove.value || 'nothing');
+      addLog("DISPLAY", nextMove.value || '');
       queueMoves(newMoveQueue);
       return;
     }

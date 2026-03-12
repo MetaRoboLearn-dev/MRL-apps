@@ -27,7 +27,7 @@ const SimTile = ({index, position}: Props) => {
 
   const barrier = barriers.get(index);
   const sticker = stickers.find((s) => s.index === index);
-  
+
   const colours: Record<TileType, string> = {
     [TileType.GROUND]: index % 2 ? '#3f9b0b' : '#3b930a',
     [TileType.START]: '#fed857',

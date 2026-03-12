@@ -27,7 +27,7 @@ const SimTile = ({index, position}: Props) => {
 
   const barrier = barriers.get(index);
   const sticker = stickers.find((s) => s.index === index);
-
+  
   const colours: Record<TileType, string> = {
     [TileType.GROUND]: index % 2 ? '#3f9b0b' : '#3b930a',
     [TileType.START]: '#fed857',
@@ -38,27 +38,31 @@ const SimTile = ({index, position}: Props) => {
 
   useEffect(() => {
     setType(() => {
-      if (index === start)
-        return TileType.START;
-      else if (index === finish)
-        return TileType.FINISH;
-      else if (barrier_keys.includes(index))
-        return TileType.BARRIER;
+      const isStart = index === start;
+      const isFinish = index === finish;
+      if (isStart && isFinish) return TileType.START; // or a blended state
+      if (isStart) return TileType.START;
+      if (isFinish) return TileType.FINISH;
+      if (barrier_keys.includes(index)) return TileType.BARRIER;
       return TileType.GROUND;
-    })
+    });
   }, [barriers, finish, index, start]);
 
   const place = (event: ThreeEvent<PointerEvent>) => {
     event.stopPropagation();
     if (!simFocused) return;
 
-    if (selectedType !== TileType.STICKER){
-      setStart(start === index ? null : start);
-      setFinish(finish === index ? null : finish);
-      setBarriers(new Map([...barriers].filter(([key]) => key !== index))
-      );
-    }
-    else {
+    if (selectedType !== TileType.STICKER) {
+      // Clear start unless we're placing start or finish
+      if (selectedType !== TileType.START && selectedType !== TileType.FINISH) {
+        setStart(start === index ? null : start);
+      }
+      // Clear finish unless we're placing start or finish
+      if (selectedType !== TileType.START && selectedType !== TileType.FINISH) {
+        setFinish(finish === index ? null : finish);
+      }
+      setBarriers(new Map([...barriers].filter(([key]) => key !== index)));
+    } else {
       setStickers(stickers.filter(i => i.index !== index));
     }
 
@@ -99,7 +103,13 @@ const SimTile = ({index, position}: Props) => {
             <boxGeometry/>
             <meshStandardMaterial emissive={'black'}
                                   emissiveIntensity={index % 2 === 1 ? 0.5 : 0}
-                                  color={(isHovered && simFocused) ? 'blue' : colours[type]}/>
+                                  color={
+                                    (isHovered && simFocused)
+                                      ? 'blue'
+                                      : (index === start && index === finish)
+                                        ? 'purple'
+                                        : colours[type]
+                                  }/>
           </mesh>
         ) : null
       }

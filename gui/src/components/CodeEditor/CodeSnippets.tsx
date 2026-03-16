@@ -28,7 +28,7 @@ export default function CodeSnippets() {
       <Section title="Kretanje robota">
         <p style={pStyle}>Robot se može kretati po stazi i okretati za 90 stupnjeva u lijevu ili desnu stranu.</p>
         <p style={pStyle}><strong style={strongStyle}>Osnovne naredbe</strong></p>
-        <Pre>{`forward()      # robot ide naprijed\nbackward()     # robot ide natrag\nturn_left()    # robot se okrene lijevo za 90°\nturn_right()   # robot se okrene desno za 90°`}</Pre>
+        <Pre>{`forward()      # robot ide naprijed\nback()     # robot ide natrag\nturn_left()    # robot se okrene lijevo za 90°\nturn_right()   # robot se okrene desno za 90°`}</Pre>
         <p style={pStyle}><strong style={strongStyle}>Primjer</strong></p>
         <Pre>{`# robot treba preći put zadan sljedećim koracima\n# NAPRIJED - NAPRIJED - OKRET LIJEVO - NAPRIJED\nforward()\nforward()\nturn_left()\nforward()`}</Pre>
       </Section>

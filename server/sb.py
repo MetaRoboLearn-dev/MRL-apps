@@ -47,6 +47,12 @@ def _make_builtins(steps: list, sim: SimState = None):
     def display_clear():
         steps.append({"type": "display_clear"})
 
+    def display_green():
+        steps.append({"type": "display", "value": 'GREEN 🟢'})
+
+    def display_red():
+        steps.append({"type": "display", "value": 'RED 🔴'})
+
     def sleep(a=0):
         steps.append({"type": "sleep", "value": a})
 
@@ -66,6 +72,8 @@ def _make_builtins(steps: list, sim: SimState = None):
         "display_char": display_char,
         "display_text": display_text,
         "display_clear": display_clear,
+        "display_green": display_green,
+        "display_red": display_red,
         "sleep": sleep,
         "detect_object": detect_object,
         "abs": abs,

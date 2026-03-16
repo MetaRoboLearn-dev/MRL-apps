@@ -7,6 +7,8 @@ import {
   Element as SlateElement,
   Node,
   Path,
+  Point,
+  Range,
   Transforms,
 } from 'slate'
 import {
@@ -17,6 +19,8 @@ import {
   Slate,
   useSlate,
   useSlateSelector,
+  useSlateStatic,
+  useReadOnly,
   withReact,
 } from 'slate-react'
 import { HistoryEditor, withHistory } from 'slate-history'
@@ -40,6 +44,8 @@ export type TableCellElement    = { type: 'table-cell';      children: CustomTex
 export type TableRowElement     = { type: 'table-row';       children: TableCellElement[] }
 export type TableElement        = { type: 'table';           children: TableRowElement[] }
 
+export type CheckListItemElement = { type: 'check-list-item'; checked: boolean; children: CustomText[] }
+
 export type CustomElement =
   | ParagraphElement
   | HeadingOneElement
@@ -50,6 +56,7 @@ export type CustomElement =
   | TableCellElement
   | TableRowElement
   | TableElement
+  | CheckListItemElement
 
 // Module augmentation — makes Slate's types aware of our custom nodes/marks,
 // eliminating the need for any type assertions in the rest of the file.
@@ -65,7 +72,7 @@ declare module 'slate' {
 
 type MarkFormat      = keyof Omit<CustomText, 'text'>
 type ListFormat      = 'bulleted-list' | 'numbered-list'
-type ToggleableBlock = 'paragraph' | 'heading-one' | 'heading-two' | ListFormat
+type ToggleableBlock = 'paragraph' | 'heading-one' | 'heading-two' | 'check-list-item' | ListFormat
 
 const LIST_FORMATS: ListFormat[] = ['bulleted-list', 'numbered-list']
 
@@ -139,7 +146,41 @@ const toggleBlock = (editor: Editor, format: ToggleableBlock): void => {
   } else if (format === 'heading-two') {
     const props: Partial<HeadingTwoElement> = { type: 'heading-two' }
     Transforms.setNodes(editor, props)
+  } else if (format === 'check-list-item') {
+    const props: Partial<CheckListItemElement> = { type: 'check-list-item', checked: false }
+    Transforms.setNodes(editor, props)
   }
+}
+
+// ─── Checklist plugin ────────────────────────────────────────────────────────
+
+const withChecklists = (editor: Editor & ReactEditor & HistoryEditor) => {
+  const { deleteBackward } = editor
+
+  editor.deleteBackward = (...args) => {
+    const { selection } = editor
+    if (selection && Range.isCollapsed(selection)) {
+      const [match] = Array.from(
+        Editor.nodes(editor, {
+          match: n => !Editor.isEditor(n) && SlateElement.isElement(n) && n.type === 'check-list-item',
+        })
+      )
+      if (match) {
+        const [, path] = match
+        const start = Editor.start(editor, path)
+        if (Point.equals(selection.anchor, start)) {
+          const props: Partial<ParagraphElement> = { type: 'paragraph' }
+          Transforms.setNodes(editor, props, {
+            match: n => !Editor.isEditor(n) && SlateElement.isElement(n) && n.type === 'check-list-item',
+          })
+          return
+        }
+      }
+    }
+    deleteBackward(...args)
+  }
+
+  return editor
 }
 
 // ─── Table helpers ────────────────────────────────────────────────────────────
@@ -394,6 +435,7 @@ function Toolbar() {
       <div className="w-px bg-gray-300 mx-1" />
       <BlockButton format="bulleted-list" label="• List"  title="Bullet list" />
       <BlockButton format="numbered-list" label="1. List" title="Numbered list" />
+      <BlockButton format="check-list-item" label="☑ Check" title="Checklist" />
       <div className="w-px bg-gray-300 mx-1" />
       <ToolbarButton
         title="Insert 2×2 table"
@@ -406,6 +448,36 @@ function Toolbar() {
 }
 
 // ─── Rendering ────────────────────────────────────────────────────────────────
+
+function CheckListItem({ attributes, children, element }: RenderElementProps) {
+  const editor = useSlateStatic()
+  const readOnly = useReadOnly()
+  if (element.type !== 'check-list-item') return null
+  const { checked } = element
+  return (
+    <div {...attributes} className="flex items-center gap-2 my-1">
+      <span contentEditable={false} className="flex-shrink-0">
+        <input
+          type="checkbox"
+          checked={checked}
+          className="w-4 h-4 accent-blue-500 cursor-pointer disabled:cursor-default"
+          onChange={e => {
+            const path = ReactEditor.findPath(editor, element)
+            const props: Partial<CheckListItemElement> = { checked: e.target.checked }
+            Transforms.setNodes(editor, props, { at: path })
+          }}
+        />
+      </span>
+      <span
+        contentEditable={!readOnly}
+        suppressContentEditableWarning
+        className={`flex-1 outline-none ${checked ? 'line-through text-gray-400' : ''}`}
+      >
+        {children}
+      </span>
+    </div>
+  )
+}
 
 function Element({ attributes, children, element }: RenderElementProps) {
   switch (element.type) {
@@ -433,6 +505,8 @@ function Element({ attributes, children, element }: RenderElementProps) {
           {children}
         </td>
       )
+    case 'check-list-item':
+      return <CheckListItem attributes={attributes} element={element} children={children} />
     default:
       return <p {...attributes} className="my-1">{children}</p>
   }
@@ -478,7 +552,7 @@ export function RichTextEditor({
   className = '',
 }: RichTextEditorProps) {
   // The editor instance must be stable across re-renders.
-  const editor = useMemo(() => withHistory(withReact(createEditor())), [])
+  const editor = useMemo(() => withChecklists(withHistory(withReact(createEditor()))), [])
 
   // Only parse on mount — Slate owns its own state after that.
   const initialValue: Descendant[] = useMemo(() => {
@@ -525,7 +599,7 @@ export function RichTextEditor({
           onKeyDown={readOnly ? undefined : handleKeyDown}
           placeholder={placeholder}
           style={{ minHeight: className.includes('h-') ? undefined : minHeight }}
-          className="flex-1 p-3 outline-none"
+          className="flex-1 p-3 text-sm outline-none"
         />
       </div>
     </Slate>

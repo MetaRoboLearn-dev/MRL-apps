@@ -28,12 +28,6 @@ const CodeScreen = () => {
         ) : (
             <BlockPlayground />
         )}
-        {/*<div className={editorMode.current === "blockly" ? "w-full h-full" : "hidden"}>*/}
-        {/*    <BlockPlayground />*/}
-        {/*  </div>*/}
-        {/*  <div className={editorMode.current === "python" ? "w-full h-full" : "hidden"}>*/}
-        {/*    <CodePlayground />*/}
-        {/*</div>*/}
       </>
     )
   }
@@ -62,7 +56,7 @@ const CodeScreen = () => {
         {mode !== "solve" && editEditor()}
         <CodeSideScreen active={activeSnippets || activeInstructions}>
           {activeSnippets && <CodeSnippets />}
-          {activeInstructions && <CodeInstructions />}
+          <CodeInstructions hidden={!activeInstructions} />
         </CodeSideScreen>
       </div>
     </div>

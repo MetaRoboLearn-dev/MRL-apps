@@ -14,3 +14,4 @@ flask_login
 gunicorn
 gevent
 gevent-websocket
+redis

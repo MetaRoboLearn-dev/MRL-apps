@@ -28,7 +28,18 @@ def init_db(app=None):
     logger.info("Connecting to database: %s", safe_uri)
 
     sql_echo = os.environ.get("SQL_ECHO", "false").lower() == "true"
-    engine = create_engine(db_uri, echo=sql_echo, pool_pre_ping=True)
+    engine = create_engine(
+        db_uri,
+        echo=sql_echo,
+        pool_pre_ping=True,
+        pool_recycle=3600,  # Recycle connections after 1 hour
+        pool_size=10,  # Connection pool size
+        max_overflow=20,  # Max connections beyond pool_size
+        connect_args={
+            "connect_timeout": 10,  # Connection timeout in seconds
+            "options": "-c statement_timeout=30000"  # Query timeout: 30 seconds
+        }
+    )
     SessionLocal = scoped_session(sessionmaker(bind=engine, expire_on_commit=False))
 
     # Verify the connection is actually reachable before continuing

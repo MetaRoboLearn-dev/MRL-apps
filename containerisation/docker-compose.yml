@@ -1,5 +1,13 @@
 services:
 
+  # ── Redis (shared state for multi-worker setup) ───────────────────────────
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+
   # ── Flask backend (gunicorn + gevent) ───────────────────────────────────────
   backend:
     build:
@@ -7,6 +15,10 @@ services:
     restart: unless-stopped
     env_file: .env
     # DATABASE_URL is read directly from .env
+    depends_on:
+      - redis
+    environment:
+      - REDIS_URL=redis://redis:6379/0
 
   # ── Nginx (HTTPS + static frontend + API/WebSocket proxy) ──────────────────
   nginx:
@@ -23,4 +35,5 @@ services:
       - backend
 
 volumes:
+  redis_data:
   ssl_certs:

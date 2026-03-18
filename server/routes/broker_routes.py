@@ -11,6 +11,7 @@ import threading
 from database import db_session
 from models.user_task_log import EventTypes
 from repositories.user_task_log_repository import UserTaskLogRepository
+from broker_token_manager import get_token_manager
 
 bp = Blueprint("broker", __name__, url_prefix="/api/broker")
 
@@ -27,14 +28,46 @@ BROKER_CLIENT_NAME = os.environ.get("BROKER_CLIENT_NAME", "mrl-app-server")
 BROKER_API_KEY = os.environ.get("BROKER_API_KEY", "")
 VIDEO_WS_URL = os.environ.get("VIDEO_WS_URL", "ws://localhost:8001")
 
-_broker_state = {
+# Get shared token manager
+token_manager = get_token_manager()
+
+# Local state as fallback if Redis is unavailable
+_local_broker_state = {
     "client_id": None,
     "token": None,
 }
 
 
+def _get_broker_state():
+    """Get broker state from Redis or local fallback."""
+    if token_manager.is_available():
+        data = token_manager.get_token()
+        if data:
+            return data
+    return _local_broker_state
+
+
+def _save_broker_state(client_id: str, token: str):
+    """Save broker state to Redis and local fallback."""
+    _local_broker_state["client_id"] = client_id
+    _local_broker_state["token"] = token
+
+    if token_manager.is_available():
+        token_manager.save_token(client_id, token)
+
+
+def _clear_broker_state():
+    """Clear broker state from Redis and local fallback."""
+    _local_broker_state["client_id"] = None
+    _local_broker_state["token"] = None
+
+    if token_manager.is_available():
+        token_manager.clear_token()
+
+
 def _ensure_logged_in(force=False):
-    if _broker_state["token"] and not force:
+    state = _get_broker_state()
+    if state.get("token") and not force:
         return
 
     res = requests.post(f"{BROKER_URL}/client/login", headers={
@@ -44,8 +77,7 @@ def _ensure_logged_in(force=False):
     })
     res.raise_for_status()
     data = res.json()
-    _broker_state["client_id"] = data["ClientId"]
-    _broker_state["token"] = data["Token"]
+    _save_broker_state(data["ClientId"], data["Token"])
 
 
 def broker_auth(f):
@@ -60,7 +92,7 @@ def broker_auth(f):
                 return f(*args, **kwargs)
             except requests.HTTPError as e:
                 if e.response is not None and e.response.status_code in (401, 403) and attempt == 0:
-                    _broker_state["token"] = None
+                    _clear_broker_state()
                     continue
                 return jsonify({"error": f"Broker request failed: {str(e)}"}), 502
             except Exception as e:
@@ -69,10 +101,11 @@ def broker_auth(f):
 
 
 def _broker_headers():
+    state = _get_broker_state()
     return {
         "Content-Type": "application/json",
-        "client-id": _broker_state["client_id"],
-        "token": _broker_state["token"],
+        "client-id": state.get("client_id"),
+        "token": state.get("token"),
     }
 
 
@@ -81,9 +114,11 @@ def _broker_headers():
 def test_connection():
     try:
         _ensure_logged_in(force=True)
+        state = _get_broker_state()
         return jsonify({
             "status": "ok",
-            "client_id": _broker_state["client_id"],
+            "client_id": state.get("client_id"),
+            "redis_available": token_manager.is_available(),
         }), 200
     except Exception as e:
         return jsonify({"status": "error", "error": str(e)}), 502
@@ -180,6 +215,7 @@ def init_broker_websocket(app):
             ws.close()
             return
 
+        state = _get_broker_state()
         broker_ws = None
         closed = threading.Event()
 
@@ -204,8 +240,8 @@ def init_broker_websocket(app):
         broker_ws = websocket.WebSocketApp(
             f"{BROKER_WS_URL}/client/robot-log/{robot_id}",
             header={
-                "client-id": str(_broker_state["client_id"]),
-                "token": str(_broker_state["token"]),
+                "client-id": str(state.get("client_id")),
+                "token": str(state.get("token")),
             },
             on_message=on_broker_message,
             on_error=on_broker_error,
@@ -236,6 +272,7 @@ def init_broker_websocket(app):
             ws.close()
             return
 
+        state = _get_broker_state()
         broker_ws = None
         closed = threading.Event()
 
@@ -260,8 +297,8 @@ def init_broker_websocket(app):
         broker_ws = websocket.WebSocketApp(
             f"{BROKER_WS_URL}/client/robot-print/{robot_id}",
             header={
-                "client-id": str(_broker_state["client_id"]),
-                "token": str(_broker_state["token"]),
+                "client-id": str(state.get("client_id")),
+                "token": str(state.get("token")),
             },
             on_message=on_broker_message,
             on_error=on_broker_error,
@@ -293,6 +330,7 @@ def init_broker_websocket(app):
             ws.close()
             return
 
+        state = _get_broker_state()
         closed = threading.Event()
         RETRY_DELAY = 2  # seconds between reconnect attempts
 
@@ -306,9 +344,9 @@ def init_broker_websocket(app):
                     upstream = websocket.create_connection(
                         f"{VIDEO_WS_URL}/robot/{robot_id}/get-video-stream",
                         header={
-                            "client-id": str(_broker_state["client_id"]),
-                            "client_id": str(_broker_state["client_id"]),
-                            "token": str(_broker_state["token"]),
+                            "client-id": str(state.get("client_id")),
+                            "client_id": str(state.get("client_id")),
+                            "token": str(state.get("token")),
                         },
                         timeout=5,
                     )

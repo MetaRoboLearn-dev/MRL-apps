@@ -30,7 +30,12 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ssl_certs:/etc/nginx/ssl
+      # Let's Encrypt certificates (DuckDNS) - mount entire letsencrypt dir
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      # Webroot for Let's Encrypt challenges (zero-downtime renewals)
+      - /var/www/certbot:/var/www/certbot:ro
+      # For self-signed certificates (testing): use Docker volume
+      # - ssl_certs:/etc/nginx/ssl
     depends_on:
       - backend
 

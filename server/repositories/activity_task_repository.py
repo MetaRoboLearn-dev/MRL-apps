@@ -130,7 +130,6 @@ class ActivityTaskRepository:
 
     # ---------- SWAP TASK ORDER ----------
     def swap_order(self, activity_id: int, activity_task_id: int, direction: str):
-        """Swap order with adjacent task. direction is 'up' or 'down'."""
         task = self.session.query(ActivityTask).filter(
             ActivityTask.id == activity_task_id,
             ActivityTask.activity_id == activity_id,
@@ -163,8 +162,19 @@ class ActivityTaskRepository:
         if not neighbor:
             return None
 
-        task.order, neighbor.order = neighbor.order, task.order
+        # Use a temporary value to avoid unique constraint violation
+        original_task_order = task.order
+        original_neighbor_order = neighbor.order
+
+        task.order = -1
         self.session.flush()
+
+        neighbor.order = original_task_order
+        self.session.flush()
+
+        task.order = original_neighbor_order
+        self.session.flush()
+
         return task
 
     # ---------- REORDER TASKSA AFTER DELETE ----------

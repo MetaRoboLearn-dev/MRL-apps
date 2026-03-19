@@ -17,8 +17,6 @@ import {
 import { ActivityTask } from '../../../../types/activityTypes.ts'
 import {formatLocalDateTime} from "../../../../utils.ts";
 
-
-
 const activityQueryOptions = (activityId: string) =>
   queryOptions({
     queryKey: ['activity', activityId],
@@ -81,7 +79,31 @@ const columns = [
       </span>
     ),
   }),
-  columnHelper.accessor('creator', {
+  columnHelper.accessor('student_mode', {
+    header: 'Student mode',
+    cell: (info) => {
+        const mode = info.getValue()
+        if (mode === 'all') return <span className="text-gray-500">All</span>
+        if (mode === 'include') return <span className="text-blue-600">Specific</span>
+        return <span className="text-orange-600">Excluded</span>
+    },
+  }),
+  columnHelper.display({
+    id: 'students',
+    header: '',
+    cell: ({ row }) => <StudentsButton activityTaskId={row.original.activity_task_id} />,
+  }),
+  columnHelper.display({
+    id: 'actions',
+    header: '',
+    cell: ({ row }) => <EditTaskButton activityTaskId={row.original.activity_task_id} />,
+  }),
+  columnHelper.display({
+    id: 'remove',
+    header: '',
+    cell: ({ row }) => <RemoveButton activityTask={row.original} />,
+  }),
+    columnHelper.accessor('creator', {
     header: 'Created By',
     cell: (info) => {
       const creator = info.getValue()
@@ -93,16 +115,6 @@ const columns = [
         </div>
       )
     },
-  }),
-  columnHelper.display({
-    id: 'actions',
-    header: '',
-    cell: ({ row }) => <EditTaskButton activityTaskId={row.original.activity_task_id} />,
-  }),
-  columnHelper.display({
-    id: 'remove',
-    header: '',
-    cell: ({ row }) => <RemoveButton activityTask={row.original} />,
   }),
 ]
 
@@ -121,6 +133,25 @@ function EditTaskButton({ activityTaskId }: { activityTaskId: number }) {
       className="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-md transition-colors"
     >
       Edit
+    </button>
+  )
+}
+
+function StudentsButton({ activityTaskId }: { activityTaskId: number }) {
+  const { activityId } = Route.useParams()
+  const navigate = useNavigate()
+
+  return (
+    <button
+      onClick={() =>
+        navigate({
+          to: '/admin/activities/$activityId/tasks/$activityTaskId/students',
+          params: { activityId, activityTaskId: activityTaskId.toString() },
+        })
+      }
+      className="px-3 py-1 bg-purple-500 hover:bg-purple-600 text-white text-sm rounded-md transition-colors"
+    >
+      Students
     </button>
   )
 }

@@ -32,6 +32,7 @@ class ActivityTask(Base):
     allows_robot = Column(Boolean, nullable=False, default=True)
 
     difficulty = Column(Integer)
+    student_mode = Column(String, nullable=False, default='all', server_default='all')  # 'all', 'include', 'exclude'
 
     activity = relationship('Activity', back_populates='activity_tasks')
     task = relationship('Task')

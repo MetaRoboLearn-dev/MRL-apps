@@ -75,6 +75,8 @@ export interface VehicleContextType {
   setCurrentMove: (currentMove: MoveCommand | null) => void;
   simFinished: boolean;
   setSimFinished: (simFinished: boolean) => void;
+  hasRun: boolean,
+  setHasRun: (hasRun: boolean) => void;
 }
 
 export interface GridContextType {

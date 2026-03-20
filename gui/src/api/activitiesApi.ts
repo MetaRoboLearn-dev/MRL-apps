@@ -210,3 +210,47 @@ export const getAvailableActivities = async (): Promise<AvailableActivity[]> => 
 
   return response.json();
 };
+
+export const getActivityTaskStudents = async (
+  activityTaskId: string,
+  params: { skip?: number; limit?: number; search?: string } = {},
+) => {
+  const queryParams = new URLSearchParams();
+  if (params.skip) queryParams.set('skip', params.skip.toString());
+  if (params.limit) queryParams.set('limit', params.limit.toString());
+  if (params.search) queryParams.set('search', params.search);
+
+  const response = await fetch(
+    `/api/activity-tasks/${activityTaskId}/students?${queryParams}`,
+    { credentials: 'include' },
+  );
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to fetch students');
+  }
+
+  return response.json();
+};
+
+export const setActivityTaskStudents = async (
+  activityTaskId: string,
+  data: { student_mode: string; user_ids: number[] },
+) => {
+  const response = await fetch(
+    `/api/activity-tasks/${activityTaskId}/students`,
+    {
+      credentials: 'include',
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    },
+  );
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to update students');
+  }
+
+  return response.json();
+};

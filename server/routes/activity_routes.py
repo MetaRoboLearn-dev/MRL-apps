@@ -4,6 +4,7 @@ from flask_login import current_user, login_required
 from auth import role_required
 from database import db_session
 from models import UserStartedTask
+from models.user_activity_task import UserActivityTask
 from repositories.activity_repository import ActivityRepository
 from repositories.activity_task_repository import ActivityTaskRepository
 from utils import parse_boolean_param, parse_datetime, _to_utc_iso
@@ -150,6 +151,23 @@ def list_student_available_activities():
             .all()
         }
 
+        # Get all activity task IDs this student is linked to
+        assigned_task_ids = set(
+            row[0]
+            for row in session.query(UserActivityTask.activity_task_id)
+            .filter(UserActivityTask.user_id == user_id)
+            .all()
+        )
+
+        def is_task_visible(at):
+            if at.student_mode == 'all':
+                return True
+            if at.student_mode == 'include':
+                return at.id in assigned_task_ids
+            if at.student_mode == 'exclude':
+                return at.id not in assigned_task_ids
+            return True
+
         return jsonify([
             {
                 "id": a.id,
@@ -174,6 +192,7 @@ def list_student_available_activities():
                         "difficulty": at.difficulty,
                     }
                     for at in sorted(a.activity_tasks, key=lambda at: at.order)
+                    if is_task_visible(at)
                 ],
             }
             for a in activities

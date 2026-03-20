@@ -30,6 +30,7 @@ import { Route as AdminUsersUserIdEditRouteImport } from './routes/admin/users/$
 import { Route as AdminTasksTaskIdEditRouteImport } from './routes/admin/tasks/$taskId/edit'
 import { Route as AdminActivitiesActivityIdEditRouteImport } from './routes/admin/activities/$activityId/edit'
 import { Route as AdminActivitiesActivityIdTasksAddRouteImport } from './routes/admin/activities/$activityId/tasks/add'
+import { Route as AdminActivitiesActivityIdTasksActivityTaskIdStudentsRouteImport } from './routes/admin/activities/$activityId/tasks/$activityTaskId/students'
 import { Route as AdminActivitiesActivityIdTasksActivityTaskIdEditRouteImport } from './routes/admin/activities/$activityId/tasks/$activityTaskId/edit'
 
 const LoginRoute = LoginRouteImport.update({
@@ -141,6 +142,12 @@ const AdminActivitiesActivityIdTasksAddRoute =
     path: '/activities/$activityId/tasks/add',
     getParentRoute: () => AdminRouteRoute,
   } as any)
+const AdminActivitiesActivityIdTasksActivityTaskIdStudentsRoute =
+  AdminActivitiesActivityIdTasksActivityTaskIdStudentsRouteImport.update({
+    id: '/activities/$activityId/tasks/$activityTaskId/students',
+    path: '/activities/$activityId/tasks/$activityTaskId/students',
+    getParentRoute: () => AdminRouteRoute,
+  } as any)
 const AdminActivitiesActivityIdTasksActivityTaskIdEditRoute =
   AdminActivitiesActivityIdTasksActivityTaskIdEditRouteImport.update({
     id: '/activities/$activityId/tasks/$activityTaskId/edit',
@@ -171,6 +178,7 @@ export interface FileRoutesByFullPath {
   '/admin/users/$userId/': typeof AdminUsersUserIdIndexRoute
   '/admin/activities/$activityId/tasks/add': typeof AdminActivitiesActivityIdTasksAddRoute
   '/admin/activities/$activityId/tasks/$activityTaskId/edit': typeof AdminActivitiesActivityIdTasksActivityTaskIdEditRoute
+  '/admin/activities/$activityId/tasks/$activityTaskId/students': typeof AdminActivitiesActivityIdTasksActivityTaskIdStudentsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -194,6 +202,7 @@ export interface FileRoutesByTo {
   '/admin/users/$userId': typeof AdminUsersUserIdIndexRoute
   '/admin/activities/$activityId/tasks/add': typeof AdminActivitiesActivityIdTasksAddRoute
   '/admin/activities/$activityId/tasks/$activityTaskId/edit': typeof AdminActivitiesActivityIdTasksActivityTaskIdEditRoute
+  '/admin/activities/$activityId/tasks/$activityTaskId/students': typeof AdminActivitiesActivityIdTasksActivityTaskIdStudentsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -219,6 +228,7 @@ export interface FileRoutesById {
   '/admin/users/$userId/': typeof AdminUsersUserIdIndexRoute
   '/admin/activities/$activityId/tasks/add': typeof AdminActivitiesActivityIdTasksAddRoute
   '/admin/activities/$activityId/tasks/$activityTaskId/edit': typeof AdminActivitiesActivityIdTasksActivityTaskIdEditRoute
+  '/admin/activities/$activityId/tasks/$activityTaskId/students': typeof AdminActivitiesActivityIdTasksActivityTaskIdStudentsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -245,6 +255,7 @@ export interface FileRouteTypes {
     | '/admin/users/$userId/'
     | '/admin/activities/$activityId/tasks/add'
     | '/admin/activities/$activityId/tasks/$activityTaskId/edit'
+    | '/admin/activities/$activityId/tasks/$activityTaskId/students'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -268,6 +279,7 @@ export interface FileRouteTypes {
     | '/admin/users/$userId'
     | '/admin/activities/$activityId/tasks/add'
     | '/admin/activities/$activityId/tasks/$activityTaskId/edit'
+    | '/admin/activities/$activityId/tasks/$activityTaskId/students'
   id:
     | '__root__'
     | '/'
@@ -292,6 +304,7 @@ export interface FileRouteTypes {
     | '/admin/users/$userId/'
     | '/admin/activities/$activityId/tasks/add'
     | '/admin/activities/$activityId/tasks/$activityTaskId/edit'
+    | '/admin/activities/$activityId/tasks/$activityTaskId/students'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -452,6 +465,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminActivitiesActivityIdTasksAddRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/admin/activities/$activityId/tasks/$activityTaskId/students': {
+      id: '/admin/activities/$activityId/tasks/$activityTaskId/students'
+      path: '/activities/$activityId/tasks/$activityTaskId/students'
+      fullPath: '/admin/activities/$activityId/tasks/$activityTaskId/students'
+      preLoaderRoute: typeof AdminActivitiesActivityIdTasksActivityTaskIdStudentsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/admin/activities/$activityId/tasks/$activityTaskId/edit': {
       id: '/admin/activities/$activityId/tasks/$activityTaskId/edit'
       path: '/activities/$activityId/tasks/$activityTaskId/edit'
@@ -492,6 +512,7 @@ interface AdminRouteRouteChildren {
   AdminUsersUserIdIndexRoute: typeof AdminUsersUserIdIndexRoute
   AdminActivitiesActivityIdTasksAddRoute: typeof AdminActivitiesActivityIdTasksAddRoute
   AdminActivitiesActivityIdTasksActivityTaskIdEditRoute: typeof AdminActivitiesActivityIdTasksActivityTaskIdEditRoute
+  AdminActivitiesActivityIdTasksActivityTaskIdStudentsRoute: typeof AdminActivitiesActivityIdTasksActivityTaskIdStudentsRoute
 }
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
@@ -511,6 +532,8 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
     AdminActivitiesActivityIdTasksAddRoute,
   AdminActivitiesActivityIdTasksActivityTaskIdEditRoute:
     AdminActivitiesActivityIdTasksActivityTaskIdEditRoute,
+  AdminActivitiesActivityIdTasksActivityTaskIdStudentsRoute:
+    AdminActivitiesActivityIdTasksActivityTaskIdStudentsRoute,
 }
 
 const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(

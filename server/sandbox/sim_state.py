@@ -1,7 +1,8 @@
 import math
 
 sticker_whitelist = [
-  'person', 'bird', 'bear', 'bench', 'donut', 'horse', 'zebra', 'giraffe', 'elephant', 'dog', 'cat', 'cow', 'sheep', 'restaurant', 'cellphone'
+  'person', 'bird', 'bear', 'bench', 'donut', 'horse', 'zebra', 'giraffe', 'elephant', 'dog', 'cat', 'cow', 'sheep', 'zoo restaurant', 'cellphone',
+  'red house', 'yellow house', 'green house', 'blue house', 'warehouse', 'post office', 'restaurant', 'trees', 'lake', 'fountain',
 ]
 
 class SimState:

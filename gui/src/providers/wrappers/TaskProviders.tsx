@@ -22,16 +22,16 @@ const TaskProviders = ({ ust, task, code, blocks, mode, onCodeSave, children }: 
     <ConsoleProvider>
       <TaskConfigProvider ust={ust} task={task} mode={mode}>
         <RobotSocketManager />
-        <GridProvider task={task}>
-          <CodeProvider
-            init_code={code}
-            init_blocks={blocks}
-            editorMode={ust?.activity_task.task_type}
-            onSave={mode === 'solve' ? onCodeSave : undefined}
-          >
-            <VehicleProvider>
-              {children}
-            </VehicleProvider>
+          <GridProvider task={task}>
+            <CodeProvider
+              init_code={code}
+              init_blocks={blocks}
+              editorMode={ust?.activity_task.task_type}
+              onSave={mode === 'solve' ? onCodeSave : undefined}
+            >
+              <VehicleProvider>
+                {children}
+              </VehicleProvider>
           </CodeProvider>
         </GridProvider>
       </TaskConfigProvider>

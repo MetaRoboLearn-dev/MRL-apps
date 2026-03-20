@@ -63,18 +63,21 @@ export const Barriers: Record<Barrier, BarrierData> = {
 }
 
 export enum Sticker {
+  TREES = 'trees',
+  LAKE = 'lake',
+  FOUNTAIN = 'fountain',
   ROAD_INTERSECT = 'Raskržije',
   ROAD_T = 'T raskržije',
   ROAD_STRAIGHT = 'Cesta',
   ROAD_TURN = 'Zavoj',
-  HOUSE_GREEN = 'Zelena kuća',
-  HOUSE_RED = 'Crvena kuća',
+  HOUSE_GREEN = 'green house',
+  HOUSE_RED = 'red house',
   HOUSE_RED_SANTA = 'Crvena kuća (Djed Mraz)',
-  HOUSE_BLUE = 'Plava kuća',
-  HOUSE_YELLOW = 'Žuta kuća',
-  POST_OFFICE = 'Pošta',
-  RESTAURANT = 'Restoran',
-  WAREHOUSE = 'Skladište',
+  HOUSE_BLUE = 'blue house',
+  HOUSE_YELLOW = 'yellow house',
+  POST_OFFICE = 'post office',
+  RESTAURANT = 'restaurant',
+  WAREHOUSE = 'warehouse',
   ELF_WORKSHOP = 'Radionica patuljaka',
   BEAR = 'bear',
   BENCH = 'bench',
@@ -97,7 +100,7 @@ export enum Sticker {
   L_YELLOW = 'l yellow',
   LJUBIMCI = 'ljubimci',
   PERSON = 'person',
-  RESTAURANT_ZOO = 'restaurant',
+  RESTAURANT_ZOO = 'zoo restaurant',
   S_BLUE_BROWN = 's blue brown',
   S_BLUE_YELLOW = 's blue yellow',
   S_BLUE = 's blue',
@@ -125,6 +128,9 @@ interface StickerData {
 }
 
 export const Stickers: Record<Sticker, StickerData> = {
+  [Sticker.TREES]: { key: 'TREES', image: '/textures/trees.webp', scale: 0.8  },
+  [Sticker.FOUNTAIN]: { key: 'FOUNTAIN', image: '/textures/fountain.webp', scale: 0.8  },
+  [Sticker.LAKE]: { key: 'LAKE', image: '/textures/lake.webp', scale: 0.8  },
   [Sticker.ROAD_INTERSECT]: { key: 'ROAD_INTERSECT', image: '/textures/road_intersect.webp', scale: 1 },
   [Sticker.ROAD_T]: { key: 'ROAD_T', image: '/textures/road_t.webp', scale: 1 },
   [Sticker.ROAD_STRAIGHT]: { key: 'ROAD_STRAIGHT', image: '/textures/road_straight.webp', scale: 1 },

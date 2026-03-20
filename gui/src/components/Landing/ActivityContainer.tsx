@@ -35,8 +35,8 @@ const ActivityContainer = () => {
 
   return (
     <div className="space-y-10 bg-white p-6 border-3 border-white-smoke-500 rounded-md">
-      {activities.map((a) => (
-        <div className={'space-y-2'}>
+      {activities.map((a, i_a) => (
+        <div className={'space-y-2'} key={i_a}>
           <div key={a.id} className="bg-sunglow-300 border-3 border-sunglow-600 px-10 py-6 rounded-md text-dark-neutrals-500 flex items-center justify-between">
             <div className="flex-1 min-w-0">
               <h2 className="font-bold text-2xl">{a.title}</h2>
@@ -58,12 +58,12 @@ const ActivityContainer = () => {
 
           <div className="space-y-2 flex flex-col items-end pl-10 relative">
             <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-turquoise-400 rounded-full"/>
-            {a.activity_tasks.map((at) => (
+            {a.activity_tasks.map((at, i_at) => (
               <div key={at.activity_task_id} className="w-full bg-turquoise-100 border-2 border-turquoise-400 px-6 py-4 rounded-md text-dark-neutrals-500 flex items-center justify-between relative">
                 <div className="absolute -left-6 top-1/2 w-6 h-0.5 bg-turquoise-400" />
                 <div className="flex items-center gap-6 flex-1 min-w-0">
                   <span className="bg-turquoise-400 text-white font-bold text-sm w-8 h-8 rounded-full flex items-center justify-center shrink-0">
-                    {at.order}
+                    {i_at + 1}
                   </span>
                   <div className="min-w-0">
                     <div className="flex items-center gap-3 text-lg font-semibold text-gray-800">

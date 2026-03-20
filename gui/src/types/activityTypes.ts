@@ -10,6 +10,7 @@ export interface ActivityTask {
   task_type: string | null;
   is_logged: boolean;
   allows_robot: boolean;
+  student_mode: string;
   creator: UserBasic | null;
   updater: UserBasic | null;
 }

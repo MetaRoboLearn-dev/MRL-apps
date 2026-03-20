@@ -50,7 +50,7 @@ def get_activity_task(activity_task_id: int):
             "task_type": at.type.name if at.type else None,
             "is_logged": at.is_logged,
             "allows_robot": at.allows_robot,
-            "difficulty": at.difficulty
+            "difficulty": at.difficulty,
         }), 200
 
 
@@ -78,6 +78,7 @@ def list_activity_tasks():
                 "task_type": at.type.name if at.type else None,
                 "is_logged": at.is_logged,
                 "allows_robot": at.allows_robot,
+                "student_mode": at.student_mode,
                 "creator": {
                     "username": at.creator.username,
                     "first_name": at.creator.first_name,

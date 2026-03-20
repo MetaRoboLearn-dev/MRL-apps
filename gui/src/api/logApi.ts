@@ -1,5 +1,5 @@
 export const EventTypes = {
-  TASK_START: 1,
+  CODE_EDIT: 1,
   SIM_RUN: 2,
   SIM_CODE_ERR: 3,
   SIM_END_SUCC: 4,
@@ -8,7 +8,7 @@ export const EventTypes = {
   ROBOT_CODE_ERR: 7,
   ROBOT_END_SUCC: 8,
   ROBOT_END_FAIL: 9,
-  CODE_EDIT: 10,
+  TASK_START: 10,
   TASK_CONTINUE: 11,
   TASK_FINISH: 12,
 } as const;

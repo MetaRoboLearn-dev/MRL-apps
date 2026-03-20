@@ -1,6 +1,7 @@
 import LogoWhite from '/logo_white_notext.svg'
 import {Link} from "@tanstack/react-router";
 import {useAuth} from "../../hooks/useAuth.ts";
+import {FaHouse} from "react-icons/fa6";
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -10,6 +11,10 @@ const Navbar = () => {
       <div className={'flex items-center'}>
         <img src={LogoWhite} alt={'logo-white'} className={'p-1 h-full'}/>
         <h1 className={'text-light-cyan-200 ml-4 font-display font-bold text-xl'}>MetaRoboLearn</h1>
+        <Link to="/" className="ml-6 flex items-center gap-2 px-3 py-1.5 text-sm font-display font-semibold text-light-cyan-200 bg-turquoise-600 rounded hover:bg-turquoise-700 transition">
+          <FaHouse size={14} />
+          Početna stranica
+        </Link>
       </div>
       <div className="flex items-center gap-3 pr-4 font-display">
         {(user?.role === 'admin' || user?.role === 'teacher') && (

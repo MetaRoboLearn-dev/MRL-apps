@@ -11,14 +11,13 @@ import TaskDeleteButton from "../Task/TaskDeleteButton.tsx";
 import TaskSubmitButton from "../Task/TaskSubmitButton.tsx";
 import ButtonRobotSelect from "../Footer/ButtonRobotSelect.tsx";
 
-// TODO - change the buttons, make it more neat
 const Footer = () => {
   const { moveQueue, isMoving } = useVehicle();
   const { modalVisible } = useUI();
   const { camMode, awaitingReview, mode, hasRobotAccess, selectedRobotId, setSelectedRobotId } = useTaskConfig();
-  const { start, finish } = useGrid();
+  const { start } = useGrid();
 
-  const disabled = isMoving || modalVisible || start === null || finish === null;
+  const disabled = isMoving || modalVisible || start === null;
 
   return (
     <div className={'bg-white-smoke-500 pr-15 w-full h-20 z-10 flex items-center justify-between select-none'}>

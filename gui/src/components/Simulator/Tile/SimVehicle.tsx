@@ -183,7 +183,7 @@ const SimVehicle = () => {
     }
   });
 
-  const { scene } = useGLTF('/RoboRanger-v1.glb');
+  const { scene } = useGLTF('/Car.glb');
   useEffect(() => {
     scene.traverse((child) => {
       if ('isMesh' in child && child.isMesh) {
@@ -198,8 +198,8 @@ const SimVehicle = () => {
            position={[startPosition.x, startPosition.y, startPosition.z]}
            rotation={[startRotation.x, startRotation.y, startRotation.z]}>
       <primitive object={scene}
-                 position={[0.07, 0.37, -0.05]}
-                 rotation={[0, 0, 0]}
+                 // position={[0.07, 0.37, -0.05]}
+                 // rotation={[0, 0, 0]}
                  scale={[0.14, 0.16, 0.16]} />
     </group>
   );

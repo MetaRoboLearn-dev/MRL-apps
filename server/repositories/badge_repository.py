@@ -15,10 +15,7 @@ class BadgeRepository(BaseRepository[Badge]):
     def list(
         self,
         *,
-        skip: int = 0,
-        limit: int = 50,
         search: Optional[str] = None,
-        order_by_title: bool = True,
     ):
         q = self.session.query(Badge)
 
@@ -31,10 +28,7 @@ class BadgeRepository(BaseRepository[Badge]):
                 )
             )
 
-        if order_by_title:
-            q = q.order_by(Badge.title.asc())
-
-        return q.offset(skip).limit(limit).all()
+        return q.all()
 
     # ---------- CREATE ----------
     def create(

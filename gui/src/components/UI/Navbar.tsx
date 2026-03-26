@@ -2,6 +2,7 @@ import LogoWhite from '/logo_white_notext.svg'
 import {Link} from "@tanstack/react-router";
 import {useAuth} from "../../hooks/useAuth.ts";
 import {FaHouse} from "react-icons/fa6";
+import {FaUser} from "react-icons/fa";
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -14,6 +15,10 @@ const Navbar = () => {
         <Link to="/" className="ml-6 flex items-center gap-2 px-3 py-1.5 text-sm font-display font-semibold text-light-cyan-200 bg-turquoise-600 rounded hover:bg-turquoise-700 transition">
           <FaHouse size={14} />
           Početna stranica
+        </Link>
+        <Link to="/profile" className="ml-2 flex items-center gap-2 px-3 py-1.5 text-sm font-display font-semibold text-light-cyan-200 bg-turquoise-600 rounded hover:bg-turquoise-700 transition">
+          <FaUser size={14} />
+          Profil
         </Link>
       </div>
       <div className="flex items-center gap-3 pr-4 font-display">

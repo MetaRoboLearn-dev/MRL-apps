@@ -198,3 +198,26 @@ def username_exists(username: str):
     with db_session() as session:
         repo = UserRepository(session)
         return jsonify({"username": username, "exists": repo.exists_username(username)}), 200
+
+# ---------- USER BADGES ----------
+@bp.route("/<int:user_id>/badges", methods=["GET"])
+@role_required('admin', 'teacher')
+def get_user_badges(user_id: int):
+    with db_session() as session:
+        from repositories.user_badge_repository import UserBadgeRepository
+        repo = UserBadgeRepository(session)
+        user_badges = repo.list_by_user(user_id)
+        return jsonify([
+            {
+                "id": ub.id,
+                "badge_id": ub.badge.id,
+                "title": ub.badge.title,
+                "description": ub.badge.description,
+                "value": ub.badge.value,
+                "image_url": ub.badge.image_url,
+                "comment": ub.comment,
+                "created_at": _to_utc_iso(ub.created_at),
+                "created_by": ub.created_by,
+            }
+            for ub in user_badges
+        ]), 200

@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AdminRouteRouteImport } from './routes/admin/route'
@@ -36,6 +37,11 @@ import { Route as AdminActivitiesActivityIdTasksAddRouteImport } from './routes/
 import { Route as AdminActivitiesActivityIdTasksActivityTaskIdStudentsRouteImport } from './routes/admin/activities/$activityId/tasks/$activityTaskId/students'
 import { Route as AdminActivitiesActivityIdTasksActivityTaskIdEditRouteImport } from './routes/admin/activities/$activityId/tasks/$activityTaskId/edit'
 
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -178,6 +184,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
+  '/profile': typeof ProfileRoute
   '/admin/robots': typeof AdminRobotsRoute
   '/solve/': typeof SolveIndexRoute
   '/admin/tasks/$taskId': typeof AdminTasksTaskIdRouteRouteWithChildren
@@ -206,6 +213,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
+  '/profile': typeof ProfileRoute
   '/admin/robots': typeof AdminRobotsRoute
   '/solve': typeof SolveIndexRoute
   '/admin/activities/new': typeof AdminActivitiesNewRoute
@@ -234,6 +242,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
+  '/profile': typeof ProfileRoute
   '/admin/robots': typeof AdminRobotsRoute
   '/solve/': typeof SolveIndexRoute
   '/admin/tasks/$taskId': typeof AdminTasksTaskIdRouteRouteWithChildren
@@ -264,6 +273,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/about'
     | '/login'
+    | '/profile'
     | '/admin/robots'
     | '/solve/'
     | '/admin/tasks/$taskId'
@@ -292,6 +302,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/about'
     | '/login'
+    | '/profile'
     | '/admin/robots'
     | '/solve'
     | '/admin/activities/new'
@@ -319,6 +330,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/about'
     | '/login'
+    | '/profile'
     | '/admin/robots'
     | '/solve/'
     | '/admin/tasks/$taskId'
@@ -348,12 +360,20 @@ export interface RootRouteChildren {
   AdminRouteRoute: typeof AdminRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
   LoginRoute: typeof LoginRoute
+  ProfileRoute: typeof ProfileRoute
   SolveIndexRoute: typeof SolveIndexRoute
   SolveActivityTaskIdIndexRoute: typeof SolveActivityTaskIdIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -608,6 +628,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRouteRoute: AdminRouteRouteWithChildren,
   AboutRoute: AboutRoute,
   LoginRoute: LoginRoute,
+  ProfileRoute: ProfileRoute,
   SolveIndexRoute: SolveIndexRoute,
   SolveActivityTaskIdIndexRoute: SolveActivityTaskIdIndexRoute,
 }

@@ -27,7 +27,7 @@ from database import init_db
 from auth import init_auth
 from routes import user_routes, task_routes, activity_routes, activity_task_routes, user_started_task_routes, \
     user_task_log_routes, type_routes, broker_routes, auth_routes, sandbox_routes, user_activity_task_routes, \
-    badge_routes
+    badge_routes, user_badge_routes
 import models
 
 app = Flask(__name__, static_folder='static')
@@ -67,6 +67,7 @@ app.register_blueprint(activity_task_routes.bp)
 app.register_blueprint(user_started_task_routes.bp)
 app.register_blueprint(user_task_log_routes.bp)
 app.register_blueprint(user_activity_task_routes.bp)
+app.register_blueprint(user_badge_routes.bp)
 app.register_blueprint(type_routes.bp)
 app.register_blueprint(sandbox_routes.bp)
 app.register_blueprint(broker_routes.bp)

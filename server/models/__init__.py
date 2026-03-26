@@ -1,6 +1,7 @@
 from .user import User
 from .user import Role
 from .task import Task
+from .badge import Badge
 from .activity import Activity
 from .activity_task import ActivityTask
 from .activity_task import Type

@@ -3,6 +3,7 @@ from flask_login import current_user, login_required
 
 from auth import role_required
 from database import db_session
+from file_utils import save_badge_image, delete_badge_image
 from repositories.badge_repository import BadgeRepository
 from utils import _to_utc_iso
 
@@ -55,20 +56,25 @@ def list_badges():
 @bp.route("/", methods=["POST"])
 @role_required('admin', 'teacher')
 def create_badge():
-    data = request.get_json(silent=True) or {}
+    title = request.form.get("title")
+    value = request.form.get("value")
+    description = request.form.get("description")
+    image = request.files.get("image")
 
-    required = ("title", "value", "image_url")
-    missing = [k for k in required if k not in data]
-    if missing:
-        return jsonify({"error": "Missing fields", "missing": missing}), 400
+    if not title or value is None or not image:
+        return jsonify({"error": "Missing fields (title, value, image required)"}), 400
+
+    image_url = save_badge_image(image)
+    if not image_url:
+        return jsonify({"error": "Invalid image file"}), 400
 
     with db_session() as session:
         repo = BadgeRepository(session)
         badge = repo.create(
-            title=data["title"],
-            description=data.get("description"),
-            value=data["value"],
-            image_url=data["image_url"],
+            title=title,
+            description=description,
+            value=int(value),
+            image_url=image_url,
             actor_user_id=current_user.id,
         )
         return jsonify(_badge_to_dict(badge)), 201
@@ -78,21 +84,32 @@ def create_badge():
 @bp.route("/<int:badge_id>", methods=["PATCH"])
 @role_required('admin', 'teacher')
 def update_badge(badge_id: int):
-    data = request.get_json(silent=True) or {}
+    title = request.form.get("title")
+    value = request.form.get("value")
+    description = request.form.get("description")
+    image = request.files.get("image")
 
-    allowed = {"title", "description", "value", "image_url"}
-    unknown = [k for k in data.keys() if k not in allowed]
-    if unknown:
-        return jsonify({"error": "Unknown fields", "unknown": unknown}), 400
+    image_url = None
+    if image:
+        image_url = save_badge_image(image)
+        if not image_url:
+            return jsonify({"error": "Invalid image file"}), 400
+
+        # delete old image
+        with db_session() as session:
+            repo = BadgeRepository(session)
+            old_badge = repo.get_by_id(badge_id)
+            if old_badge:
+                delete_badge_image(old_badge.image_url)
 
     with db_session() as session:
         repo = BadgeRepository(session)
         badge = repo.update(
             badge_id,
-            title=data.get("title"),
-            description=data.get("description"),
-            value=data.get("value"),
-            image_url=data.get("image_url"),
+            title=title,
+            description=description,
+            value=int(value) if value is not None else None,
+            image_url=image_url,
             actor_user_id=current_user.id,
         )
         if not badge:
@@ -107,7 +124,11 @@ def update_badge(badge_id: int):
 def delete_badge(badge_id: int):
     with db_session() as session:
         repo = BadgeRepository(session)
-        ok = repo.delete(badge_id)
-        if not ok:
+        badge = repo.get_by_id(badge_id)
+        if not badge:
             return jsonify({"error": "Badge not found"}), 404
+
+        delete_badge_image(badge.image_url)
+
+        repo.delete(badge_id)
         return jsonify({"deleted": True}), 200

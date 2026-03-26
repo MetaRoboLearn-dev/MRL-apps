@@ -18,9 +18,11 @@ import { Route as AdminRobotsRouteImport } from './routes/admin/robots'
 import { Route as SolveActivityTaskIdIndexRouteImport } from './routes/solve/$activityTaskId/index'
 import { Route as AdminUsersIndexRouteImport } from './routes/admin/users/index'
 import { Route as AdminTasksIndexRouteImport } from './routes/admin/tasks/index'
+import { Route as AdminBadgesIndexRouteImport } from './routes/admin/badges/index'
 import { Route as AdminActivitiesIndexRouteImport } from './routes/admin/activities/index'
 import { Route as AdminUsersNewRouteImport } from './routes/admin/users/new'
 import { Route as AdminTasksNewRouteImport } from './routes/admin/tasks/new'
+import { Route as AdminBadgesNewRouteImport } from './routes/admin/badges/new'
 import { Route as AdminActivitiesNewRouteImport } from './routes/admin/activities/new'
 import { Route as AdminTasksTaskIdRouteRouteImport } from './routes/admin/tasks/$taskId/route'
 import { Route as AdminUsersUserIdIndexRouteImport } from './routes/admin/users/$userId/index'
@@ -28,6 +30,7 @@ import { Route as AdminTasksTaskIdIndexRouteImport } from './routes/admin/tasks/
 import { Route as AdminActivitiesActivityIdIndexRouteImport } from './routes/admin/activities/$activityId/index'
 import { Route as AdminUsersUserIdEditRouteImport } from './routes/admin/users/$userId/edit'
 import { Route as AdminTasksTaskIdEditRouteImport } from './routes/admin/tasks/$taskId/edit'
+import { Route as AdminBadgesBadgeIdEditRouteImport } from './routes/admin/badges/$badgeId/edit'
 import { Route as AdminActivitiesActivityIdEditRouteImport } from './routes/admin/activities/$activityId/edit'
 import { Route as AdminActivitiesActivityIdTasksAddRouteImport } from './routes/admin/activities/$activityId/tasks/add'
 import { Route as AdminActivitiesActivityIdTasksActivityTaskIdStudentsRouteImport } from './routes/admin/activities/$activityId/tasks/$activityTaskId/students'
@@ -79,6 +82,11 @@ const AdminTasksIndexRoute = AdminTasksIndexRouteImport.update({
   path: '/tasks/',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminBadgesIndexRoute = AdminBadgesIndexRouteImport.update({
+  id: '/badges/',
+  path: '/badges/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AdminActivitiesIndexRoute = AdminActivitiesIndexRouteImport.update({
   id: '/activities/',
   path: '/activities/',
@@ -92,6 +100,11 @@ const AdminUsersNewRoute = AdminUsersNewRouteImport.update({
 const AdminTasksNewRoute = AdminTasksNewRouteImport.update({
   id: '/tasks/new',
   path: '/tasks/new',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminBadgesNewRoute = AdminBadgesNewRouteImport.update({
+  id: '/badges/new',
+  path: '/badges/new',
   getParentRoute: () => AdminRouteRoute,
 } as any)
 const AdminActivitiesNewRoute = AdminActivitiesNewRouteImport.update({
@@ -130,6 +143,11 @@ const AdminTasksTaskIdEditRoute = AdminTasksTaskIdEditRouteImport.update({
   path: '/edit',
   getParentRoute: () => AdminTasksTaskIdRouteRoute,
 } as any)
+const AdminBadgesBadgeIdEditRoute = AdminBadgesBadgeIdEditRouteImport.update({
+  id: '/badges/$badgeId/edit',
+  path: '/badges/$badgeId/edit',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AdminActivitiesActivityIdEditRoute =
   AdminActivitiesActivityIdEditRouteImport.update({
     id: '/activities/$activityId/edit',
@@ -164,13 +182,16 @@ export interface FileRoutesByFullPath {
   '/solve/': typeof SolveIndexRoute
   '/admin/tasks/$taskId': typeof AdminTasksTaskIdRouteRouteWithChildren
   '/admin/activities/new': typeof AdminActivitiesNewRoute
+  '/admin/badges/new': typeof AdminBadgesNewRoute
   '/admin/tasks/new': typeof AdminTasksNewRoute
   '/admin/users/new': typeof AdminUsersNewRoute
   '/admin/activities/': typeof AdminActivitiesIndexRoute
+  '/admin/badges/': typeof AdminBadgesIndexRoute
   '/admin/tasks/': typeof AdminTasksIndexRoute
   '/admin/users/': typeof AdminUsersIndexRoute
   '/solve/$activityTaskId/': typeof SolveActivityTaskIdIndexRoute
   '/admin/activities/$activityId/edit': typeof AdminActivitiesActivityIdEditRoute
+  '/admin/badges/$badgeId/edit': typeof AdminBadgesBadgeIdEditRoute
   '/admin/tasks/$taskId/edit': typeof AdminTasksTaskIdEditRoute
   '/admin/users/$userId/edit': typeof AdminUsersUserIdEditRoute
   '/admin/activities/$activityId/': typeof AdminActivitiesActivityIdIndexRoute
@@ -188,13 +209,16 @@ export interface FileRoutesByTo {
   '/admin/robots': typeof AdminRobotsRoute
   '/solve': typeof SolveIndexRoute
   '/admin/activities/new': typeof AdminActivitiesNewRoute
+  '/admin/badges/new': typeof AdminBadgesNewRoute
   '/admin/tasks/new': typeof AdminTasksNewRoute
   '/admin/users/new': typeof AdminUsersNewRoute
   '/admin/activities': typeof AdminActivitiesIndexRoute
+  '/admin/badges': typeof AdminBadgesIndexRoute
   '/admin/tasks': typeof AdminTasksIndexRoute
   '/admin/users': typeof AdminUsersIndexRoute
   '/solve/$activityTaskId': typeof SolveActivityTaskIdIndexRoute
   '/admin/activities/$activityId/edit': typeof AdminActivitiesActivityIdEditRoute
+  '/admin/badges/$badgeId/edit': typeof AdminBadgesBadgeIdEditRoute
   '/admin/tasks/$taskId/edit': typeof AdminTasksTaskIdEditRoute
   '/admin/users/$userId/edit': typeof AdminUsersUserIdEditRoute
   '/admin/activities/$activityId': typeof AdminActivitiesActivityIdIndexRoute
@@ -214,13 +238,16 @@ export interface FileRoutesById {
   '/solve/': typeof SolveIndexRoute
   '/admin/tasks/$taskId': typeof AdminTasksTaskIdRouteRouteWithChildren
   '/admin/activities/new': typeof AdminActivitiesNewRoute
+  '/admin/badges/new': typeof AdminBadgesNewRoute
   '/admin/tasks/new': typeof AdminTasksNewRoute
   '/admin/users/new': typeof AdminUsersNewRoute
   '/admin/activities/': typeof AdminActivitiesIndexRoute
+  '/admin/badges/': typeof AdminBadgesIndexRoute
   '/admin/tasks/': typeof AdminTasksIndexRoute
   '/admin/users/': typeof AdminUsersIndexRoute
   '/solve/$activityTaskId/': typeof SolveActivityTaskIdIndexRoute
   '/admin/activities/$activityId/edit': typeof AdminActivitiesActivityIdEditRoute
+  '/admin/badges/$badgeId/edit': typeof AdminBadgesBadgeIdEditRoute
   '/admin/tasks/$taskId/edit': typeof AdminTasksTaskIdEditRoute
   '/admin/users/$userId/edit': typeof AdminUsersUserIdEditRoute
   '/admin/activities/$activityId/': typeof AdminActivitiesActivityIdIndexRoute
@@ -241,13 +268,16 @@ export interface FileRouteTypes {
     | '/solve/'
     | '/admin/tasks/$taskId'
     | '/admin/activities/new'
+    | '/admin/badges/new'
     | '/admin/tasks/new'
     | '/admin/users/new'
     | '/admin/activities/'
+    | '/admin/badges/'
     | '/admin/tasks/'
     | '/admin/users/'
     | '/solve/$activityTaskId/'
     | '/admin/activities/$activityId/edit'
+    | '/admin/badges/$badgeId/edit'
     | '/admin/tasks/$taskId/edit'
     | '/admin/users/$userId/edit'
     | '/admin/activities/$activityId/'
@@ -265,13 +295,16 @@ export interface FileRouteTypes {
     | '/admin/robots'
     | '/solve'
     | '/admin/activities/new'
+    | '/admin/badges/new'
     | '/admin/tasks/new'
     | '/admin/users/new'
     | '/admin/activities'
+    | '/admin/badges'
     | '/admin/tasks'
     | '/admin/users'
     | '/solve/$activityTaskId'
     | '/admin/activities/$activityId/edit'
+    | '/admin/badges/$badgeId/edit'
     | '/admin/tasks/$taskId/edit'
     | '/admin/users/$userId/edit'
     | '/admin/activities/$activityId'
@@ -290,13 +323,16 @@ export interface FileRouteTypes {
     | '/solve/'
     | '/admin/tasks/$taskId'
     | '/admin/activities/new'
+    | '/admin/badges/new'
     | '/admin/tasks/new'
     | '/admin/users/new'
     | '/admin/activities/'
+    | '/admin/badges/'
     | '/admin/tasks/'
     | '/admin/users/'
     | '/solve/$activityTaskId/'
     | '/admin/activities/$activityId/edit'
+    | '/admin/badges/$badgeId/edit'
     | '/admin/tasks/$taskId/edit'
     | '/admin/users/$userId/edit'
     | '/admin/activities/$activityId/'
@@ -381,6 +417,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminTasksIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/admin/badges/': {
+      id: '/admin/badges/'
+      path: '/badges'
+      fullPath: '/admin/badges/'
+      preLoaderRoute: typeof AdminBadgesIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/admin/activities/': {
       id: '/admin/activities/'
       path: '/activities'
@@ -400,6 +443,13 @@ declare module '@tanstack/react-router' {
       path: '/tasks/new'
       fullPath: '/admin/tasks/new'
       preLoaderRoute: typeof AdminTasksNewRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/badges/new': {
+      id: '/admin/badges/new'
+      path: '/badges/new'
+      fullPath: '/admin/badges/new'
+      preLoaderRoute: typeof AdminBadgesNewRouteImport
       parentRoute: typeof AdminRouteRoute
     }
     '/admin/activities/new': {
@@ -451,6 +501,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminTasksTaskIdEditRouteImport
       parentRoute: typeof AdminTasksTaskIdRouteRoute
     }
+    '/admin/badges/$badgeId/edit': {
+      id: '/admin/badges/$badgeId/edit'
+      path: '/badges/$badgeId/edit'
+      fullPath: '/admin/badges/$badgeId/edit'
+      preLoaderRoute: typeof AdminBadgesBadgeIdEditRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/admin/activities/$activityId/edit': {
       id: '/admin/activities/$activityId/edit'
       path: '/activities/$activityId/edit'
@@ -501,12 +558,15 @@ interface AdminRouteRouteChildren {
   AdminRobotsRoute: typeof AdminRobotsRoute
   AdminTasksTaskIdRouteRoute: typeof AdminTasksTaskIdRouteRouteWithChildren
   AdminActivitiesNewRoute: typeof AdminActivitiesNewRoute
+  AdminBadgesNewRoute: typeof AdminBadgesNewRoute
   AdminTasksNewRoute: typeof AdminTasksNewRoute
   AdminUsersNewRoute: typeof AdminUsersNewRoute
   AdminActivitiesIndexRoute: typeof AdminActivitiesIndexRoute
+  AdminBadgesIndexRoute: typeof AdminBadgesIndexRoute
   AdminTasksIndexRoute: typeof AdminTasksIndexRoute
   AdminUsersIndexRoute: typeof AdminUsersIndexRoute
   AdminActivitiesActivityIdEditRoute: typeof AdminActivitiesActivityIdEditRoute
+  AdminBadgesBadgeIdEditRoute: typeof AdminBadgesBadgeIdEditRoute
   AdminUsersUserIdEditRoute: typeof AdminUsersUserIdEditRoute
   AdminActivitiesActivityIdIndexRoute: typeof AdminActivitiesActivityIdIndexRoute
   AdminUsersUserIdIndexRoute: typeof AdminUsersUserIdIndexRoute
@@ -519,12 +579,15 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminRobotsRoute: AdminRobotsRoute,
   AdminTasksTaskIdRouteRoute: AdminTasksTaskIdRouteRouteWithChildren,
   AdminActivitiesNewRoute: AdminActivitiesNewRoute,
+  AdminBadgesNewRoute: AdminBadgesNewRoute,
   AdminTasksNewRoute: AdminTasksNewRoute,
   AdminUsersNewRoute: AdminUsersNewRoute,
   AdminActivitiesIndexRoute: AdminActivitiesIndexRoute,
+  AdminBadgesIndexRoute: AdminBadgesIndexRoute,
   AdminTasksIndexRoute: AdminTasksIndexRoute,
   AdminUsersIndexRoute: AdminUsersIndexRoute,
   AdminActivitiesActivityIdEditRoute: AdminActivitiesActivityIdEditRoute,
+  AdminBadgesBadgeIdEditRoute: AdminBadgesBadgeIdEditRoute,
   AdminUsersUserIdEditRoute: AdminUsersUserIdEditRoute,
   AdminActivitiesActivityIdIndexRoute: AdminActivitiesActivityIdIndexRoute,
   AdminUsersUserIdIndexRoute: AdminUsersUserIdIndexRoute,

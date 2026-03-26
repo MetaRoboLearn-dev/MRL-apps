@@ -25,6 +25,9 @@ const Navbar = () => {
             <Link to="/admin/users" className="[&.active]:font-bold">
               Users
             </Link>
+            <Link to="/admin/badges" className="[&.active]:font-bold">
+              Badges
+            </Link>
             <Link to="/admin/activities" className="[&.active]:font-bold">
               Activities
             </Link>

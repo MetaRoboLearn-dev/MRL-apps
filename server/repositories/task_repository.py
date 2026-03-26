@@ -124,35 +124,18 @@ class TaskRepository(BaseRepository[Task]):
         if not task:
             return None
 
-        if title is not None:
-            task.title = title
-        if description is not None:
-            task.description = description
-        if size_x is not None:
-            task.size_x = size_x
-        if size_z is not None:
-            task.size_z = size_z
-        if start is not None:
-            task.start = start
-        if rotation is not None:
-            task.rotation = rotation
-        if finish is not None:
-            task.finish = finish
-
-        # JSON-ish fields: allow explicit clearing by passing None
-        # If you want "only update when provided", keep as-is and only set when not None.
-        if barriers is not None:
-            task.barriers = barriers
-        if stickers is not None:
-            task.stickers = stickers
-
-        if code is not None:
-            task.code = code
-        if blocks is not None:
-            task.blocks = blocks
-
-        if active is not None:
-            task.active = active
+        task.title = title
+        task.description = description
+        task.size_x = size_x
+        task.size_z = size_z
+        task.start = start
+        task.rotation = rotation
+        task.finish = finish
+        task.barriers = barriers
+        task.stickers = stickers
+        task.code = code
+        task.blocks = blocks
+        task.active = active
 
         task.updated_at = utc_now()
         task.updated_by = actor_user_id

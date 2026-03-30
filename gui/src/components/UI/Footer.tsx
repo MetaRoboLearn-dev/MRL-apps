@@ -32,7 +32,7 @@ const Footer = () => {
           <TaskSubmitButton />
         )}
       </div>
-      <div className={'flex'}>
+      <div className={'flex items-center'}>
         {hasRobotAccess && <>
           <ButtonRobotSelect
             disabled={disabled}

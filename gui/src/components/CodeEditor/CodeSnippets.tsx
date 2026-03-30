@@ -1,13 +1,33 @@
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
+import { IoChevronDown, IoChevronUp } from "react-icons/io5";
 
 export default function CodeSnippets() {
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({
+    "Komentar": false,
+    "Varijable": false,
+    "Kretanje robota": false,
+    "Prikaz na LED zaslonu (ispis)": false,
+    "Uvjeti (if)": false,
+    "Naredbe ponavljanja (petlje)": false,
+    "Prepoznavanje slike (image recognition)": false,
+    "Liste": false,
+    "Funkcije": false,
+  });
+
+  const toggleSection = (title: string) => {
+    setOpenSections((prev) => ({
+      ...prev,
+      [title]: !prev[title],
+    }));
+  };
+
   return (
-    <div className={'bg-white p-5 font-display'}>
+    <div className={'bg-white p-5 font-display w-full'}>
       <h1 style={{ textAlign: "center", color: "#2c3e50" }}>
         Python podsjetnik za zadatke
       </h1>
 
-      <Section title="Komentar">
+      <Section title="Komentar" isOpen={openSections["Komentar"]} onToggle={toggleSection}>
         <p style={pStyle}>Komentar je tekst koji služi za objašnjenje dijelova programskog koda.</p>
         <p style={pStyle}><strong style={strongStyle}>Sintaksa</strong></p>
         <Pre>{`# tekst komentara`}</Pre>
@@ -15,7 +35,7 @@ export default function CodeSnippets() {
         <Pre>{`# kretanje robota do prve kontrolne točke\n# provjera broja porcija hrane`}</Pre>
       </Section>
 
-      <Section title="Varijable">
+      <Section title="Varijable" isOpen={openSections["Varijable"]} onToggle={toggleSection}>
         <p style={pStyle}>Varijable služe za spremanje vrijednosti.</p>
         <p style={pStyle}><strong style={strongStyle}>Sintaksa</strong></p>
         <Pre>{`ime_varijable = vrijednost`}</Pre>
@@ -25,7 +45,7 @@ export default function CodeSnippets() {
         <Pre>{`# povećavamo vrijednost varijable hrana\nhrana = hrana + 1\n\n# smanjujemo vrijednost varijable zivotinja (kraći zapis)\nbroj_zivotinja -= 1`}</Pre>
       </Section>
 
-      <Section title="Kretanje robota">
+      <Section title="Kretanje robota" isOpen={openSections["Kretanje robota"]} onToggle={toggleSection}>
         <p style={pStyle}>Robot se može kretati po stazi i okretati za 90 stupnjeva u lijevu ili desnu stranu.</p>
         <p style={pStyle}><strong style={strongStyle}>Osnovne naredbe</strong></p>
         <Pre>{`forward()      # robot ide naprijed\nback()     # robot ide natrag\nturn_left()    # robot se okrene lijevo za 90°\nturn_right()   # robot se okrene desno za 90°`}</Pre>
@@ -33,7 +53,7 @@ export default function CodeSnippets() {
         <Pre>{`# robot treba preći put zadan sljedećim koracima\n# NAPRIJED - NAPRIJED - OKRET LIJEVO - NAPRIJED\nforward()\nforward()\nturn_left()\nforward()`}</Pre>
       </Section>
 
-      <Section title="Prikaz na LED zaslonu (ispis)">
+      <Section title="Prikaz na LED zaslonu (ispis)" isOpen={openSections["Prikaz na LED zaslonu (ispis)"]} onToggle={toggleSection}>
         <p style={pStyle}>Na LED zaslonu robota može se ispisati tekst ili jedan znak. <b>Znak</b> ostaje prikazan dok se zaslon ne obriše.</p>
         <p style={pStyle}><strong style={strongStyle}>Sintaksa</strong></p>
         <Pre>{`# ispis zadanog teksta\ndisplay_text("tekst")\n\n#ispis vrijednosti varijable\ndisplay_text(varijabla)\n\n#prikaz znaka\ndisplay_char(znak)\n\n# LED ekran svijetli \ndisplay_green()    #zeleno\ndisplay_red()      #crveno\n\n# brisanje ekrana\ndisplay_clear()\n\n# vrijeme čekanja (n je broj sekundi)\nsleep(n)`}</Pre>
@@ -41,7 +61,7 @@ export default function CodeSnippets() {
         <Pre>{`# tekstualna poruka\nime_zivotinje="dog"\ndisplay_text("Hranjenje:")\ndisplay_text(ime_zivotinje)  \n\n# prikaz prvog slova imena\nime = "Ana"\ndisplay_char(ime[0])\n\n# ispis vrijednosti varijable porcije u trajanju od 3 sekunde nakon čega se briše LED zaslon\ndisplay_char(porcije)\nsleep(3)\ndisplay_clear()`}</Pre>
       </Section>
 
-      <Section title="Uvjeti (if)">
+      <Section title="Uvjeti (if)" isOpen={openSections["Uvjeti (if)"]} onToggle={toggleSection}>
         <p style={pStyle}>Koristi se za donošenje odluka u programu.</p>
         <p style={pStyle}><strong style={strongStyle}>Sintaksa</strong></p>
         <Pre>{`if uvjet:\n    naredbe\nelse:\n    naredbe`}</Pre>
@@ -56,7 +76,7 @@ export default function CodeSnippets() {
         <Pre>{`if hrana > 0:\ndisplay_text("Ima hrane")`}</Pre>
       </Section>
 
-      <Section title="Naredbe ponavljanja (petlje)">
+      <Section title="Naredbe ponavljanja (petlje)" isOpen={openSections["Naredbe ponavljanja (petlje)"]} onToggle={toggleSection}>
         <p style={pStyle}>
           Petlje služe za ponavljanje jedne ili više naredbi.<br />
           <strong style={strongStyle}>Petlju for</strong> koristimo kada znamo koliko puta se nešto ponavlja.<br />
@@ -74,7 +94,7 @@ export default function CodeSnippets() {
         <Pre>{`# robot ide naprijed dok ima hrane\nwhile hrana > 0:\n    forward()\n    hrana -= 1`}</Pre>
       </Section>
 
-      <Section title="Prepoznavanje slike (image recognition)">
+      <Section title="Prepoznavanje slike (image recognition)" isOpen={openSections["Prepoznavanje slike (image recognition)"]} onToggle={toggleSection}>
         <p style={pStyle}>Robot može prepoznati objekt na polju ispred sebe.</p>
         <p style={pStyle}><strong style={strongStyle}>Sintaksa</strong></p>
         <Pre>{`naziv_varijable = detect_object()`}</Pre>
@@ -82,7 +102,7 @@ export default function CodeSnippets() {
         <Pre>{`# robot prepoznaje objekt i ispisuje poruku ovisno o tome što je prepoznao\nzivotinja = detect_object()\nif zivotinja == "lion":\n    display_text("Velika zivotinja")\nelse:\n    display_text("Zivotinja")`}</Pre>
       </Section>
 
-      <Section title="Liste">
+      <Section title="Liste" isOpen={openSections["Liste"]} onToggle={toggleSection}>
         <p style={pStyle}>Lista je struktura u koju se može spremiti više vrijednosti.</p>
         <p style={pStyle}><strong style={strongStyle}>Sintaksa</strong></p>
         <Pre>{`naziv_liste = [vrijednost1, vrijednost2, vrijednost3]`}</Pre>
@@ -97,7 +117,7 @@ export default function CodeSnippets() {
         <Pre>{`popis_zivotinja = ["lion", "tiger", "elephant"]\n\nfor zivotinja in popis_zivotinja:\n    display_char(zivotinja)`}</Pre>
       </Section>
 
-      <Section title="Funkcije">
+      <Section title="Funkcije" isOpen={openSections["Funkcije"]} onToggle={toggleSection}>
         <p style={pStyle}>Funkcija je skup naredbi koje možemo spremiti pod jednim imenom i pozvati ih kada želimo.</p>
         <p style={pStyle}>Funkcije se koriste kako bismo organizirali kod i izbjegli ponavljanje istih naredbi.</p>
         <p style={pStyle}><strong style={strongStyle}>Sintaksa</strong></p>
@@ -128,6 +148,11 @@ const sectionHeadingStyle: React.CSSProperties = {
   paddingBottom: "5px",
   fontSize: "24px",
   color: "#1f4e79",
+  cursor: "pointer",
+  userSelect: "none",
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
 };
 
 const preStyle: React.CSSProperties = {
@@ -142,11 +167,24 @@ const preStyle: React.CSSProperties = {
   lineHeight: 1.6,
 };
 
-function Section({ title, children }: { title: string; children: ReactNode }) {
+function Section({
+  title,
+  children,
+  isOpen,
+  onToggle
+}: {
+  title: string;
+  children: ReactNode;
+  isOpen: boolean;
+  onToggle: (title: string) => void;
+}) {
   return (
     <>
-      <h1 style={sectionHeadingStyle}>{title}</h1>
-      {children}
+      <h1 style={sectionHeadingStyle} onClick={() => onToggle(title)}>
+        <span>{title}</span>
+        {isOpen ? <IoChevronUp size={24} /> : <IoChevronDown size={24} />}
+      </h1>
+      {isOpen && children}
     </>
   );
 }

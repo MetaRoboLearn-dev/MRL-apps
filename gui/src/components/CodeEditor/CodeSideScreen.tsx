@@ -10,7 +10,7 @@ const CodeSideScreen = ({ active, children }: PropsWithChildren<Props>) => {
 
   return (
     <div className={`bg-tomato-50 h-full py-5 absolute top-0 right-0 
-                      flex flex-col items-start overflow-y-scroll overflow-x-hidden scrollbar-red
+                      flex flex-col items-stretch overflow-y-scroll overflow-x-hidden scrollbar-red
                       border-tomato-600 border-t-8 border-b-10 
                       transition-all duration-400 ease-in-out
                       ${expanded && active ? 'w-full' : active ? 'w-128' : 'w-1/3'}
@@ -29,7 +29,9 @@ const CodeSideScreen = ({ active, children }: PropsWithChildren<Props>) => {
         }
       </button>
 
-      {children}
+      <div className="w-full">
+        {children}
+      </div>
     </div>
   );
 };

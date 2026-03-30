@@ -4,6 +4,12 @@ import logging
 from dotenv import load_dotenv
 load_dotenv()  # loads .env when running outside Docker
 
+# static folder creation
+import os
+
+UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'uploads', 'badges')
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
 # ── Logging setup ────────────────────────────────────────────────────────────
 log_level = os.environ.get("LOG_LEVEL", "INFO").upper()
 logging.basicConfig(
@@ -18,13 +24,13 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from werkzeug.middleware.proxy_fix import ProxyFix
 from database import init_db
-from sb import sb_run_python
 from auth import init_auth
 from routes import user_routes, task_routes, activity_routes, activity_task_routes, user_started_task_routes, \
-    user_task_log_routes, type_routes, broker_routes, auth_routes, sandbox_routes, user_activity_task_routes
+    user_task_log_routes, type_routes, broker_routes, auth_routes, sandbox_routes, user_activity_task_routes, \
+    badge_routes, user_badge_routes
 import models
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static')
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
@@ -55,11 +61,13 @@ CORS(app,
 app.register_blueprint(auth_routes.bp)
 app.register_blueprint(user_routes.bp)
 app.register_blueprint(task_routes.bp)
+app.register_blueprint(badge_routes.bp)
 app.register_blueprint(activity_routes.bp)
 app.register_blueprint(activity_task_routes.bp)
 app.register_blueprint(user_started_task_routes.bp)
 app.register_blueprint(user_task_log_routes.bp)
 app.register_blueprint(user_activity_task_routes.bp)
+app.register_blueprint(user_badge_routes.bp)
 app.register_blueprint(type_routes.bp)
 app.register_blueprint(sandbox_routes.bp)
 app.register_blueprint(broker_routes.bp)

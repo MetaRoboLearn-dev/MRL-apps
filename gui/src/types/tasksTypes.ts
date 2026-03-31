@@ -1,5 +1,5 @@
 import {UserBasic} from "./userTypes.ts";
-import {Barrier, Sticker} from "../types.ts";
+import {Barrier} from "../types.ts";
 
 export type GridState = {
   size_x: number;

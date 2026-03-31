@@ -19,6 +19,8 @@ services:
       - redis
     environment:
       - REDIS_URL=redis://redis:6379/0
+    volumes:
+      - ../server/static/stickers:/app/static/stickers
 
   # ── Nginx (HTTPS + static frontend + API/WebSocket proxy) ──────────────────
   nginx:

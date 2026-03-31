@@ -2,6 +2,7 @@ import {PropsWithChildren, useState} from "react";
 import {GridContext} from "./Context.tsx";
 import {Barrier, Sticker} from "../types.ts";
 import {GridState, Task} from "../types/tasksTypes.ts";
+import {isPackStickerKey} from "../api/stickerPackApi.ts";
 
 interface Props {
   task: Task
@@ -21,10 +22,14 @@ const GridProvider = ({ task: t, children }: PropsWithChildren<Props>) => {
           ([index, key]: [number, keyof typeof Barrier]) => [index, Barrier[key]]
         )
       ));
-  const [stickers, setStickers] = useState<{ index: number, sticker: Sticker, rotation: number }[]>(
+  const [stickers, setStickers] = useState<{ index: number, sticker: Sticker | string, rotation: number }[]>(
     (t.stickers || []).map(({ index, sticker, rotation }) => ({
       index,
-      sticker: Sticker[sticker as keyof typeof Sticker],
+      // Pack sticker keys (e.g. "Farma/farmer") are kept as-is.
+      // Standard sticker keys are converted from enum key → enum value.
+      sticker: isPackStickerKey(sticker)
+        ? sticker
+        : (Sticker[sticker as keyof typeof Sticker] ?? sticker),
       rotation,
     }))
   );

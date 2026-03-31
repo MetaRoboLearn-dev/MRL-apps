@@ -19,8 +19,8 @@ export interface TaskConfigType {
   setMode: (taskMode: TaskMode) => void;
   selectedType: TileType;
   setSelectedType: (selectedType: TileType) => void;
-  selectedSticker: Sticker | null;
-  setSelectedSticker: (selectedPlaceable: Sticker | null) => void;
+  selectedSticker: Sticker | string | null;
+  setSelectedSticker: (selectedPlaceable: Sticker | string | null) => void;
   selectedBarrier: Barrier;
   setSelectedBarrier: (selectedBarrier: Barrier) => void;
   selectedRotation: number;
@@ -37,6 +37,8 @@ export interface TaskConfigType {
   setAnimationSpeed: (animationSpeed: number) => void;
   textures: Record<Sticker, Texture>;
   loadTextures: () => void;
+  packTextures: Record<string, Texture>;
+  loadPackTextures: (packName: string) => void;
   barrierTextures: Record<Barrier, Texture>;
   loadBarrierTextures: () => void;
   robotUrl: string | null;
@@ -92,8 +94,8 @@ export interface GridContextType {
   setFinish: (finish: number | null) => void;
   barriers: Map<number, Barrier>;
   setBarriers: (barriers: Map<number, Barrier>) => void;
-  stickers: { index: number, sticker: Sticker, rotation: number }[];
-  setStickers: (stickers: { index: number, sticker: Sticker, rotation: number }[]) => void;
+  stickers: { index: number, sticker: Sticker | string, rotation: number }[];
+  setStickers: (stickers: { index: number, sticker: Sticker | string, rotation: number }[]) => void;
   buildGridState: () => GridState;
 }
 

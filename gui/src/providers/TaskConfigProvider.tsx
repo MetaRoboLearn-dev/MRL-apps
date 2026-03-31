@@ -4,6 +4,7 @@ import {Barrier, Barriers, Sticker, Stickers, TileType} from "../types.ts";
 import {Texture, TextureLoader} from "three";
 import {Task, TaskMode} from "../types/tasksTypes.ts";
 import {UserStartedTask} from "../types/userStartedTasksTypes.ts";
+import {isPackStickerKey, packStickerUrl} from "../api/stickerPackApi.ts";
 
 interface Props {
   task: Task
@@ -15,7 +16,7 @@ export const TaskConfigProvider = ({ust, task, mode, children }: PropsWithChildr
   // Grid editing options
   const [taskMode, setTaskMode] = useState<TaskMode>(mode || 'solve') // this is going to be true only while editing/creaing task
   const [selectedType, setSelectedType] = useState<TileType>(TileType.GROUND);
-  const [selectedSticker, setSelectedSticker] = useState<Sticker | null>(null);
+  const [selectedSticker, setSelectedSticker] = useState<Sticker | string | null>(null);
   const [selectedBarrier, setSelectedBarrier] = useState<Barrier>(Barrier.TREES);
   const [selectedRotation, setSelectedRotation] = useState<number>(0);
 
@@ -40,6 +41,7 @@ export const TaskConfigProvider = ({ust, task, mode, children }: PropsWithChildr
   // TODO - check this out maybe it isnt needed
   const [textures, setTextures] = useState<Record<Sticker, Texture>>({} as Record<Sticker, Texture>);
   const [barrierTextures, setBarrierTextures] = useState<Record<Barrier, Texture>>({} as Record<Barrier, Texture>);
+  const [packTextures, setPackTextures] = useState<Record<string, Texture>>({});
 
   // Robot related options
   // TODO - replace robot url with call from broker api and dropdown
@@ -60,26 +62,52 @@ export const TaskConfigProvider = ({ust, task, mode, children }: PropsWithChildr
       setSelectedRotation(new_rot)
   }
 
-  // TODO - This is a BIG one, the dir /public is not used used properly here, it should only use STATIC images (research pls).
-  //  Every non-static image should be in src/img, stuff like sticker and barrier images (but research aswell pls)
-  //  Also what this does, it preloads all the stickers and barrier images so it doesn't flicker on every change
-  //  (not sure why it happens but my guess is because its in /public)
+  // Load only standard (enum) sticker textures that appear in this task (task-dependent loading).
+  // Pack sticker textures are handled separately via loadPackTextures.
   const loadTextures = () => {
     const loader = new TextureLoader();
     const textureMap: Record<string, Texture> = {};
-    const entries = Object.entries(Stickers);
-    let loadedCount = 0;
-    const total = entries.length;
 
-    entries.forEach(([key, sticker]) => {
-      loader.load(sticker.image, (texture) => {
-        textureMap[key] = texture;
-        loadedCount++;
-        if (loadedCount === total) {
-          setTextures(textureMap);
-        }
+    // Collect non-pack sticker identifiers used in the task.
+    // Saved data stores enum KEY names (e.g. "RESTAURANT"), but Stickers record
+    // is indexed by enum VALUES (e.g. 'restaurant'), so convert before comparing.
+    const taskStickerValues = new Set<string>(
+      (task.stickers || [])
+        .filter(s => !isPackStickerKey(s.sticker))
+        .map(s => (Sticker[s.sticker as keyof typeof Sticker] as string | undefined) ?? s.sticker)
+    );
+
+    // Only load entries that match a sticker used in the task
+    const entries = Object.entries(Stickers).filter(([key]) => taskStickerValues.has(key));
+
+    if (entries.length > 0) {
+      let loadedCount = 0;
+      entries.forEach(([key, sticker]) => {
+        loader.load(sticker.image, (texture) => {
+          textureMap[key] = texture;
+          loadedCount++;
+          if (loadedCount === entries.length) {
+            setTextures(prev => ({ ...prev, ...textureMap } as Record<Sticker, Texture>));
+          }
+        });
       });
-    });
+    }
+
+    // Eagerly load pack sticker textures already in the task (runs regardless of enum stickers)
+    const packKeys = (task.stickers || []).map(s => s.sticker).filter(isPackStickerKey);
+    if (packKeys.length > 0) {
+      const packMap: Record<string, Texture> = {};
+      let packLoaded = 0;
+      packKeys.forEach(key => {
+        loader.load(packStickerUrl(key), (texture) => {
+          packMap[key] = texture;
+          packLoaded++;
+          if (packLoaded === packKeys.length) {
+            setPackTextures(prev => ({ ...prev, ...packMap }));
+          }
+        });
+      });
+    }
   };
 
   const loadBarrierTextures = () => {
@@ -99,6 +127,25 @@ export const TaskConfigProvider = ({ust, task, mode, children }: PropsWithChildr
       });
     });
   }
+
+  /** Preload all textures for a backend sticker pack (called when admin opens a pack tab). */
+  const loadPackTextures = (packName: string) => {
+    // Find stickers for this pack from existing packTextures keys — we rely on URLs instead
+    // since the pack metadata is fetched separately in useStickerPacks.
+    // This function accepts a list-of-urls approach via a helper fetch.
+    fetch(`/api/stickers/pack/${encodeURIComponent(packName)}`, { credentials: 'include' })
+      .then(r => r.json())
+      .then((stickers: { key: string; url: string }[]) => {
+        const loader = new TextureLoader();
+        stickers.forEach(({ key, url }) => {
+          if (packTextures[key]) return;   // already loaded
+          loader.load(url, texture => {
+            setPackTextures(prev => ({ ...prev, [key]: texture }));
+          });
+        });
+      })
+      .catch(e => console.error(`Failed to load textures for pack "${packName}"`, e));
+  };
 
   useEffect(() => {
     const raw = localStorage.getItem('robotUrl');
@@ -122,6 +169,7 @@ export const TaskConfigProvider = ({ust, task, mode, children }: PropsWithChildr
       animationSpeed, setAnimationSpeed,
       textures, loadTextures,
       barrierTextures, loadBarrierTextures,
+      packTextures, loadPackTextures,
       robotUrl, setRobotUrl,
       awaitingReview, setAwaitingReview,
       selectedRobotId, setSelectedRobotId,

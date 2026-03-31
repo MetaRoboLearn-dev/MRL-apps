@@ -5,7 +5,8 @@ import {useTaskConfig} from "../../hooks/useTaskConfig.ts";
 import {useMutation} from "@tanstack/react-query";
 import {createTask, updateTask} from "../../api/tasksApi.ts";
 import {FaPlus} from "react-icons/fa";
-import {Barriers, Stickers} from "../../types.ts";
+import {Barriers, Stickers, Sticker} from "../../types.ts";
+import {isPackStickerKey} from "../../api/stickerPackApi.ts";
 
 const TaskSaveButton = () => {
   const { taskId } = useParams({ strict: false });
@@ -35,7 +36,7 @@ const TaskSaveButton = () => {
       rotation: startRotationOffset,
       stickers: stickers.map(({ index, sticker, rotation }) => ({
         index,
-        sticker: Stickers[sticker].key,
+        sticker: isPackStickerKey(sticker as string) ? sticker : Stickers[sticker as Sticker].key,
         rotation
       })),
       barriers: [...barriers.entries()].map(([index, barrier]) => [

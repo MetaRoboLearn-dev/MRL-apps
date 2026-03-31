@@ -21,6 +21,7 @@ services:
       - REDIS_URL=redis://redis:6379/0
     volumes:
       - ../server/static/uploads/badges:/app/static/uploads/badges
+      - ../server/static/stickers:/app/static/stickers
 
   # ── Nginx (HTTPS + static frontend + API/WebSocket proxy) ──────────────────
   nginx:

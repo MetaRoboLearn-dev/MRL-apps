@@ -26,6 +26,8 @@ services:
     command: python app.py
     depends_on:
       - redis
+    volumes:
+      - ./server/static/stickers:/app/static/stickers
 
   frontend:
     build:

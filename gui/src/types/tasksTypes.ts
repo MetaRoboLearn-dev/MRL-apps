@@ -35,7 +35,7 @@ export type Task = {
   rotation: number;
   finish: number | null;
   barriers: [number, keyof typeof Barrier][] | null;
-  stickers: { index: number; sticker: keyof typeof Sticker; rotation: number }[] | null;
+  stickers: { index: number; sticker: string; rotation: number }[] | null;
   code: string | null;
   blocks: string | null;
   active: boolean;

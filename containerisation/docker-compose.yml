@@ -19,6 +19,8 @@ services:
       - redis
     environment:
       - REDIS_URL=redis://redis:6379/0
+    volumes:
+      - ../server/static/uploads/badges:/app/static/uploads/badges
 
   # ── Nginx (HTTPS + static frontend + API/WebSocket proxy) ──────────────────
   nginx:
@@ -36,6 +38,8 @@ services:
       - /var/www/certbot:/var/www/certbot:ro
       # For self-signed certificates (testing): use Docker volume
       # - ssl_certs:/etc/nginx/ssl
+      # Badge images - served directly by nginx
+      - ../server/static/uploads/badges:/usr/share/nginx/static/uploads/badges:ro
     depends_on:
       - backend
 

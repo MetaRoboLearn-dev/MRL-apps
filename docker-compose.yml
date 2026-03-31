@@ -21,6 +21,8 @@ services:
       - REDIS_URL=redis://redis:6379/0
     ports:
       - "5000:5000"
+    volumes:
+      - ./server/static/uploads/badges:/app/static/uploads/badges
     command: python app.py
     depends_on:
       - redis

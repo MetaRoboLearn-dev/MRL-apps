@@ -100,3 +100,20 @@ export const deleteUser = async (userId: string)=> {
 
   return response.json()
 }
+
+export const getUsersByIds = async (ids: number[]): Promise<{
+  id: number
+  first_name: string
+  last_name: string
+  username: string
+}[]> => {
+  if (ids.length === 0) return []
+  const response = await fetch('/api/users/by-ids', {
+    credentials: 'include',
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ids }),
+  })
+  if (!response.ok) throw new Error('Failed to fetch users')
+  return response.json()
+}

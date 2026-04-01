@@ -27,6 +27,8 @@ def _task_to_dict(task):
         "stickers": task.stickers,
         "code": task.code,
         "blocks": task.blocks,
+        "floor_color": task.floor_color,
+        "model_path": task.model_path,
         "active": getattr(task, "active", None),
         "created_at": _to_utc_iso(task.created_at),
         "updated_at": _to_utc_iso(task.updated_at),
@@ -117,6 +119,8 @@ def create_task():
             stickers=data.get("stickers"),
             code=data.get("code"),
             blocks=data.get("blocks"),
+            floor_color=data.get("floor_color"),
+            model_path=data.get("model_path"),
             active=data.get("active"),
             actor_user_id=current_user.id,
         )
@@ -141,6 +145,8 @@ def update_task(task_id: int):
         "stickers",
         "code",
         "blocks",
+        "floor_color",
+        "model_path",
         "active",
     }
     unknown = [k for k in data.keys() if k not in allowed]
@@ -178,6 +184,8 @@ def update_task(task_id: int):
             stickers=data.get("stickers"),
             code=data.get("code"),
             blocks=data.get("blocks"),
+            floor_color=data.get("floor_color"),
+            model_path=data.get("model_path"),
             active=active_val,
             actor_user_id=current_user.id,
         )

@@ -38,6 +38,8 @@ export type Task = {
   stickers: { index: number; sticker: string; rotation: number }[] | null;
   code: string | null;
   blocks: string | null;
+  floor_color: string | null;
+  model_path: string | null;
   active: boolean;
 }
 
@@ -53,5 +55,7 @@ export type CreateTaskRequest = {
   stickers: { index: number; sticker: string; rotation: number }[] | null,
   code: string | null,
   blocks: string | null,
+  floor_color: string | null,
+  model_path: string | null,
   active: boolean
 }

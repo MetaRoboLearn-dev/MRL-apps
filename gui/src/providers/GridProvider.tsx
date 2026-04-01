@@ -34,6 +34,8 @@ const GridProvider = ({ task: t, children }: PropsWithChildren<Props>) => {
     }))
   );
 
+  const [floorColor, setFloorColor] = useState<string | null>(t.floor_color ?? null);
+
   const buildGridState = (): GridState => {
     return {
       size_x: sizeX,
@@ -56,6 +58,7 @@ const GridProvider = ({ task: t, children }: PropsWithChildren<Props>) => {
       barriers, setBarriers,
       stickers, setStickers,
       buildGridState,
+      floorColor, setFloorColor,
     }}>
       {children}
     </GridContext.Provider>

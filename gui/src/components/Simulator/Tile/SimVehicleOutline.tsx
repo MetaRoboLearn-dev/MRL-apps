@@ -6,9 +6,14 @@ import {useTaskConfig} from "../../../hooks/useTaskConfig.ts";
 const degToRad = (deg: number) => deg * Math.PI / 180;
 
 const SimVehicleOutline = () => {
-  const { scene } = useGLTF("/RoboRanger-v1.glb");
+  const { selectedRotation, modelPath, modelsConfig } = useTaskConfig();
 
-  const { selectedRotation } = useTaskConfig();
+  const DEFAULT_PATH = '/models/Car.glb';
+  const activePath = modelPath ?? modelsConfig?.default_path ?? DEFAULT_PATH;
+  const modelEntry = modelsConfig?.models.find(m => m.path === activePath);
+  const offset = modelEntry?.offset ?? { position: [0, 0, 0] as [number, number, number], rotation: [0, 0, 0] as [number, number, number], scale: [0.14, 0.16, 0.16] as [number, number, number] };
+
+  const { scene } = useGLTF(activePath);
 
   const clonedScene = useMemo(() => scene.clone(true), [scene]);
 
@@ -42,9 +47,9 @@ const SimVehicleOutline = () => {
   return (
     <primitive
       object={clonedScene}
-      position={[0, 0.1, 0]}
-      rotation={[0, -Math.PI / 2 + degToRad(selectedRotation), 0]}
-      scale={[0.14, 0.16, 0.16]}
+      position={[offset.position[0], offset.position[1] + 0.1, offset.position[2]]}
+      rotation={[offset.rotation[0], -Math.PI / 2 + offset.rotation[1] + degToRad(selectedRotation), offset.rotation[2]]}
+      scale={offset.scale}
     />
   );
 };

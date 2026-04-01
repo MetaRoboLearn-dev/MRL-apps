@@ -18,7 +18,8 @@ const SimTile = ({index, position}: Props) => {
           setStartRotationOffset,
           finish, setFinish,
           barriers, setBarriers,
-          stickers, setStickers } = useGrid();
+          stickers, setStickers,
+          floorColor } = useGrid();
 
   const [isHovered, setIsHovered] = useState(false);
   const [type, setType] = useState<TileType>(TileType.GROUND);
@@ -29,7 +30,7 @@ const SimTile = ({index, position}: Props) => {
   const sticker = stickers.find((s) => s.index === index);
 
   const colours: Record<TileType, string> = {
-    [TileType.GROUND]: index % 2 ? '#3f9b0b' : '#3b930a',
+    [TileType.GROUND]: floorColor ?? (index % 2 ? '#3f9b0b' : '#3b930a'),
     [TileType.START]: '#fed857',
     [TileType.FINISH]: '#fe5244',
     [TileType.BARRIER]: index % 2 ? '#008000' : '#007500', // #646767

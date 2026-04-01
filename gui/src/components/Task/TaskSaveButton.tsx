@@ -10,9 +10,9 @@ import {isPackStickerKey} from "../../api/stickerPackApi.ts";
 
 const TaskSaveButton = () => {
   const { taskId } = useParams({ strict: false });
-  const { sizeX, sizeZ, barriers, stickers, start, finish, startRotationOffset } = useGrid();
+  const { sizeX, sizeZ, barriers, stickers, start, finish, startRotationOffset, floorColor } = useGrid();
   const { code, blocks } = useCode();
-  const { mode, title, description, isActive } = useTaskConfig();
+  const { mode, title, description, isActive, modelPath } = useTaskConfig();
   const navigate = useNavigate();
 
   const createMutation = useMutation({
@@ -44,6 +44,8 @@ const TaskSaveButton = () => {
       ]),
       code,
       blocks,
+      floor_color: floorColor,
+      model_path: modelPath,
       active: isActive
     };
 

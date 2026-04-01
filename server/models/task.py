@@ -20,6 +20,9 @@ class Task(Base):
     code = Column(Text)
     blocks = Column(Text)
 
+    floor_color = Column(String, nullable=True)
+    model_path = Column(String, nullable=True)
+
     created_at = Column(DateTime(timezone=True), nullable=False)
     updated_at = Column(DateTime(timezone=True))
 

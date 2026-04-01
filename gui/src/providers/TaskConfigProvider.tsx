@@ -5,6 +5,7 @@ import {Texture, TextureLoader} from "three";
 import {Task, TaskMode} from "../types/tasksTypes.ts";
 import {UserStartedTask} from "../types/userStartedTasksTypes.ts";
 import {isPackStickerKey, packStickerUrl} from "../api/stickerPackApi.ts";
+import {ModelsConfig} from "../types/contextTypes.ts";
 
 interface Props {
   task: Task
@@ -48,6 +49,17 @@ export const TaskConfigProvider = ({ust, task, mode, children }: PropsWithChildr
   const [robotUrl, setRobotUrl] = useState<string | null>(null);
   const [awaitingReview, setAwaitingReview] = useState<boolean>(false);
   const [selectedRobotId, setSelectedRobotId] = useState<string | null>(null);
+
+  // Model related options
+  const [modelPath, setModelPath] = useState<string | null>(task.model_path ?? null);
+  const [modelsConfig, setModelsConfig] = useState<ModelsConfig | null>(null);
+
+  useEffect(() => {
+    fetch('/models/models.json')
+      .then(r => r.json())
+      .then((cfg: ModelsConfig) => setModelsConfig(cfg))
+      .catch(e => console.error('Failed to load models config', e));
+  }, []);
 
   const setAnimationSpeed = (speed: number) => {
     // max 0.1, min 0.02, default 0.4
@@ -178,7 +190,9 @@ export const TaskConfigProvider = ({ust, task, mode, children }: PropsWithChildr
       isActive, setIsActive,
       title, setTitle,
       description, setDescription,
-      instructions
+      instructions,
+      modelPath, setModelPath,
+      modelsConfig,
     }}>
       {children}
     </TaskConfigContext.Provider>

@@ -6,6 +6,24 @@ import {GridState, TaskMode} from "./tasksTypes.ts";
 import {CurrentUser} from "./userTypes.ts";
 import {LogEntry} from "./consoleTypes.ts";
 
+export type ModelOffset = {
+  position: [number, number, number];
+  rotation: [number, number, number];
+  scale: [number, number, number];
+};
+
+export type ModelConfig = {
+  id: string;
+  name: string;
+  path: string;
+  offset: ModelOffset;
+};
+
+export type ModelsConfig = {
+  default_path: string;
+  models: ModelConfig[];
+};
+
 export interface AuthContextType {
   user: CurrentUser | null;
   loading: boolean;
@@ -58,6 +76,9 @@ export interface TaskConfigType {
   instructions: string;
   selectedRobotId: string | null;
   setSelectedRobotId: (robotId: string | null) => void;
+  modelPath: string | null;
+  setModelPath: (modelPath: string | null) => void;
+  modelsConfig: ModelsConfig | null;
 }
 
 export interface VehicleContextType {
@@ -97,6 +118,8 @@ export interface GridContextType {
   stickers: { index: number, sticker: Sticker | string, rotation: number }[];
   setStickers: (stickers: { index: number, sticker: Sticker | string, rotation: number }[]) => void;
   buildGridState: () => GridState;
+  floorColor: string | null;
+  setFloorColor: (color: string | null) => void;
 }
 
 export interface CodeContextType {

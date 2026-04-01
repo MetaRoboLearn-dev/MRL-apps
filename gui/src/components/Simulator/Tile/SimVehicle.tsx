@@ -183,7 +183,14 @@ const SimVehicle = () => {
     }
   });
 
-  const { scene } = useGLTF('/Car.glb');
+  const { modelPath, modelsConfig } = useTaskConfig();
+
+  const DEFAULT_PATH = '/models/Car.glb';
+  const activePath = modelPath ?? modelsConfig?.default_path ?? DEFAULT_PATH;
+  const modelEntry = modelsConfig?.models.find(m => m.path === activePath);
+  const offset = modelEntry?.offset ?? { position: [0, 0, 0] as [number, number, number], rotation: [0, 0, 0] as [number, number, number], scale: [0.14, 0.16, 0.16] as [number, number, number] };
+
+  const { scene } = useGLTF(activePath);
   useEffect(() => {
     scene.traverse((child) => {
       if ('isMesh' in child && child.isMesh) {
@@ -198,9 +205,9 @@ const SimVehicle = () => {
            position={[startPosition.x, startPosition.y, startPosition.z]}
            rotation={[startRotation.x, startRotation.y, startRotation.z]}>
       <primitive object={scene}
-                 // position={[0.07, 0.37, -0.05]}
-                 // rotation={[0, 0, 0]}
-                 scale={[0.14, 0.16, 0.16]} />
+                 position={offset.position}
+                 rotation={offset.rotation}
+                 scale={offset.scale} />
     </group>
   );
 };

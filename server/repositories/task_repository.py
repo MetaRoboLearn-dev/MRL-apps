@@ -73,6 +73,8 @@ class TaskRepository(BaseRepository[Task]):
         stickers: Optional[dict] = None,
         code: Optional[str] = None,
         blocks: Optional[str] = None,
+        floor_color: Optional[str] = None,
+        model_path: Optional[str] = None,
         active: bool,
         actor_user_id: Optional[int] = None,
     ) -> Task:
@@ -89,6 +91,8 @@ class TaskRepository(BaseRepository[Task]):
             stickers=stickers,
             code=code,
             blocks=blocks,
+            floor_color=floor_color,
+            model_path=model_path,
             created_at=now,
             updated_at=now,
             created_by=actor_user_id,
@@ -117,6 +121,8 @@ class TaskRepository(BaseRepository[Task]):
         stickers=None,
         code: Optional[str] = None,
         blocks: Optional[str] = None,
+        floor_color: Optional[str] = None,
+        model_path: Optional[str] = None,
         active: Optional[bool] = None,
         actor_user_id: Optional[int] = None,
     ) -> Optional[Task]:
@@ -135,6 +141,8 @@ class TaskRepository(BaseRepository[Task]):
         task.stickers = stickers
         task.code = code
         task.blocks = blocks
+        task.floor_color = floor_color
+        task.model_path = model_path
         task.active = active
 
         task.updated_at = utc_now()

@@ -21,6 +21,8 @@ const DEFAULT_TASK: Task = {
   code: null,
   blocks: null,
   active: true,
+  floor_color: null,
+  model_path: null,
 }
 
 function RouteComponent() {

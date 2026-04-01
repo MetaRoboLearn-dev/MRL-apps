@@ -1,4 +1,4 @@
-from typing import Optional, Iterable, Any
+from typing import Optional, Iterable, Any, List
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import or_
 
@@ -123,3 +123,10 @@ class UserRepository(BaseRepository[User]):
     # ---------- EXISTS USERNAME ----------
     def exists_username(self, username: str) -> bool:
         return self.session.query(User.id).filter(User.username == username).first() is not None
+
+    # ---------- GET USERS BY ID ----------
+
+    def get_by_ids(self, ids: List[int]):
+        if not ids:
+            return []
+        return self.session.query(User).filter(User.id.in_(ids)).all()

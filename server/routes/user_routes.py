@@ -221,3 +221,25 @@ def get_user_badges(user_id: int):
             }
             for ub in user_badges
         ]), 200
+
+# ---------- GET USERS BY ID ----------
+@bp.route("/by-ids", methods=["POST"])
+@role_required('admin', 'teacher')
+def get_users_by_ids():
+    data = request.get_json(silent=True) or {}
+    ids = data.get("ids", [])
+    if not ids:
+        return jsonify([]), 200
+
+    with db_session() as session:
+        repo = UserRepository(session)
+        users = repo.get_by_ids(ids)
+        return jsonify([
+            {
+                "id": u.id,
+                "first_name": u.first_name,
+                "last_name": u.last_name,
+                "username": u.username,
+            }
+            for u in users
+        ]), 200

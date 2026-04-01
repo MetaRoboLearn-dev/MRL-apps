@@ -168,7 +168,7 @@ def list_student_available_activities():
                 return at.id not in assigned_task_ids
             return True
 
-        return jsonify([
+        result = [
             {
                 "id": a.id,
                 "title": a.title,
@@ -196,7 +196,9 @@ def list_student_available_activities():
                 ],
             }
             for a in activities
-        ]), 200
+        ]
+
+        return jsonify([a for a in result if a["activity_tasks"]]), 200
 
 # ---------- CREATE ----------
 @bp.route("/", methods=["POST"])

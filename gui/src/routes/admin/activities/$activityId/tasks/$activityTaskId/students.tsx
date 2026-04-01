@@ -1,12 +1,12 @@
-// /admin/activities/$activityId/tasks/$activityTaskId/students
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import {
   getActivityTaskById,
   getActivityTaskStudents,
   setActivityTaskStudents
-} from "../../../../../../api/activitiesApi.ts";
+} from "../../../../../../api/activitiesApi.ts"
+import { getUsersByIds } from "../../../../../../api/usersApi.ts"
 
 export const Route = createFileRoute(
   '/admin/activities/$activityId/tasks/$activityTaskId/students',
@@ -41,6 +41,7 @@ function RouteComponent() {
     queryFn: () => getActivityTaskById(activityTaskId),
   })
 
+  // Left panel: paginated list of all students
   const { data: studentData, isLoading } = useQuery({
     queryKey: ['activity-task-students', activityTaskId, page, searchQuery],
     queryFn: () =>
@@ -51,6 +52,20 @@ function RouteComponent() {
       }),
   })
 
+  // Right panel: fetch selected students by IDs
+  const selectedIdsKey = useMemo(
+    () => Array.from(selectedIds).sort((a, b) => a - b).join(','),
+    [selectedIds]
+  )
+
+  const { data: selectedStudents = [] } = useQuery({
+    queryKey: ['users-by-ids', selectedIdsKey],
+    queryFn: () => getUsersByIds(Array.from(selectedIds)),
+    enabled: selectedIds.size > 0,
+    placeholderData: (prev) => prev,
+  })
+
+  // Initialize mode and selected IDs from first API response
   useEffect(() => {
     if (studentData && !initialized) {
       setMode(studentData.student_mode)
@@ -91,39 +106,8 @@ function RouteComponent() {
   const actionLabel = mode === 'exclude' ? 'Exclude' : 'Add'
   const undoLabel = mode === 'exclude' ? 'Include' : 'Remove'
 
-  // Left side: unselected students only
+  // Left side only shows unselected students
   const unselected = students.filter((s) => !selectedIds.has(s.id))
-
-  // Right side: selected students from the full list
-  // We need all students data to show names, so we'll track them
-  const [selectedStudents, setSelectedStudents] = useState<Map<number, Student>>(new Map())
-
-  // Keep track of student data as we see them
-  useEffect(() => {
-    if (students.length > 0) {
-      setSelectedStudents((prev) => {
-        const next = new Map(prev)
-        students.forEach((s) => next.set(s.id, s))
-        return next
-      })
-    }
-  }, [students])
-
-  // Also seed from initial load
-  useEffect(() => {
-    if (studentData?.students) {
-      setSelectedStudents((prev) => {
-        const next = new Map(prev)
-        studentData.students.forEach((s: Student) => next.set(s.id, s))
-        return next
-      })
-    }
-  }, [studentData])
-
-  const selectedList = Array.from(selectedIds)
-    .map((id) => selectedStudents.get(id))
-    .filter(Boolean) as Student[]
-
   const hasMore = students.length === PAGE_SIZE
 
   return (
@@ -151,7 +135,7 @@ function RouteComponent() {
       </div>
 
       {/* Mode dropdown */}
-      <div className="mb-4">
+      <div className="mb-4 max-w-xs">
         <label className="block text-sm font-medium mb-1">Selection mode</label>
         <select
           value={mode}
@@ -170,7 +154,6 @@ function RouteComponent() {
           <div className="lg:w-1/2 bg-white rounded-lg border border-gray-200 p-6">
             <h3 className="text-lg font-semibold mb-4">All Students</h3>
 
-            {/* Search */}
             <div className="flex gap-2 mb-3">
               <input
                 type="text"
@@ -188,7 +171,6 @@ function RouteComponent() {
               </button>
             </div>
 
-            {/* Student list */}
             <div className="border border-gray-200 rounded-md divide-y divide-gray-100">
               {isLoading ? (
                 <div className="px-4 py-6 text-center text-sm text-gray-400">Loading...</div>
@@ -223,7 +205,6 @@ function RouteComponent() {
               )}
             </div>
 
-            {/* Pagination */}
             <div className="flex items-center justify-between mt-3 text-sm">
               <button
                 onClick={() => setPage((p) => Math.max(0, p - 1))}
@@ -254,12 +235,12 @@ function RouteComponent() {
             </p>
 
             <div className="border border-gray-200 rounded-md divide-y divide-gray-100">
-              {selectedList.length === 0 ? (
+              {selectedIds.size === 0 ? (
                 <div className="px-4 py-6 text-center text-sm text-gray-400">
                   No students {mode === 'exclude' ? 'excluded' : 'added'} yet.
                 </div>
               ) : (
-                selectedList.map((student) => (
+                selectedStudents.map((student) => (
                   <div
                     key={student.id}
                     className={`flex items-center justify-between px-4 py-2 text-sm transition-colors ${

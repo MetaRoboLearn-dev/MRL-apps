@@ -67,7 +67,7 @@ export const TaskConfigProvider = ({ust, task, mode, children }: PropsWithChildr
   }, [task.model_path]);
 
   useEffect(() => {
-    fetch('/models/models.json')
+    fetch('/models/models.json', { cache: 'no-store' })
       .then(r => r.json())
       .then((cfg: ModelsConfig) => setModelsConfig(cfg))
       .catch(e => console.error('Failed to load models config', e));

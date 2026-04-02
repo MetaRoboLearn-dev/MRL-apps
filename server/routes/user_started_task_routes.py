@@ -42,6 +42,8 @@ def _user_started_task_to_dict(ust):
             "stickers": ust.activity_task.task.stickers,
             "code": ust.activity_task.task.code,
             "blocks": ust.activity_task.task.blocks,
+            "floor_color": ust.activity_task.task.floor_color,
+            "model_path": ust.activity_task.task.model_path,
             "active": getattr(ust.activity_task.task, "active", None),
         },
     }

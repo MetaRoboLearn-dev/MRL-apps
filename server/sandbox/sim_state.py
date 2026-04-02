@@ -20,33 +20,33 @@ sticker_whitelist = [
   'person', 'bird', 'bear', 'bench', 'donut', 'horse', 'zebra', 'giraffe', 'elephant', 'dog', 'cat', 'cow', 'sheep', 'zoo restaurant', 'cellphone',
   'red house', 'yellow house', 'green house', 'blue house', 'warehouse', 'post office', 'restaurant', 'trees', 'lake', 'fountain',
   # Svemir pack
-  'mercury', 'venus', 'earth', 'mars', 'jupiter', 'package', 'astronaut', 'saturn', 'uranus', 'neptune',
-  'sun', 'tools', 'spaceship', 'space station', 'asteroid', 'rocket', 'present',
+  'Mercury', 'Venus', 'Earth', 'Mars', 'Jupiter', 'package', 'astronaut', 'Saturn', 'Uranus', 'Neptune',
+  'Sun', 'tools', 'spaceship', 'space station', 'asteroid', 'rocket', 'present',
   # Farma pack
-  'carrots', 'peppers', 'pears', 'apples', 'plums', 'strawberries', 'cabbage', 'onions', 'cows', 'house', 'farmer',
+  'carrots', 'peppers', 'pears', 'apples', 'plums', 'strawberries', 'cabbage', 'onions', 'cow', 'house', 'farmer',
 ]
 
 # Maps pack sticker keys (e.g. "Svemir/Svemir_mapa-11") to their simulation type.
 # Pack stickers not listed here are decorative and return "" in the simulation.
 pack_sticker_types = {
   # --- Svemir ---
-  'Svemir/Svemir_mapa-01': 'sun',
+  'Svemir/Svemir_mapa-01': 'Sun',
   'Svemir/Svemir_mapa-05': 'tools',
   'Svemir/Svemir_mapa-08': 'spaceship',
-  'Svemir/Svemir_mapa-11': 'mercury',
+  'Svemir/Svemir_mapa-11': 'Mercury',
   'Svemir/Svemir_mapa-17': 'space station',
-  'Svemir/Svemir_mapa-19': 'venus',
+  'Svemir/Svemir_mapa-19': 'Venus',
   'Svemir/Svemir_mapa-21': 'asteroid',
-  'Svemir/Svemir_mapa-23': 'earth',
-  'Svemir/Svemir_mapa-31': 'mars',
-  'Svemir/Svemir_mapa-34': 'jupiter',
+  'Svemir/Svemir_mapa-23': 'Earth',
+  'Svemir/Svemir_mapa-31': 'Mars',
+  'Svemir/Svemir_mapa-34': 'Jupiter',
   'Svemir/Svemir_mapa-36': 'package',
   'Svemir/Svemir_mapa-37': 'astronaut',
-  'Svemir/Svemir_mapa-42': 'saturn',
-  'Svemir/Svemir_mapa-47': 'uranus',
+  'Svemir/Svemir_mapa-42': 'Saturn',
+  'Svemir/Svemir_mapa-47': 'Uranus',
   'Svemir/Svemir_mapa-51': 'asteroid',
   'Svemir/Svemir_mapa-53': 'rocket',
-  'Svemir/Svemir_mapa-55': 'neptune',
+  'Svemir/Svemir_mapa-55': 'Neptune',
   'Svemir/Svemir_mapa-57': 'present',
   # --- ZOO ---
   'ZOO/bird':       'bird',
@@ -84,8 +84,8 @@ pack_sticker_types = {
   'Farma/jagode_naziv':    'strawberries',
   'Farma/kupus':          'cabbage',
   'Farma/luk':            'onions',
-  'Farma/krave':          'cows',
-  'Farma/krave_naziv':    'cows',
+  'Farma/krave':          'cow',
+  'Farma/krave_naziv':    'cow',
   'Farma/kuca':           'house',
   'Farma/farmer':         'farmer',
 }

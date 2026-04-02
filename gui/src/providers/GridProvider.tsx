@@ -1,4 +1,4 @@
-import {PropsWithChildren, useState} from "react";
+import {PropsWithChildren, useState, useEffect} from "react";
 import {GridContext} from "./Context.tsx";
 import {Barrier, Sticker} from "../types.ts";
 import {GridState, Task} from "../types/tasksTypes.ts";
@@ -35,6 +35,30 @@ const GridProvider = ({ task: t, children }: PropsWithChildren<Props>) => {
   );
 
   const [floorColor, setFloorColor] = useState<string | null>(t.floor_color ?? null);
+
+  // Sync grid state when task changes (e.g., after editing and refetching)
+  useEffect(() => {
+    setSizeX(t.size_x);
+    setSizeZ(t.size_z);
+    setStart(t.start);
+    setStartRotationOffset(t.rotation);
+    setFinish(t.finish);
+    setBarriers(new Map(
+      (t.barriers || []).map(
+        ([index, key]: [number, keyof typeof Barrier]) => [index, Barrier[key]]
+      )
+    ));
+    setStickers(
+      (t.stickers || []).map(({ index, sticker, rotation }) => ({
+        index,
+        sticker: isPackStickerKey(sticker)
+          ? sticker
+          : (Sticker[sticker as keyof typeof Sticker] ?? sticker),
+        rotation,
+      }))
+    );
+    setFloorColor(t.floor_color ?? null);
+  }, [t.size_x, t.size_z, t.start, t.rotation, t.finish, t.barriers, t.stickers, t.floor_color]);
 
   const buildGridState = (): GridState => {
     return {

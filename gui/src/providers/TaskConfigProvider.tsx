@@ -29,6 +29,13 @@ export const TaskConfigProvider = ({ust, task, mode, children }: PropsWithChildr
   const [hasRobotAccess, setHasRobotAccess] = useState<boolean>(ust?.activity_task.allows_robot || false)
   const instructions = ust?.activity_task.instructions || '';
 
+  // Sync task metadata when task changes
+  useEffect(() => {
+    setTitle(task.title);
+    setDescription(task.description);
+    setIsActive(task.active);
+  }, [task.title, task.description, task.active]);
+
   // Task solving specific options
   const ustId: number | null = ust?.id ?? null;
 
@@ -53,6 +60,11 @@ export const TaskConfigProvider = ({ust, task, mode, children }: PropsWithChildr
   // Model related options
   const [modelPath, setModelPath] = useState<string | null>(task.model_path ?? null);
   const [modelsConfig, setModelsConfig] = useState<ModelsConfig | null>(null);
+
+  // Sync modelPath when task.model_path changes
+  useEffect(() => {
+    setModelPath(task.model_path ?? null);
+  }, [task.model_path]);
 
   useEffect(() => {
     fetch('/models/models.json')

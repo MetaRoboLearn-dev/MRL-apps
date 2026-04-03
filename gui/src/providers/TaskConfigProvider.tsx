@@ -182,6 +182,7 @@ export const TaskConfigProvider = ({ust, task, mode, children }: PropsWithChildr
     <TaskConfigContext.Provider value={{
       ustId,
       mode: taskMode, setMode: setTaskMode,
+      taskPreview: ust?.activity_task.preview,
       selectedType, setSelectedType,
       selectedSticker, setSelectedSticker,
       selectedBarrier, setSelectedBarrier,

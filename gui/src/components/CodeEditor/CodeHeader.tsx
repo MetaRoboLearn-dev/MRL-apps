@@ -9,7 +9,7 @@ interface Props {
 }
 
 const CodeHeader = ({activeS, setActiveS, activeI, setActiveI, setEditor}: Props) => {
-  const {mode} = useTaskConfig()
+  const {mode, taskPreview} = useTaskConfig()
   const editingMode = mode === 'edit' || mode === 'create'
   const styleS = activeS ? 'bg-tomato-600' : 'bg-tomato-300 pt-2 pb-3.5 translate-y-1.5 hover:bg-tomato-600 hover:translate-y-0.5';
   const styleI = activeI ? 'bg-tomato-600' : 'bg-tomato-300 pt-2 pb-3.5 translate-y-1.5 hover:bg-tomato-600 hover:translate-y-0.5';
@@ -48,6 +48,10 @@ const CodeHeader = ({activeS, setActiveS, activeI, setActiveI, setEditor}: Props
         }
 
       </div>
+
+      {mode == 'solve' && (
+        <span className={'mb-2 text-dark-neutrals-400'}>{taskPreview}</span>
+      )}
 
       <div className={'flex'}>
         <div

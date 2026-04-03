@@ -65,30 +65,44 @@ function ProfilePage() {
               <p className="mt-2 text-dark-neutrals-300">Nastavi rješavati zadatke i uskoro ćeš dobiti svoju prvu značku!</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               {badges.map((ub: UserBadgeEntry) => (
                 <div
                   key={ub.id}
-                  className="bg-sunglow-100 border-2 border-sunglow-300 rounded-lg p-5 flex flex-col items-center text-center hover:border-sunglow-500 transition-colors"
+                  className="bg-sunglow-100 border-2 border-sunglow-300 rounded-lg px-6 py-4 flex items-center gap-6 hover:border-sunglow-500 transition-colors"
                 >
+                  {/* Badge image */}
                   <img
                     src={ub.image_url}
                     alt={ub.title}
-                    className="h-20 w-20 object-contain mb-4"
+                    className="h-30 w-30 object-contain shrink-0"
                   />
-                  <p className="font-bold text-dark-neutrals-500">{ub.title}</p>
-                  <p className="text-sm font-medium text-sunglow-600 mt-1">{'⭐'.repeat(ub.value)}</p>
-                  {ub.description && (
-                    <p className="text-xs text-dark-neutrals-300 mt-2">{ub.description}</p>
-                  )}
-                  {ub.comment && (
-                    <p className="text-xs text-dark-neutrals-400 mt-2 italic bg-white rounded px-3 py-1.5">
-                      "{ub.comment}"
+
+                  {/* Title, stars, date */}
+                  <div className="shrink-0">
+                    <p className="font-bold text-dark-neutrals-500">{ub.title}</p>
+                    <p className="text-sm font-medium text-sunglow-600 mt-1">
+                      {ub.value <= 5 ? '⭐'.repeat(ub.value) : `⭐ x${ub.value}`}
                     </p>
-                  )}
-                  <p className="text-xs text-dark-neutrals-200 mt-3">
-                    {formatLocalDateTime(ub.created_at)}
-                  </p>
+                    <p className="text-xs text-dark-neutrals-200 mt-1">
+                      {formatLocalDateTime(ub.created_at)}
+                    </p>
+                  </div>
+
+                  {/* Description, comment */}
+                  <div className="flex-1 min-w-0 border-l-2 border-sunglow-300 pl-6">
+                    {ub.description && (
+                      <p className="text-sm text-dark-neutrals-400">{ub.description}</p>
+                    )}
+                    {ub.comment && (
+                      <p className="text-sm text-dark-neutrals-500 mt-2 italic bg-white rounded px-3 py-2">
+                        "{ub.comment}"
+                      </p>
+                    )}
+                    {!ub.description && !ub.comment && (
+                      <p className="text-sm text-dark-neutrals-200 italic">Nema opisa</p>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>

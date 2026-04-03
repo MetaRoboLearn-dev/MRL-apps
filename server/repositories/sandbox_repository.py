@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from models.user_task_log import EventTypes
 from repositories.user_task_log_repository import UserTaskLogRepository
-from sb import sb_run_python
+from sandbox.sb import sb_run_python
 
 
 class SandboxRepository:

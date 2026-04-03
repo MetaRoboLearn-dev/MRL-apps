@@ -1,16 +1,16 @@
 import threading
 import io
 import contextlib
-import math
 from flask import jsonify
 
 from sandbox.sim_state import SimState
+from sandbox.ast_validator import validate_code, CodeValidationError
 
 EXEC_TIMEOUT = 2
 MAX_OUTPUT_LEN = 1024
 
 
-def _make_builtins(steps: list, sim: SimState = None):
+def _make_sdk_funcs(steps: list, sim: SimState = None):
     def _print(a=''):
         steps.append({"type": "print", "value": str(a)})
 
@@ -76,44 +76,31 @@ def _make_builtins(steps: list, sim: SimState = None):
         "display_red": display_red,
         "sleep": sleep,
         "detect_object": detect_object,
-        "abs": abs,
-        "bool": bool,
-        "dict": dict,
-        "enumerate": enumerate,
-        "float": float,
-        "int": int,
-        "len": len,
-        "list": list,
-        "max": max,
-        "min": min,
-        "range": range,
-        "set": set,
-        "str": str,
-        "sum": sum,
-        "zip": zip,
-        "math": math,
     }
 
 
-def run_user_code(code: str, output: io.StringIO, error: io.StringIO, builtins: dict):
+def run_user_code(code: str, output: io.StringIO, error: io.StringIO, sdk_funcs: dict):
     try:
+        namespace = {**sdk_funcs}
         with contextlib.redirect_stdout(output), contextlib.redirect_stderr(error):
-            exec(code, {"__builtins__": {}}, builtins)
+            exec(code, namespace)
     except Exception as e:
         error.write(f"{type(e).__name__}: {str(e)}\n")
 
 
 def sb_run_python(code, grid_state=None):
-    if "import" in code:
-        return jsonify({"error": "Import statements are not allowed."}), 400
+    try:
+        validate_code(code)
+    except CodeValidationError as e:
+        return jsonify({"error": str(e)}), 400
 
     steps = []
     sim = SimState(grid_state) if grid_state else None
-    builtins = _make_builtins(steps, sim)
+    sdk_funcs = _make_sdk_funcs(steps, sim)
     stdout = io.StringIO()
     stderr = io.StringIO()
 
-    thread = threading.Thread(target=run_user_code, args=(code, stdout, stderr, builtins))
+    thread = threading.Thread(target=run_user_code, args=(code, stdout, stderr, sdk_funcs))
     thread.start()
     thread.join(EXEC_TIMEOUT)
 

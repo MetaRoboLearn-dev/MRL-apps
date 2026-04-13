@@ -48,7 +48,7 @@ export default function CodeSnippets() {
       <Section title="Kretanje robota" isOpen={openSections["Kretanje robota"]} onToggle={toggleSection}>
         <p style={pStyle}>Robot se može kretati po stazi i okretati za 90 stupnjeva u lijevu ili desnu stranu.</p>
         <p style={pStyle}><strong style={strongStyle}>Osnovne naredbe</strong></p>
-        <Pre>{`forward()      # robot ide naprijed\nback()     # robot ide natrag\nturn_left()    # robot se okrene lijevo za 90°\nturn_right()   # robot se okrene desno za 90°`}</Pre>
+        <Pre>{`forward()      # robot ide naprijed\nback()         # robot ide natrag\nturn_left()    # robot se okrene lijevo za 90°\nturn_right()   # robot se okrene desno za 90°`}</Pre>
         <p style={pStyle}><strong style={strongStyle}>Primjer</strong></p>
         <Pre>{`# robot treba preći put zadan sljedećim koracima\n# NAPRIJED - NAPRIJED - OKRET LIJEVO - NAPRIJED\nforward()\nforward()\nturn_left()\nforward()`}</Pre>
       </Section>
@@ -56,9 +56,10 @@ export default function CodeSnippets() {
       <Section title="Prikaz na LED zaslonu (ispis)" isOpen={openSections["Prikaz na LED zaslonu (ispis)"]} onToggle={toggleSection}>
         <p style={pStyle}>Na LED zaslonu robota može se ispisati tekst ili jedan znak. <b>Znak</b> ostaje prikazan dok se zaslon ne obriše.</p>
         <p style={pStyle}><strong style={strongStyle}>Sintaksa</strong></p>
-        <Pre>{`# ispis zadanog teksta\ndisplay_text("tekst")\n\n#ispis vrijednosti varijable\ndisplay_text(varijabla)\n\n#prikaz znaka\ndisplay_char(znak)\n\n# LED ekran svijetli \ndisplay_green()    #zeleno\ndisplay_red()      #crveno\n\n# brisanje ekrana\ndisplay_clear()\n\n# vrijeme čekanja (n je broj sekundi)\nsleep(n)`}</Pre>
+        <Pre>{`# ispis zadanog teksta\ndisplay_text("tekst")\n\n# ispis vrijednosti varijable\ndisplay_text(varijabla)\n\n# prikaz znaka\ndisplay_char(znak)\n\n# LED ekran svijetli \ndisplay_green()    # zeleno\ndisplay_red()      # crveno\n\n# brisanje ekrana\ndisplay_clear()\n\n# vrijeme čekanja (n je broj sekundi)\nsleep(n)`}</Pre>
         <p style={pStyle}><strong style={strongStyle}>Primjeri</strong></p>
-        <Pre>{`# tekstualna poruka\nime_zivotinje="dog"\ndisplay_text("Hranjenje:")\ndisplay_text(ime_zivotinje)  \n\n# prikaz prvog slova imena\nime = "Ana"\ndisplay_char(ime[0])\n\n# ispis vrijednosti varijable porcije u trajanju od 3 sekunde nakon čega se briše LED zaslon\ndisplay_char(porcije)\nsleep(3)\ndisplay_clear()`}</Pre>
+        <Pre>{`# tekstualna poruka\nime_zivotinje = "dog"\nhrana = 10\n\n# ispis u 2 reda\ndisplay_text("Hranjenje:")\ndisplay_text(ime_zivotinje)\n\n# ispis u jednom redu\ndisplay_text("Preostala hrana: " + str(hrana))`}</Pre>
+        <Pre>{`# prikaz prvog slova imena\nime = "Ana"\ndisplay_char(ime[0])\n\n# ispis vrijednosti varijable porcije u trajanju od 3 sekunde nakon čega se briše LED zaslon\ndisplay_char(porcije)\nsleep(3)\ndisplay_clear()`}</Pre>
       </Section>
 
       <Section title="Uvjeti (if)" isOpen={openSections["Uvjeti (if)"]} onToggle={toggleSection}>
@@ -67,6 +68,8 @@ export default function CodeSnippets() {
         <Pre>{`if uvjet:\n    naredbe\nelse:\n    naredbe`}</Pre>
         <p style={pStyle}><strong style={strongStyle}>Primjer</strong></p>
         <Pre>{`zivotinja = "lion"\n\nif zivotinja == "lion":\n    display_text("Kralj životinja")\nelse:\n    display_text("Životinja")`}</Pre>
+        <p style={pStyle}><strong style={strongStyle}>Primjer s više uvjeta</strong></p>
+        <Pre>{`zivotinja = detect_object()\n\nif zivotinja == "dog":\n    hrana -= 3\nelif zivotinja == "rabbit":\n    hrana -= 1\nelif zivotinja == "cat":\n    hrana -= 2\nelse:\n    display_text("Nepoznata životinja")`}</Pre>
         <p style={pStyle}><strong style={strongStyle}>Operatori usporedbe</strong></p>
         <Pre>{`==   jednako\n!=   nije jednako\n>    veće\n<    manje\n>=   veće ili jednako\n<=   manje ili jednako`}</Pre>
         <p style={pStyle}><strong style={strongStyle}>VAŽNO:</strong> Potrebno je koristiti uvlake.</p>
@@ -82,13 +85,11 @@ export default function CodeSnippets() {
           <strong style={strongStyle}>Petlju for</strong> koristimo kada znamo koliko puta se nešto ponavlja.<br />
           <strong style={strongStyle}>Petlju while</strong> koristimo kada se ponavljanje događa dok je neki uvjet ispunjen.
         </p>
-        <p style={pStyle}><strong style={strongStyle}>Petlja for</strong></p>
-        <p style={pStyle}><strong style={strongStyle}>Sintaksa</strong></p>
+        <p style={pStyle}><strong style={strongStyle}>Petlja for — sintaksa</strong></p>
         <Pre>{`for i in range(broj):\n    naredbe`}</Pre>
         <p style={pStyle}><strong style={strongStyle}>Primjer</strong></p>
         <Pre>{`# tri koraka naprijed\nfor i in range(3):\n    forward()`}</Pre>
-        <p style={pStyle}><strong style={strongStyle}>Petlja while</strong></p>
-        <p style={pStyle}><strong style={strongStyle}>Sintaksa</strong></p>
+        <p style={pStyle}><strong style={strongStyle}>Petlja while — sintaksa</strong></p>
         <Pre>{`while uvjet:\n    naredbe`}</Pre>
         <p style={pStyle}><strong style={strongStyle}>Primjer</strong></p>
         <Pre>{`# robot ide naprijed dok ima hrane\nwhile hrana > 0:\n    forward()\n    hrana -= 1`}</Pre>
@@ -125,15 +126,24 @@ export default function CodeSnippets() {
         <p style={pStyle}>Nakon što je funkcija definirana, potrebno ju je <strong style={strongStyle}>pozvati</strong>.</p>
         <Pre>{`naziv_funkcije()`}</Pre>
         <p style={pStyle}><strong style={strongStyle}>Primjer</strong></p>
-        <Pre>{`# funkcija koja pomiče robota naprijed tri puta\ndef tri_koraka():\n    forward()\n    forward()\n    forward()\n# pozivanje funkcije\ntri_koraka()`}</Pre>
-        <p style={pStyle}><strong style={strongStyle}>Funkcija s parametrima</strong></p>
+        <Pre>{`# funkcija koja pomiče robota naprijed tri puta\ndef tri_koraka():\n    forward()\n    forward()\n    forward()\n\n# pozivanje funkcije\ntri_koraka()`}</Pre>
+
+        <h2 style={h2Style}>Funkcija s parametrima</h2>
         <p style={pStyle}>Funkcija može primiti vrijednosti (parametre) koje koristi unutar funkcije.</p>
         <p style={pStyle}><strong style={strongStyle}>Sintaksa</strong></p>
         <Pre>{`def naziv_funkcije(parametar):\n    naredbe`}</Pre>
         <p style={pStyle}><strong style={strongStyle}>Primjer</strong></p>
-        <Pre>{`# funkcija koja ispisuje ime životinje\ndef ispisi_zivotinju(ime):\n    display_text("Zivotinja:")\n    display_text(ime)\n# pozivanje funkcije\nispisi_zivotinju("lion")`}</Pre>
-        <p style={pStyle}><strong style={strongStyle}>Primjer funkcije za kretanje robota</strong></p>
-        <Pre>{`# funkcija za okretanje robota i pomak naprijed\ndef skretanje():\n    turn_left()\n    forward()\n# korištenje funkcije\nskretanje()`}</Pre>
+        <Pre>{`# funkcija koja ispisuje ime životinje\ndef ispisi_zivotinju(ime):\n    display_text("Zivotinja:")\n    display_text(ime)\n\n# pozivanje funkcije\nispisi_zivotinju("lion")`}</Pre>
+
+        <h2 style={h2Style}>Funkcije koje vraćaju vrijednost</h2>
+        <p style={pStyle}>Funkcija može vratiti rezultat pomoću naredbe <strong style={strongStyle}>return</strong>, npr. zbroj dva broja.</p>
+        <p style={pStyle}><strong style={strongStyle}>Primjer</strong></p>
+        <Pre>{`# funkcija vraća zbroj dva broja\ndef zbroj(a, b):\n    rezultat = a + b\n    return rezultat\n\nrezultat = zbroj(2, 3)\ndisplay_text(rezultat)`}</Pre>
+
+        <h2 style={h2Style}>Funkcija s dvije povratne vrijednosti</h2>
+        <p style={pStyle}>Povratnih vrijednosti kao i parametara koje funkcija koristi može biti više, kao u sljedećem primjeru.</p>
+        <p style={pStyle}><strong style={strongStyle}>Primjer</strong></p>
+        <Pre>{`# funkcija određuje vrijednost varijable hrana i poruku za ispis\ndef hranjenje(zivotinja, hrana):\n    if zivotinja == "dog":\n        hrana -= 3\n        poruka = "Nahranio sam psa."\n    elif zivotinja == "cat":\n        hrana -= 2\n        poruka = "Nahranio sam mačku."\n    else:\n        poruka = "Neuspjelo hranjenje."\n\n    return hrana, poruka\n\n# robot prepoznaje životinju\nzivotinja = detect_object()\n\n# poziv funkcije\nhrana, poruka = hranjenje(zivotinja, 10)\n\n# ispis rezultata\ndisplay_text(poruka)\ndisplay_text("Preostala hrana: " + str(hrana))`}</Pre>
       </Section>
     </div>
   );
@@ -141,6 +151,15 @@ export default function CodeSnippets() {
 
 const pStyle: React.CSSProperties = { marginTop: "12px" };
 const strongStyle: React.CSSProperties = { color: "#333" };
+
+const h2Style: React.CSSProperties = {
+  marginTop: "20px",
+  fontSize: "17px",
+  color: "#1f4e79",
+  fontWeight: 500,
+  borderBottom: "1px solid #eee",
+  paddingBottom: "4px",
+};
 
 const sectionHeadingStyle: React.CSSProperties = {
   marginTop: "35px",

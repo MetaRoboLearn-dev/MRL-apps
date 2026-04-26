@@ -63,6 +63,14 @@ def _make_sdk_funcs(steps: list, sim: SimState = None):
             return tile
         return None
 
+    def detect_object_conf(a):
+        if sim:
+            tile = sim.get_tile_ahead()
+            steps.append({"type": "detect", "result": (tile, 1)})
+            return tile, 1
+        return None
+
+
     return {
         "print": _print,
         "forward": forward,
@@ -76,6 +84,7 @@ def _make_sdk_funcs(steps: list, sim: SimState = None):
         "display_red": display_red,
         "sleep": sleep,
         "detect_object": detect_object,
+        "detect_object_conf": detect_object_conf,
     }
 
 

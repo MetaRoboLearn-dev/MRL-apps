@@ -2,10 +2,24 @@ import LogoWhite from '/logo_white_notext.svg'
 import {Link} from "@tanstack/react-router";
 import {useAuth} from "../../hooks/useAuth.ts";
 import {FaHouse} from "react-icons/fa6";
-import {FaUser} from "react-icons/fa";
+import {FaUser, FaDownload} from "react-icons/fa";
+import {useState} from "react";
+import {downloadDbDump} from "../../api/adminApi.ts";
 
 const Navbar = () => {
   const { user, logout } = useAuth();
+  const [dumping, setDumping] = useState(false);
+
+  const handleDbDump = async () => {
+    setDumping(true);
+    try {
+      await downloadDbDump();
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setDumping(false);
+    }
+  };
 
   return (
     <div className="bg-turquoise-500 px-2 w-full h-20 z-50 flex items-center justify-between">
@@ -43,6 +57,17 @@ const Navbar = () => {
               Robots
             </Link>
           </div>
+        )}
+        {user?.role === 'admin' && (
+          <button
+            onClick={handleDbDump}
+            disabled={dumping}
+            title="Download DB dump"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-turquoise-600 text-light-cyan-200 rounded hover:bg-turquoise-700 transition disabled:opacity-50"
+          >
+            <FaDownload size={13} />
+            {dumping ? 'Downloading…' : 'DB Dump'}
+          </button>
         )}
         {user && (
           <>

@@ -43,7 +43,14 @@ services:
       - ../server/static/uploads/badges:/usr/share/nginx/static/uploads/badges:ro
     depends_on:
       - backend
+    networks:
+      - default
+      - shared-proxy
 
 volumes:
   redis_data:
   ssl_certs:
+
+networks:
+  shared-proxy:
+    external: true

@@ -332,15 +332,23 @@ def init_broker_websocket(app):
 
         state = _get_broker_state()
         closed = threading.Event()
-        RETRY_DELAY = 2  # seconds between reconnect attempts
+        RETRY_DELAY = 2        # seconds between reconnect attempts
+        IDLE_TIMEOUT = 8       # seconds without a frame before we force-reconnect upstream
+                               # (video servers often only push to connections made *after*
+                               # the robot starts streaming; an idle reconnect re-subscribes)
+
+        frame_count = [0]
 
         def run_upstream():
             """Synchronous loop: connect to the video broker, recv frames,
             forward them to the browser WS.  Retries on any failure until
-            the browser disconnects (closed is set)."""
+            the browser disconnected (closed is set)."""
+            attempt = 0
             while not closed.is_set():
                 upstream = None
+                attempt += 1
                 try:
+                    print(f"[WS] camera: connecting upstream attempt #{attempt} for robot {robot_id}")
                     upstream = websocket.create_connection(
                         f"{VIDEO_WS_URL}/robot/{robot_id}/get-video-stream",
                         header={
@@ -350,20 +358,35 @@ def init_broker_websocket(app):
                         },
                         timeout=5,
                     )
-                    print(f"[WS] camera: upstream connected for robot {robot_id}")
+                    print(f"[WS] camera: upstream connected (attempt #{attempt}) for robot {robot_id}, status={upstream.status}, headers={dict(upstream.getheaders())}")
                     upstream.settimeout(1.0)
+                    last_frame_time = time.monotonic()
                     while not closed.is_set():
                         try:
-                            _opcode, data = upstream.recv_data()
+                            opcode, data = upstream.recv_data()
                             if data:
-                                ws.send(data)
+                                print(f"[WS] camera: frame #{frame_count[0]+1} opcode={opcode} size={len(data)} robot={robot_id}")
+                                try:
+                                    ws.send(data)
+                                    frame_count[0] += 1
+                                    last_frame_time = time.monotonic()
+                                except Exception as send_exc:
+                                    print(f"[WS] camera: ws.send failed (browser closed?): {send_exc}")
+                                    closed.set()
+                                    return
+                            else:
+                                print(f"[WS] camera: recv_data returned opcode={opcode} with empty data for robot {robot_id}")
                         except websocket.WebSocketTimeoutException:
-                            # No frame within 1 s — just keep waiting
+                            elapsed = time.monotonic() - last_frame_time
+                            if elapsed > IDLE_TIMEOUT:
+                                print(f"[WS] camera: no frames for {elapsed:.1f}s on attempt #{attempt}, reconnecting upstream for robot {robot_id}")
+                                break
                             continue
-                        except Exception:
+                        except Exception as recv_exc:
+                            print(f"[WS] camera: recv_data error on attempt #{attempt} for robot {robot_id}: {type(recv_exc).__name__}: {recv_exc}")
                             break
                 except Exception as exc:
-                    print(f"[WS] camera: upstream failed for robot {robot_id}: {exc}")
+                    print(f"[WS] camera: upstream connection failed (attempt #{attempt}) for robot {robot_id}: {type(exc).__name__}: {exc}")
                 finally:
                     if upstream:
                         try:
@@ -378,10 +401,23 @@ def init_broker_websocket(app):
         upstream_thread.start()
 
         try:
+            # The camera socket is server→client only; the browser never sends
+            # messages. We must distinguish between:
+            #   - Timeout (no message in N seconds) → browser still alive, keep waiting
+            #   - ConnectionClosed              → browser truly disconnected, stop
+            # simple_websocket raises ConnectionError on timeout and
+            # ConnectionClosed on an actual close handshake or network drop.
+            import simple_websocket
             while not closed.is_set():
                 try:
-                    ws.receive(timeout=1)
-                except Exception:
+                    ws.receive(timeout=10)
+                except simple_websocket.ConnectionClosed:
+                    # Browser closed the WebSocket — stop the upstream thread.
+                    closed.set()
                     break
+                except Exception:
+                    # Timeout or other transient error; camera is server→client
+                    # only so a timeout just means no client message, which is normal.
+                    continue
         finally:
             closed.set()

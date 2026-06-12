@@ -11,7 +11,7 @@ export type GridState = {
   stickers: { index: number; sticker: string }[];
 }
 
-export type TaskMode = 'solve' | 'create' | 'edit';
+export type TaskMode = 'solve' | 'create' | 'edit' | 'map_edit' | 'map_view' | 'task_create';
 
 export type TaskPreview = {
   id: number;
@@ -58,4 +58,22 @@ export type CreateTaskRequest = {
   floor_color: string | null,
   model_path: string | null,
   active: boolean
+}
+
+export const EMPTY_MAP_TASK: Task = {
+  id: null,
+  title: "",
+  description: null,
+  size_x: 5,
+  size_z: 5,
+  start: null,
+  rotation: 0,
+  finish: null,
+  barriers: [],
+  stickers: [],
+  code: null,
+  blocks: null,
+  floor_color: null,
+  model_path: null,
+  active: true,
 }

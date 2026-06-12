@@ -4,7 +4,6 @@
 #   docker compose -f containerisation/docker-compose.yml up --build
 # ─────────────────────────────────────────────────────────────────────────────
 services:
-
   redis:
     image: redis:7-alpine
     restart: unless-stopped
@@ -23,11 +22,10 @@ services:
       - "5000:5000"
     volumes:
       - ./server/static/uploads/badges:/app/static/uploads/badges
+      - ./server/static/stickers:/app/static/stickers
     command: python app.py
     depends_on:
       - redis
-    volumes:
-      - ./server/static/stickers:/app/static/stickers
 
   frontend:
     build:

@@ -21,6 +21,9 @@ function ProtectedLayout() {
     }
   }, [user, loading, location.pathname, navigate]);
 
+  const embedded =
+    new URLSearchParams(window.location.search).get("embedded") === "true";
+
   if (loading) {
     return <div className="w-full h-screen flex items-center justify-center">Loading...</div>;
   }
@@ -31,7 +34,7 @@ function ProtectedLayout() {
 
   return (
     <div className="w-full h-screen flex flex-col">
-      {location.pathname !== '/login' && <Navbar />}
+      {location.pathname !== '/login' && !embedded && <Navbar />}
       <Outlet />
       <Modal />
     </div>

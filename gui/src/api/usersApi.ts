@@ -1,4 +1,4 @@
-import {CreateUserRequest, UpdateUserRequest, User, Role} from "../types/userTypes.ts";
+import { CreateUserRequest, UpdateUserRequest, User, Role } from "../types/userTypes.ts";
 
 export const getRoles = async (): Promise<Role[]> => {
   const response = await fetch('/api/users/roles', {
@@ -22,15 +22,15 @@ export const getUsers = async (params: {
   order_by_username?: boolean;
 }) => {
   const queryParams = new URLSearchParams();
-  
+
   if (params.skip) queryParams.set('skip', params.skip.toString());
   if (params.limit) queryParams.set('limit', params.limit.toString());
   if (params.role_id) queryParams.set('role_id', params.role_id.toString());
   if (params.active_only !== undefined) queryParams.set('active_only', params.active_only.toString());
   if (params.search) queryParams.set('search', params.search);
   if (params.order_by_username) queryParams.set('order_by_username', params.order_by_username.toString());
-  
-  const response = await fetch(`/api/users?${queryParams}`, {
+
+  const response = await fetch(`/api/users/?${queryParams}`, {
     credentials: 'include'
   });
   return response.json();
@@ -52,7 +52,7 @@ export const getUserById = async (userId: string): Promise<User> => {
 }
 
 export const createUser = async (data: CreateUserRequest) => {
-  const response = await fetch('/api/users', {
+  const response = await fetch('/api/users/', {
     credentials: 'include',
     method: 'POST',
     headers: {
@@ -87,7 +87,7 @@ export const updateUser = async (userId: string, data: UpdateUserRequest): Promi
   return response.json()
 }
 
-export const deleteUser = async (userId: string)=> {
+export const deleteUser = async (userId: string) => {
   const response = await fetch(`/api/users/${userId}`, {
     credentials: 'include',
     method: 'DELETE'

@@ -7,12 +7,14 @@ interface Props {
 }
 
 const SimTileDropdown = ({show, setShow} : Props) => {
-  const { selectedType, setSelectedType } = useTaskConfig();
+  const { selectedType, setSelectedType, mode } = useTaskConfig();
 
   return (
     <ul
       className={`${!show ? 'hidden' : 'flex'} mx-auto flex-col bg-white-smoke-600 rounded-2xl overflow-hidden shadow translate-y-5`}>
-      {Object.values(TileType).map((item: string, index) => (
+      {Object.values(TileType)
+        .filter((t) => mode === "map_edit" ? t !== TileType.START && t !== TileType.FINISH : true)
+        .map((item: string, index) => (
         <li key={index} className={'bg-white-smoke-400 text-center'}>
           <label className="block">
             <input

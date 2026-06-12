@@ -30,7 +30,10 @@ const SimInterface = ({isHovered}: Props) => {
   const [showTileDropdown, setShowTileDropdown] = useState(false);
   const [showSideMenu, setShowSideMenu] = useState(false);
 
-  const tileValues = Object.values(TileType);
+
+  const tileValues = Object.values(TileType).filter((t) =>
+    mode === "map_edit" ? t !== TileType.START && t !== TileType.FINISH : true
+  );  
   const dev = false;
   const allowEdit = mode != 'solve';
 
@@ -89,13 +92,16 @@ const SimInterface = ({isHovered}: Props) => {
         {/*<h1>validWorkspace: {isValidWorkspace.toString()}</h1>*/}
       </div>
 
-      <div className={`absolute bottom-5 text-lg text-center font-semibold text-dark-neutrals-500 bg-white/80 px-4 py-2 rounded shadow transition-opacity duration-200 select-none
-                      ${!simFocused && isHovered && !modalVisible && !isMoving && allowEdit ? 'opacity-100 cursor-pointer' : 'opacity-0 pointer-events-none'}`}
-           onClick={() => {
-             setSimFocused(true)
-           }}>
-        ✏️ Pritisni za uređivanje simulacije
-      </div>
+
+      {mode != "map_view" && (
+        <div className={`absolute bottom-5 text-lg text-center font-semibold text-dark-neutrals-500 bg-white/80 px-4 py-2 rounded shadow transition-opacity duration-200 select-none
+                        ${!simFocused && isHovered && !modalVisible && !isMoving && allowEdit ? 'opacity-100 cursor-pointer' : 'opacity-0 pointer-events-none'}`}
+            onClick={() => {
+              setSimFocused(true)
+            }}>
+          ✏️ Pritisni za uređivanje simulacije
+        </div>
+      )}
 
       <div
         className={`absolute bottom-5 select-none transition-opacity duration-200 ${simFocused ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>

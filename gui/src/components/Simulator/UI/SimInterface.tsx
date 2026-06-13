@@ -147,55 +147,57 @@ const SimInterface = ({ isHovered }: Props) => {
         </div>
 
         {mode != "start" && mode != "finish" && <SimSpeedSlider />}
+        {mode != "start" && mode != "finish" && (
+          <div className={"flex justify-between"}>
+            <div
+              className={`text-lg text-center font-semibold text-white-smoke-500 bg-tomato-600 p-2 rounded shadow cursor-pointer`}
+              onClick={() => setSimFocused(false)}
+            >
+              <BsArrowLeftCircleFill size={20} />
+            </div>
+            <div className="mx-10 flex items-center justify-center">
+              <span
+                className={"flex items-center cursor-pointer"}
+                onClick={selectPreviousType}
+              >
+                <BsChevronLeft
+                  size={15}
+                  className={"stroke-3 stroke-white-smoke-900"}
+                />
+                <TbCircleDashedLetterA
+                  size={25}
+                  className={"stroke-3 stroke-white-smoke-900"}
+                />
+              </span>
 
-        <div className={"flex justify-between"}>
-          <div
-            className={`text-lg text-center font-semibold text-white-smoke-500 bg-tomato-600 p-2 rounded shadow cursor-pointer`}
-            onClick={() => setSimFocused(false)}
-          >
-            <BsArrowLeftCircleFill size={20} />
+              <span
+                className="w-50 text-center text-3xl font-display font-bold mx-4 text-dark-neutrals-500 cursor-pointer"
+                onClick={() => setShowTileDropdown(!showTileDropdown)}
+              >
+                {selectedType.toUpperCase()}
+              </span>
+              <span
+                className={"flex items-center cursor-pointer"}
+                onClick={selectNextType}
+              >
+                <TbCircleDashedLetterD
+                  size={25}
+                  className={"stroke-3 stroke-white-smoke-900"}
+                />
+                <BsChevronRight
+                  size={15}
+                  className={"stroke-3 stroke-white-smoke-900"}
+                />
+              </span>
+            </div>
+            <button
+              className={`text-lg text-center font-semibold text-dark-neutrals-400 p-2 rounded shadow bg-sunglow-500 cursor-pointer transition`}
+              onClick={() => setShowSideMenu(!showSideMenu)}
+            >
+              <BsGearFill size={20} />
+            </button>
           </div>
-          <div className="mx-10 flex items-center justify-center">
-            <span
-              className={"flex items-center cursor-pointer"}
-              onClick={selectPreviousType}
-            >
-              <BsChevronLeft
-                size={15}
-                className={"stroke-3 stroke-white-smoke-900"}
-              />
-              <TbCircleDashedLetterA
-                size={25}
-                className={"stroke-3 stroke-white-smoke-900"}
-              />
-            </span>
-            <span
-              className="w-50 text-center text-3xl font-display font-bold mx-4 text-dark-neutrals-500 cursor-pointer"
-              onClick={() => setShowTileDropdown(!showTileDropdown)}
-            >
-              {selectedType.toUpperCase()}
-            </span>
-            <span
-              className={"flex items-center cursor-pointer"}
-              onClick={selectNextType}
-            >
-              <TbCircleDashedLetterD
-                size={25}
-                className={"stroke-3 stroke-white-smoke-900"}
-              />
-              <BsChevronRight
-                size={15}
-                className={"stroke-3 stroke-white-smoke-900"}
-              />
-            </span>
-          </div>
-          <button
-            className={`text-lg text-center font-semibold text-dark-neutrals-400 p-2 rounded shadow bg-sunglow-500 cursor-pointer transition`}
-            onClick={() => setShowSideMenu(!showSideMenu)}
-          >
-            <BsGearFill size={20} />
-          </button>
-        </div>
+        )}
       </div>
 
       <SimSideMenu

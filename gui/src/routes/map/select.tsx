@@ -7,9 +7,12 @@ import GridProvider from "../../providers/GridProvider";
 import { TaskConfigProvider } from "../../providers/TaskConfigProvider";
 import { VehicleProvider } from "../../providers/VehicleProvider";
 import { isPackStickerKey } from "../../api/stickerPackApi.ts";
-import { Task } from "../../types/tasksTypes";
+import { Task, TaskMode } from "../../types/tasksTypes";
 import { useStickerPacks } from "../../hooks/useStickerPacks";
 import SimInterface from "../../components/Simulator/UI/SimInterface.tsx";
+import { TileType } from "../../types.ts";
+import { useGrid } from "../../hooks/useGrid.ts";
+import { useTaskConfig } from "../../hooks/useTaskConfig.ts";
 
 const EMPTY_TASK: Task = {
   id: null,
@@ -51,9 +54,47 @@ function taskFromPayload(payload: Record<string, any>): Task {
   };
 }
 
+function MapSelectInner({ mode }: { mode: "start" | "finish" }) {
+  const { start, finish, startRotationOffset } = useGrid();
+  const { setSelectedType } = useTaskConfig();
+
+  useEffect(() => {
+    setSelectedType(mode === "start" ? TileType.START : TileType.FINISH);
+  }, [mode]);
+
+  useEffect(() => {
+    if (mode === "start" && start !== null) {
+      window.parent.postMessage(
+        {
+          type: "MAP_CELL_CLICK",
+          payload: { row: start, rotation: startRotationOffset },
+        },
+        "*",
+      );
+    }
+  }, [start, startRotationOffset]);
+
+  useEffect(() => {
+    if (mode === "finish" && finish !== null) {
+      window.parent.postMessage(
+        { type: "MAP_CELL_CLICK", payload: { row: finish, rotation: 0 } },
+        "*",
+      );
+    }
+  }, [finish]);
+
+  return (
+    <div className="h-screen w-full flex flex-col relative">
+      <div className="bg-turquoise-50 flex-center flex-col flex-grow w-full border-t-8 border-y-10 border-turquoise-700 relative overflow-hidden">
+        <SimCanvas />
+        <SimInterface isHovered={true} />
+      </div>
+    </div>
+  );
+}
+
 function MapSelectPage() {
   const [task, setTask] = useState<Task | null>(null);
-  const [packsReady, setPacksReady] = useState(false);
   const { fetchPackStickers } = useStickerPacks();
   const search = useSearch({ from: "/map/select" }) as { mode?: string };
   const mode = (search.mode === "finish" ? "finish" : "start") as
@@ -62,7 +103,7 @@ function MapSelectPage() {
 
   useEffect(() => {
     async function onMessage(event: MessageEvent) {
-      if (event.data?.type !== "MAP_VIEW") return;
+      if (event.data?.type !== "MAP_START_FINISH") return;
 
       const parsedTask = taskFromPayload(event.data.payload);
 
@@ -76,9 +117,7 @@ function MapSelectPage() {
       ];
 
       await Promise.all(packNames.map(fetchPackStickers));
-
       setTask(parsedTask);
-      setPacksReady(true);
     }
 
     window.addEventListener("message", onMessage);
@@ -118,16 +157,7 @@ function MapSelectPage() {
         <GridProvider task={task}>
           <CodeProvider init_code="" init_blocks="">
             <VehicleProvider>
-              <div className="h-screen w-full flex flex-col relative">
-                <div className="bg-turquoise-50 flex-center flex-col flex-grow w-full border-t-8 border-y-10 border-turquoise-700 relative overflow-hidden">
-                  {packsReady && (
-                    <>
-                      <SimCanvas />
-                      <SimInterface isHovered={true} />
-                    </>
-                  )}
-                </div>
-              </div>
+              <MapSelectInner mode={mode} />
             </VehicleProvider>
           </CodeProvider>
         </GridProvider>

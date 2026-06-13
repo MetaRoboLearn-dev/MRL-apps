@@ -10,11 +10,14 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as MapRouteImport } from './routes/map'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SolveIndexRouteImport } from './routes/solve/index'
+import { Route as MapIndexRouteImport } from './routes/map/index'
+import { Route as MapViewRouteImport } from './routes/map/view'
 import { Route as AdminRobotsRouteImport } from './routes/admin/robots'
 import { Route as SolveActivityTaskIdIndexRouteImport } from './routes/solve/$activityTaskId/index'
 import { Route as AdminUsersIndexRouteImport } from './routes/admin/users/index'
@@ -42,6 +45,11 @@ const ProfileRoute = ProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MapRoute = MapRouteImport.update({
+  id: '/map',
+  path: '/map',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -66,6 +74,16 @@ const SolveIndexRoute = SolveIndexRouteImport.update({
   id: '/solve/',
   path: '/solve/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const MapIndexRoute = MapIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => MapRoute,
+} as any)
+const MapViewRoute = MapViewRouteImport.update({
+  id: '/view',
+  path: '/view',
+  getParentRoute: () => MapRoute,
 } as any)
 const AdminRobotsRoute = AdminRobotsRouteImport.update({
   id: '/robots',
@@ -184,8 +202,11 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
+  '/map': typeof MapRouteWithChildren
   '/profile': typeof ProfileRoute
   '/admin/robots': typeof AdminRobotsRoute
+  '/map/view': typeof MapViewRoute
+  '/map/': typeof MapIndexRoute
   '/solve/': typeof SolveIndexRoute
   '/admin/tasks/$taskId': typeof AdminTasksTaskIdRouteRouteWithChildren
   '/admin/activities/new': typeof AdminActivitiesNewRoute
@@ -215,6 +236,8 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
   '/admin/robots': typeof AdminRobotsRoute
+  '/map/view': typeof MapViewRoute
+  '/map': typeof MapIndexRoute
   '/solve': typeof SolveIndexRoute
   '/admin/activities/new': typeof AdminActivitiesNewRoute
   '/admin/badges/new': typeof AdminBadgesNewRoute
@@ -242,8 +265,11 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
+  '/map': typeof MapRouteWithChildren
   '/profile': typeof ProfileRoute
   '/admin/robots': typeof AdminRobotsRoute
+  '/map/view': typeof MapViewRoute
+  '/map/': typeof MapIndexRoute
   '/solve/': typeof SolveIndexRoute
   '/admin/tasks/$taskId': typeof AdminTasksTaskIdRouteRouteWithChildren
   '/admin/activities/new': typeof AdminActivitiesNewRoute
@@ -273,8 +299,11 @@ export interface FileRouteTypes {
     | '/admin'
     | '/about'
     | '/login'
+    | '/map'
     | '/profile'
     | '/admin/robots'
+    | '/map/view'
+    | '/map/'
     | '/solve/'
     | '/admin/tasks/$taskId'
     | '/admin/activities/new'
@@ -304,6 +333,8 @@ export interface FileRouteTypes {
     | '/login'
     | '/profile'
     | '/admin/robots'
+    | '/map/view'
+    | '/map'
     | '/solve'
     | '/admin/activities/new'
     | '/admin/badges/new'
@@ -330,8 +361,11 @@ export interface FileRouteTypes {
     | '/admin'
     | '/about'
     | '/login'
+    | '/map'
     | '/profile'
     | '/admin/robots'
+    | '/map/view'
+    | '/map/'
     | '/solve/'
     | '/admin/tasks/$taskId'
     | '/admin/activities/new'
@@ -360,6 +394,7 @@ export interface RootRouteChildren {
   AdminRouteRoute: typeof AdminRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
   LoginRoute: typeof LoginRoute
+  MapRoute: typeof MapRouteWithChildren
   ProfileRoute: typeof ProfileRoute
   SolveIndexRoute: typeof SolveIndexRoute
   SolveActivityTaskIdIndexRoute: typeof SolveActivityTaskIdIndexRoute
@@ -372,6 +407,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/map': {
+      id: '/map'
+      path: '/map'
+      fullPath: '/map'
+      preLoaderRoute: typeof MapRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -408,6 +450,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/solve/'
       preLoaderRoute: typeof SolveIndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/map/': {
+      id: '/map/'
+      path: '/'
+      fullPath: '/map/'
+      preLoaderRoute: typeof MapIndexRouteImport
+      parentRoute: typeof MapRoute
+    }
+    '/map/view': {
+      id: '/map/view'
+      path: '/view'
+      fullPath: '/map/view'
+      preLoaderRoute: typeof MapViewRouteImport
+      parentRoute: typeof MapRoute
     }
     '/admin/robots': {
       id: '/admin/robots'
@@ -623,11 +679,24 @@ const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
   AdminRouteRouteChildren,
 )
 
+interface MapRouteChildren {
+  MapViewRoute: typeof MapViewRoute
+  MapIndexRoute: typeof MapIndexRoute
+}
+
+const MapRouteChildren: MapRouteChildren = {
+  MapViewRoute: MapViewRoute,
+  MapIndexRoute: MapIndexRoute,
+}
+
+const MapRouteWithChildren = MapRoute._addFileChildren(MapRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRouteRoute: AdminRouteRouteWithChildren,
   AboutRoute: AboutRoute,
   LoginRoute: LoginRoute,
+  MapRoute: MapRouteWithChildren,
   ProfileRoute: ProfileRoute,
   SolveIndexRoute: SolveIndexRoute,
   SolveActivityTaskIdIndexRoute: SolveActivityTaskIdIndexRoute,

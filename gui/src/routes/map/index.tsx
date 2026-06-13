@@ -8,7 +8,6 @@ import { ConsoleProvider } from "../../providers/ConsoleProvider";
 import GridProvider from "../../providers/GridProvider";
 import { TaskConfigProvider } from "../../providers/TaskConfigProvider";
 import { VehicleProvider } from "../../providers/VehicleProvider";
-import { Barrier, Barriers, Stickers } from "../../types";
 import { Task, TaskMode } from "../../types/tasksTypes";
 
 const EMPTY_MAP_TASK: Task = {
@@ -43,25 +42,6 @@ function taskFromPayload(p: Record<string, unknown>): Task {
   };
 }
 
-function barrierValueToKey(value: Barrier): string {
-  return Barriers[value]?.key ?? value;
-}
-
-function stickerValueToKey(value: string): string {
-  const byEnumValue = Object.entries(Stickers).find(
-    ([enumVal]) => enumVal === value,
-  );
-  if (byEnumValue) return byEnumValue[1].key;
-
-  const byKey = Object.values(Stickers).find((s) => s.key === value);
-  if (byKey) return byKey.key;
-
-  const byImage = Object.values(Stickers).find((s) => s.image.includes(value));
-  if (byImage) return byImage.key;
-
-  return value;
-}
-
 function SaveButton() {
   const {
     sizeX,
@@ -75,16 +55,6 @@ function SaveButton() {
   } = useGrid();
 
   function handleSave() {
-    const barriersPayload: [number, string][] = [...barriers.entries()].map(
-      ([index, barrierValue]) => [index, barrierValueToKey(barrierValue)],
-    );
-
-    const stickersPayload = stickers.map((s) => ({
-      index: s.index,
-      sticker: stickerValueToKey(s.sticker as string),
-      rotation: s.rotation,
-    }));
-
     const layout = {
       sizeX,
       sizeZ,
@@ -92,8 +62,8 @@ function SaveButton() {
       startRotationOffset,
       finish,
       floorColor,
-      barriers: barriersPayload,
-      stickers: stickersPayload,
+      barriers: barriers,
+      stickers: stickers,
     };
 
     window.parent.postMessage({ type: "MAP_SAVED", payload: layout }, "*");
@@ -151,6 +121,6 @@ function MapPage() {
   );
 }
 
-export const Route = createFileRoute("/map")({
+export const Route = createFileRoute("/map/")({
   component: MapPage,
 });

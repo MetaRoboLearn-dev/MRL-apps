@@ -1,5 +1,5 @@
-import {UserBasic} from "./userTypes.ts";
-import {Barrier} from "../types.ts";
+import { UserBasic } from "./userTypes.ts";
+import { Barrier } from "../types.ts";
 
 export type GridState = {
   size_x: number;
@@ -11,7 +11,7 @@ export type GridState = {
   stickers: { index: number; sticker: string }[];
 }
 
-export type TaskMode = 'solve' | 'create' | 'edit' | 'map_edit' | 'map_view' | 'task_create';
+export type TaskMode = 'solve' | 'create' | 'edit' | 'map_edit' | 'map_view' | 'task_create' | 'start' | 'finish';
 
 export type TaskPreview = {
   id: number;

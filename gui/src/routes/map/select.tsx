@@ -1,5 +1,5 @@
 import { createFileRoute, useSearch } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import SimCanvas from "../../components/Simulator/Scene/SimCanvas";
 import { CodeProvider } from "../../providers/CodeProvider";
 import { ConsoleProvider } from "../../providers/ConsoleProvider";
@@ -62,25 +62,30 @@ function MapSelectInner({ mode }: { mode: "start" | "finish" }) {
     setSelectedType(mode === "start" ? TileType.START : TileType.FINISH);
   }, [mode]);
 
+  const prevStart = useRef(start);
+  const prevFinish = useRef(finish);
+
   useEffect(() => {
-    if (mode === "start" && start !== null) {
-      window.parent.postMessage(
-        {
-          type: "MAP_CELL_CLICK",
-          payload: { row: start, rotation: startRotationOffset },
-        },
-        "*",
-      );
-    }
+    if (start === prevStart.current) return;
+    prevStart.current = start;
+    if (start === null) return;
+    window.parent.postMessage(
+      {
+        type: "MAP_CELL_CLICK",
+        payload: { row: start, rotation: startRotationOffset },
+      },
+      "*",
+    );
   }, [start, startRotationOffset]);
 
   useEffect(() => {
-    if (mode === "finish" && finish !== null) {
-      window.parent.postMessage(
-        { type: "MAP_CELL_CLICK", payload: { row: finish, rotation: 0 } },
-        "*",
-      );
-    }
+    if (finish === prevFinish.current) return;
+    prevFinish.current = finish;
+    if (finish === null) return;
+    window.parent.postMessage(
+      { type: "MAP_CELL_CLICK", payload: { row: finish, rotation: 0 } },
+      "*",
+    );
   }, [finish]);
 
   return (
@@ -97,27 +102,29 @@ function MapSelectPage() {
   const [task, setTask] = useState<Task | null>(null);
   const { fetchPackStickers } = useStickerPacks();
   const search = useSearch({ from: "/map/select" }) as { mode?: string };
-  const mode = (search.mode === "finish" ? "finish" : "start") as
-    | "start"
-    | "finish";
+  const [mode, setMode] = useState<"start" | "finish">(
+    search.mode === "finish" ? "finish" : "start",
+  );
 
   useEffect(() => {
     async function onMessage(event: MessageEvent) {
-      if (event.data?.type !== "MAP_START_FINISH") return;
+      if (event.data?.type === "MAP_START_FINISH") {
+        const parsedTask = taskFromPayload(event.data.payload);
+        const packNames = [
+          ...new Set(
+            (parsedTask.stickers ?? [])
+              .map((s) => s.sticker)
+              .filter(isPackStickerKey)
+              .map((key) => key.split("/")[0]),
+          ),
+        ];
+        await Promise.all(packNames.map(fetchPackStickers));
+        setTask(parsedTask);
+      }
 
-      const parsedTask = taskFromPayload(event.data.payload);
-
-      const packNames = [
-        ...new Set(
-          (parsedTask.stickers ?? [])
-            .map((s) => s.sticker)
-            .filter(isPackStickerKey)
-            .map((key) => key.split("/")[0]),
-        ),
-      ];
-
-      await Promise.all(packNames.map(fetchPackStickers));
-      setTask(parsedTask);
+      if (event.data?.type === "SET_MODE") {
+        setMode(event.data.payload.mode);
+      }
     }
 
     window.addEventListener("message", onMessage);

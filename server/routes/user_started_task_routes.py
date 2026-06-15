@@ -182,4 +182,7 @@ def finish_task(ust_id: int):
         ust = repo.finish(ust_id, actor_user_id=current_user.id)
         if not ust:
             return jsonify({"error": "Not found"}), 404
-        return jsonify({"finished": True}), 200
+        return jsonify({
+            "finished": True,
+            "final_code_snapshot": ust.current_value,
+        }), 200

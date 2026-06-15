@@ -48,29 +48,31 @@ class UserStartedTaskRepository:
         return q.all()
 
     # ---------- CREATE ----------
-    def create(self, *, activity_task_id: int, actor_user_id: Optional[int] = None) -> UserStartedTask:
+    def create(self, *, activity_task_id: int, assignment_id: str, current_value: str, actor_user_id: Optional[int] = None) -> UserStartedTask:
         now = utc_now()
+        activity_task = None
+        if activity_task_id:
+            activity_task = (
+                self.session.query(ActivityTask)
+                .options(joinedload(ActivityTask.task), joinedload(ActivityTask.type))
+                .filter(ActivityTask.id == activity_task_id)
+                .first()
+            )
 
-        activity_task = (
-            self.session.query(ActivityTask)
-            .options(joinedload(ActivityTask.task), joinedload(ActivityTask.type))
-            .filter(ActivityTask.id == activity_task_id)
-            .first()
-        )
+            if not activity_task:
+                raise ValueError("ActivityTask not found")
 
-        if not activity_task:
-            raise ValueError("ActivityTask not found")
+            task_type = activity_task.type.name.lower() if activity_task.type else "python"
 
-        task_type = activity_task.type.name.lower() if activity_task.type else "python"
-
-        if task_type == "blockly":
-            current_value = activity_task.task.blocks if activity_task.task else None
-        else:
-            current_value = activity_task.task.code if activity_task.task else None
+            if task_type == "blockly":
+                current_value = activity_task.task.blocks if activity_task.task else None
+            else:
+                current_value = activity_task.task.code if activity_task.task else None
 
         ust = UserStartedTask(
             started_by=actor_user_id,
             activity_task_id=activity_task_id,
+            assignment_id=assignment_id,
             current_value=current_value,
             started_at=now,
             created_at=now,

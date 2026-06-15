@@ -25,8 +25,9 @@ class UserTaskLogRepository:
             UserStartedTask.id == user_started_task_id
         ).first()
 
-        if not ust or not ust.activity_task or not ust.activity_task.is_logged:
-            return None
+        if not ust.assignment_id:
+            if not ust or not ust.activity_task or not ust.activity_task.is_logged:
+                return None
 
         log = UserTaskLog(
             user_started_task_id=user_started_task_id,

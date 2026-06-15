@@ -13,12 +13,28 @@ export const getUserStartedTask = async (activityTaskId: string): Promise<UserSt
   return response.json();
 };
 
-export const createUserStartedTask = async (activityTaskId: number) => {
+export const getUserStartedTaskByAssignment = async (id: string): Promise<UserStartedTask> => {
+  const response = await fetch(`/api/user-started-tasks/by-assignment/${id}`, {
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to fetch user started task');
+  }
+
+  return response.json();
+};
+
+export const createUserStartedTask = async (activityTaskId?: number, assignmentId?: string, initialCode?: string) => {
+  let body;
+  if (activityTaskId) body = JSON.stringify({ activity_task_id: activityTaskId });
+  else if (assignmentId) body = JSON.stringify({ assignment_id: assignmentId, initial_code: initialCode });
   const response = await fetch('/api/user-started-tasks/', {
     credentials: 'include',
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ activity_task_id: activityTaskId }),
+    body: body,
   });
 
   if (!response.ok) {

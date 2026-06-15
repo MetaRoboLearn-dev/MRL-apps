@@ -19,7 +19,7 @@ export const createLog = async (
   codeSnapshot?: string | null,
 ) => {
   if (!userStartedTaskId) return
-  const response = await fetch("/api/user-task-logs", {
+  const response = await fetch("/api/user-task-logs/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",

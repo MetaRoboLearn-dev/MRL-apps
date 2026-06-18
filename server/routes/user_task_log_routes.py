@@ -3,6 +3,8 @@ from flask_login import login_required
 
 from database import db_session
 from repositories.user_task_log_repository import UserTaskLogRepository
+from models.user_started_task import UserStartedTask
+from models.user_task_log import EventType, UserTaskLog
 from utils import parse_boolean_param
 
 bp = Blueprint("user_task_logs", __name__, url_prefix="/api/user-task-logs")
@@ -45,3 +47,28 @@ def delete_user_task_log(log_id: int):
         if not ok:
             return jsonify({"error": "UserTaskLog not found"}), 404
         return jsonify({"deleted": True}), 200
+    
+@bp.route("/by-assignment/<string:assignment_id>", methods=["GET"])
+def get_logs_by_assignment(assignment_id: str):
+    with db_session() as session:
+        ust = session.query(UserStartedTask).filter_by(
+            assignment_id=assignment_id
+        ).first()
+        if not ust:
+            return jsonify([]), 200
+
+        logs = (
+            session.query(UserTaskLog)
+            .join(EventType, UserTaskLog.event_type_id == EventType.id)
+            .filter(UserTaskLog.user_started_task_id == ust.id)
+            .order_by(UserTaskLog.created_at.asc())
+            .all()
+        )
+
+        return jsonify([{
+            "id": log.id,
+            "event_type_id": log.event_type_id,
+            "event_name": log.event_type.name if log.event_type else None,
+            "code_snapshot": log.code_snapshot,
+            "created_at": log.created_at.isoformat() if log.created_at else None,
+        } for log in logs]), 200

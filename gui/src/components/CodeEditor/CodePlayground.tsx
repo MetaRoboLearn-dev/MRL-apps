@@ -1,26 +1,30 @@
 import Editor, { OnMount } from "@monaco-editor/react";
-import {useEffect, useRef} from "react";
+import { useEffect, useRef } from "react";
 import * as monaco from "monaco-editor";
-import {useCode} from "../../hooks/useCode.ts";
-import {codeTheme} from "./CodeTheme.ts";
+import { useCode } from "../../hooks/useCode.ts";
+import { codeTheme } from "./CodeTheme.ts";
+import { useTaskConfig } from "../../hooks/useTaskConfig.ts";
 
 const CodePlayground = () => {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const debounceTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const debounceTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined,
+  );
   const { codeRef, setCode } = useCode();
+  const { mode } = useTaskConfig();
 
   const handleEditorDidMount: OnMount = (editor, monacoInstance) => {
     editorRef.current = editor;
     monacoInstance.editor.defineTheme("default", codeTheme);
-    monacoInstance.editor.setTheme('default');
+    monacoInstance.editor.setTheme("default");
   };
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
-    const observer = new ResizeObserver(entries => {
+    const observer = new ResizeObserver((entries) => {
       const entry = entries[0];
       if (!entry || !editorRef.current) return;
       const { width, height } = entry.contentRect;
@@ -36,7 +40,7 @@ const CodePlayground = () => {
   const handleCodeChange = (value: string | undefined) => {
     clearTimeout(debounceTimeout.current);
     debounceTimeout.current = setTimeout(() => {
-      setCode(value ?? '');
+      setCode(value ?? "");
     }, 500);
   };
 
@@ -54,7 +58,7 @@ const CodePlayground = () => {
           height="100%"
           defaultLanguage="python"
           theme="dark"
-          value={codeRef.current ?? ''}
+          value={codeRef.current ?? ""}
           onChange={handleCodeChange}
           keepCurrentModel={false}
           options={{
@@ -62,6 +66,7 @@ const CodePlayground = () => {
             lineNumbers: "on",
             minimap: { enabled: false },
             padding: { top: 10 },
+            readOnly: mode === "preview_task",
           }}
         />
       </div>

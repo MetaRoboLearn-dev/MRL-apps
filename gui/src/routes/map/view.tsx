@@ -30,23 +30,7 @@ function taskFromPayload(p: Record<string, unknown>): Task {
 }
 
 function MapPage() {
-  const [task, setTask] = useState<Task>({
-    id: null,
-    title: "",
-    description: null,
-    size_x: 5,
-    size_z: 5,
-    start: null,
-    rotation: 0,
-    finish: null,
-    barriers: [],
-    stickers: [],
-    code: null,
-    blocks: null,
-    floor_color: null,
-    model_path: null,
-    active: false,
-  });
+  const [task, setTask] = useState<Task | null>(null);
   const [mode, setMode] = useState<TaskMode>("map_view");
 
   useEffect(() => {
@@ -60,6 +44,14 @@ function MapPage() {
     window.parent.postMessage({ type: "MAP_READY" }, "*");
     return () => window.removeEventListener("message", onMessage);
   }, []);
+
+  if (!task) {
+    return (
+      <div className="h-screen w-full flex items-center justify-center">
+        <span>Učitavanje...</span>
+      </div>
+    );
+  }
 
   return (
     <ConsoleProvider>

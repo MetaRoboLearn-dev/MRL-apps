@@ -109,7 +109,7 @@ const SimInterface = ({ isHovered }: Props) => {
         {/*<h1>validWorkspace: {isValidWorkspace.toString()}</h1>*/}
       </div>
 
-      {mode != "map_view" && mode != "preview_task" && (
+      {mode != "map_view" && mode != "preview_task" && mode != "solve" && (
         <div
           className={`absolute bottom-5 text-lg text-center font-semibold text-dark-neutrals-500 bg-white/80 px-4 py-2 rounded shadow transition-opacity duration-200 select-none
                         ${!simFocused && isHovered && !modalVisible && !isMoving && allowEdit ? "opacity-100 cursor-pointer" : "opacity-0 pointer-events-none"}`}
@@ -121,86 +121,88 @@ const SimInterface = ({ isHovered }: Props) => {
         </div>
       )}
 
-      <div
-        className={`absolute bottom-5 select-none transition-opacity duration-200 ${simFocused ? "opacity-100" : "opacity-0 pointer-events-none"}`}
-      >
-        <SimTileDropdown
-          show={showTileDropdown}
-          setShow={setShowTileDropdown}
-        />
-
+      {mode != "solve" && (
         <div
-          className={`${selectedType === TileType.STICKER || selectedType === TileType.START ? "flex" : "hidden"} mb-2 flex justify-center items-center`}
+          className={`absolute bottom-5 select-none transition-opacity duration-200 ${simFocused ? "opacity-100" : "opacity-0 pointer-events-none"}`}
         >
-          <span
-            className={
-              "text-lg font-bold text-dark-neutrals-400 mr-4 whitespace-nowrap"
-            }
+          <SimTileDropdown
+            show={showTileDropdown}
+            setShow={setShowTileDropdown}
+          />
+
+          <div
+            className={`${selectedType === TileType.STICKER || selectedType === TileType.START ? "flex" : "hidden"} mb-2 flex justify-center items-center`}
           >
-            Pritisni R za rotaciju!
-          </span>
-        </div>
-        {mode !== "start_finish_select" && <SimSpeedSlider />}
-
-        <div className={"flex justify-between"}>
-          {mode !== "start_finish_select" && (
-            <div
-              className={`text-lg text-center font-semibold text-white-smoke-500 bg-tomato-600 p-2 rounded shadow cursor-pointer`}
-              onClick={() => setSimFocused(false)}
-            >
-              <BsArrowLeftCircleFill size={20} />
-            </div>
-          )}
-
-          <div className="mx-10 flex items-center justify-center">
-            {mode !== "start_finish_select" && (
-              <span
-                className={"flex items-center cursor-pointer"}
-                onClick={selectPreviousType}
-              >
-                <BsChevronLeft
-                  size={15}
-                  className={"stroke-3 stroke-white-smoke-900"}
-                />
-                <TbCircleDashedLetterA
-                  size={25}
-                  className={"stroke-3 stroke-white-smoke-900"}
-                />
-              </span>
-            )}
             <span
-              className="w-50 text-center text-3xl font-display font-bold mx-4 text-dark-neutrals-500 cursor-pointer"
-              onClick={() => setShowTileDropdown(!showTileDropdown)}
+              className={
+                "text-lg font-bold text-dark-neutrals-400 mr-4 whitespace-nowrap"
+              }
             >
-              {selectedType.toUpperCase()}
+              Pritisni R za rotaciju!
             </span>
+          </div>
+          {mode !== "start_finish_select" && <SimSpeedSlider />}
+
+          <div className={"flex justify-between"}>
             {mode !== "start_finish_select" && (
-              <span
-                className={"flex items-center cursor-pointer"}
-                onClick={selectNextType}
+              <div
+                className={`text-lg text-center font-semibold text-white-smoke-500 bg-tomato-600 p-2 rounded shadow cursor-pointer`}
+                onClick={() => setSimFocused(false)}
               >
-                <TbCircleDashedLetterD
-                  size={25}
-                  className={"stroke-3 stroke-white-smoke-900"}
-                />
-                <BsChevronRight
-                  size={15}
-                  className={"stroke-3 stroke-white-smoke-900"}
-                />
+                <BsArrowLeftCircleFill size={20} />
+              </div>
+            )}
+
+            <div className="mx-10 flex items-center justify-center">
+              {mode !== "start_finish_select" && (
+                <span
+                  className={"flex items-center cursor-pointer"}
+                  onClick={selectPreviousType}
+                >
+                  <BsChevronLeft
+                    size={15}
+                    className={"stroke-3 stroke-white-smoke-900"}
+                  />
+                  <TbCircleDashedLetterA
+                    size={25}
+                    className={"stroke-3 stroke-white-smoke-900"}
+                  />
+                </span>
+              )}
+              <span
+                className="w-50 text-center text-3xl font-display font-bold mx-4 text-dark-neutrals-500 cursor-pointer"
+                onClick={() => setShowTileDropdown(!showTileDropdown)}
+              >
+                {selectedType.toUpperCase()}
               </span>
+              {mode !== "start_finish_select" && (
+                <span
+                  className={"flex items-center cursor-pointer"}
+                  onClick={selectNextType}
+                >
+                  <TbCircleDashedLetterD
+                    size={25}
+                    className={"stroke-3 stroke-white-smoke-900"}
+                  />
+                  <BsChevronRight
+                    size={15}
+                    className={"stroke-3 stroke-white-smoke-900"}
+                  />
+                </span>
+              )}
+            </div>
+            {mode !== "start_finish_select" && (
+              <button
+                className={`text-lg text-center font-semibold text-dark-neutrals-400 p-2 rounded shadow bg-sunglow-500 cursor-pointer transition`}
+                onClick={() => setShowSideMenu(!showSideMenu)}
+              >
+                <BsGearFill size={20} />
+              </button>
             )}
           </div>
-          {mode !== "start_finish_select" && (
-            <button
-              className={`text-lg text-center font-semibold text-dark-neutrals-400 p-2 rounded shadow bg-sunglow-500 cursor-pointer transition`}
-              onClick={() => setShowSideMenu(!showSideMenu)}
-            >
-              <BsGearFill size={20} />
-            </button>
-          )}
         </div>
-      </div>
-      {mode !== "start_finish_select" && (
+      )}
+      {mode !== "start_finish_select" && mode !== "solve" && (
         <SimSideMenu
           show={showSideMenu}
           setShow={setShowSideMenu}

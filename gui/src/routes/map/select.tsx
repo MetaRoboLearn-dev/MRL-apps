@@ -7,7 +7,7 @@ import GridProvider from "../../providers/GridProvider";
 import { TaskConfigProvider } from "../../providers/TaskConfigProvider";
 import { VehicleProvider } from "../../providers/VehicleProvider";
 import { isPackStickerKey } from "../../api/stickerPackApi.ts";
-import { Task, TaskMode } from "../../types/tasksTypes";
+import { Task } from "../../types/tasksTypes";
 import { useStickerPacks } from "../../hooks/useStickerPacks";
 import SimInterface from "../../components/Simulator/UI/SimInterface.tsx";
 import { TileType } from "../../types.ts";
@@ -56,10 +56,11 @@ function taskFromPayload(payload: Record<string, any>): Task {
 
 function MapSelectInner({ mode }: { mode: "start" | "finish" }) {
   const { start, finish, startRotationOffset } = useGrid();
-  const { setSelectedType } = useTaskConfig();
+  const { setSelectedType, setMode } = useTaskConfig();
 
   useEffect(() => {
     setSelectedType(mode === "start" ? TileType.START : TileType.FINISH);
+    setMode("start_finish_select");
   }, [mode]);
 
   const prevStart = useRef(start);

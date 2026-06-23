@@ -11,7 +11,7 @@ export type GridState = {
   stickers: { index: number; sticker: string }[];
 }
 
-export type TaskMode = 'solve' | 'create' | 'edit' | 'map_edit' | 'map_view' | 'task_create' | 'preview_task';
+export type TaskMode = 'solve' | 'create' | 'edit' | 'map_edit' | 'map_view' | 'task_create' | 'preview_task' | 'start_finish_select';
 
 export type TaskPreview = {
   id: number;
